@@ -1,6 +1,0 @@
-{
-	"directory":"js/lib/",
-	"scripts": {
-		"postinstall": "grunt bowerRequirejs"
-	}
-}
