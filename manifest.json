@@ -15,7 +15,7 @@
 
     "web_accessible_resources": [
         "js/*",
-        "vizualization-widgets/*",
+        "visualization-widgets/*",
         "media/*"
     ],
     "manifest_version": 2,
