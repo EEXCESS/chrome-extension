@@ -4,6 +4,8 @@ require.config({
   },
   baseUrl: "/js/lib",
   paths: {
+    jquery: "jquery/dist/jquery",
+    requirejs: "requirejs/require"
   },
   packages: [
 
