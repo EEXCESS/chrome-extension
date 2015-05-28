@@ -1,0 +1,34 @@
+{
+    "name": "EEXCESS_DEV",
+    "version": "0.11",
+    "background": {
+        "page": "html/background.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "run_at":"document_end",
+            "js": ["js/lib/requirejs/require.js","js/requireContent.js","js/common.js","js/content.js"],
+            "css": []
+        }
+    ],
+
+    "web_accessible_resources": [
+        "js/*",
+        "external/*",
+        "media/*"
+    ],
+    "manifest_version": 2,
+    "permissions": [
+        "tabs",
+        "<all_urls>",
+        "geolocation",
+        "history",
+        "background",
+        "storage"
+    ],
+    "icons": {"16": "media/icons/16.png",
+        "48": "media/icons/48.png",
+        "128": "media/icons/128.png"}
+}
+
