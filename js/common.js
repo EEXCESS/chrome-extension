@@ -2,10 +2,11 @@ require.config({
   shim: {
 
   },
-  baseUrl: "/js/lib",
+  baseUrl: "/js/lib/",
   paths: {
     jquery: "jquery/dist/jquery",
-    requirejs: "requirejs/require"
+    requirejs: "requirejs/require",
+    jqueryui: "jquery-ui/jquery-ui"
   },
   packages: [
 
