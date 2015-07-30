@@ -1,4 +1,4 @@
-require(['c4/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
+require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     searchBar.init(function(profile) {
         chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
         iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
