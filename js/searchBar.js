@@ -6,9 +6,8 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-    var contentArea = $("<div id='tabs' class='contentArea'> " +
-        "<div id='tabs-header'><ul></ul>" +
-        "<div id = 'tabs-content'></div></div></div>").hide();
+    var contentArea = $("<div id='tabs-header' class='contentArea'><ul></ul>" +
+        "<div id = 'tabs-content'></div></div>").hide();
 
 
     //var testArea = ('<div id ="tabs">' +
@@ -86,6 +85,9 @@ define(['jquery', 'jqueryui'], function ($) {
                 // adding handle to resize ResultArea
                 $("#tabs-header").resizable({
                     handles: "nw"
+                });
+                $("#tabs-header").draggable({
+                    scroll: "true"
                 });
             }),
 
