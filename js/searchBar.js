@@ -7,8 +7,8 @@ define(['jquery', 'jqueryui'], function ($) {
 
 
     var contentArea = $("<div id='tabs' class='contentArea'> " +
-        "<div id='tabs-header'><ul></ul></div>" +
-        "<div id = 'tabs-content'></div></div>").hide();
+        "<div id='tabs-header'><ul></ul>" +
+        "<div id = 'tabs-content'></div></div></div>").hide();
 
 
     //var testArea = ('<div id ="tabs">' +
@@ -39,7 +39,8 @@ define(['jquery', 'jqueryui'], function ($) {
                             "icon": "icon.png",
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
-                            "content": "<iframe src='visualization-widgets/SearchResultList/index.html'/>",
+                            "content": '<iframe src="' +
+                            chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         },
