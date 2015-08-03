@@ -84,7 +84,7 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 // adding handle to resize ResultArea
                 $("#tabs-header").resizable({
-                    handles: "nw"
+                    handles: "all"
                 });
                 $("#tabs-header").draggable({
                     scroll: "true"
