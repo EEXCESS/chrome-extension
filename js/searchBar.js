@@ -35,7 +35,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     "tabs": [
                         {
                             "id": "1",
-                            "name": "Tab One",
+                            "name": "SearchResultList",
                             "icon": "icon.png",
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
@@ -46,9 +46,18 @@ define(['jquery', 'jqueryui'], function ($) {
                         },
                         {
                             "id": "2",
-                            "name": "Tabula Rasa",
+                            "name": "PowerSearch",
                             "icon": "icon.png",
-                            "content": "Test",
+                            "content": '<iframe src="' +
+                            chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
+                            "renderedHead": "",
+                            "renderedContent": ""
+                        }, {
+                            "id": "3",
+                            "name": "Dashboard",
+                            "icon": "icon.png",
+                            "content": '<iframe src="' +
+                            chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }]
