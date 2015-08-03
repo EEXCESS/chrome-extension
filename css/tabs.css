@@ -5,13 +5,14 @@ iframe {
 }
 
 .ui-tabs-vertical {
-    width: 55em;
+    width: 45em;
+    font-size: 0.7em;
 }
 
 .ui-tabs-vertical .ui-tabs-nav {
     padding: .2em .1em .2em .2em;
     float: left;
-    width: 12em;
+    width: auto;
 }
 
 .ui-tabs-vertical .ui-tabs-nav li {
@@ -35,7 +36,7 @@ iframe {
 .ui-tabs-vertical .ui-tabs-panel {
     padding: 1em;
     float: right;
-    width: 40em;
+    width: 30em;
 }
 
 .contentArea {
@@ -51,4 +52,5 @@ iframe {
     -webkit-justify-content: space-around; /* Safari 6.1+ */
     display: flex;
     justify-content: space-between;
+    overflow-y: scroll;
 }
