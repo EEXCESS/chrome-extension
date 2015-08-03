@@ -6,7 +6,8 @@ require.config({
   paths: {
     jquery: "jquery/dist/jquery",
     requirejs: "requirejs/require",
-    jqueryui: "jquery-ui/jquery-ui"
+    jqueryui: "jquery-ui/jquery-ui",
+    searchBar:"../searchBar"
   },
   packages: [
 
