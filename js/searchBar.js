@@ -86,7 +86,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     )
                 });
 
-                //de-comment to experience jump behavior
+                //de-comment to experience jump behavior, comment in dragstop listener function
                 // // adding handle to resize ResultArea
                 //$("#tabs-header").resizable({
                 //    handles: "all",
