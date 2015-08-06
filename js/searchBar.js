@@ -18,15 +18,12 @@ define(['jquery', 'jqueryui'], function ($) {
         return {
             init: function (triggerFunction) {
 
-
+                //sets size and position of the tab area according to previous adjustments
                 $(function setSizeAndPosition() {
-
                     storage.get(null, function (result) {
                         if (result.resizeHeight) {
                             $("#tabs-header").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
-
                         }
-
                         if (result.dragPosition) {
                             $("#tabs-header").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
                         }
@@ -34,14 +31,14 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 });
 
-                //generates
+                //generates jquery-ui tabs TODO: icons? and move into external json
                 $(function generateTabView() {
                     var tabModel = {
                         "tabs": [
                             {
                                 "id": "1",
                                 "name": "SearchResultList",
-                                "icon": "icon.png",
+                                //"icon": "icon.png",
                                 // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
                                 "content": '<iframe src="' +
@@ -52,7 +49,7 @@ define(['jquery', 'jqueryui'], function ($) {
                             {
                                 "id": "2",
                                 "name": "PowerSearch",
-                                "icon": "icon.png",
+                                //"icon": "icon.png",
                                 "content": '<iframe src="' +
                                 chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
                                 "renderedHead": "",
@@ -60,7 +57,7 @@ define(['jquery', 'jqueryui'], function ($) {
                             }, {
                                 "id": "3",
                                 "name": "Dashboard",
-                                "icon": "icon.png",
+                                //"icon": "icon.png",
                                 "content": '<iframe src="' +
                                 chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
                                 "renderedHead": "",
@@ -89,7 +86,8 @@ define(['jquery', 'jqueryui'], function ($) {
                     )
                 });
 
-                // adding handle to resize ResultArea
+                //de-comment to experience jump behavior
+                // // adding handle to resize ResultArea
                 //$("#tabs-header").resizable({
                 //    handles: "all",
                 //    minHeight: 200,
@@ -123,7 +121,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
 
-                    // adding handle to resize ResultArea
+                    // adding handle to resize ResultArea (after drag to ensure no jumping)
                     $("#tabs-header").resizable({
                         handles: "all",
                         minHeight: 200,
