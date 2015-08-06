@@ -45,10 +45,7 @@
     z-index: 99999;
     overflow-y: scroll;
 }
-.contentHeader{
 
-
-}
 .flex-start {
     display: -webkit-flex; /* Safari */
     -webkit-justify-content: flex-start;
@@ -62,8 +59,7 @@
     overflow: hidden;
 }
 
-/* 4x3 Aspect Ratio */
-.intrinsic-container-4x3 {
+.intrinsic-container-ratio {
     padding-bottom: 60%;
 }
 
