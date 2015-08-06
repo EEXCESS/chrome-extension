@@ -90,14 +90,15 @@ define(['jquery', 'jqueryui'], function ($) {
                 });
 
                 // adding handle to resize ResultArea
-                $("#tabs-header").resizable({
-                    handles: "all",
-                    minHeight: 200,
-                    minWidth: 250,
-                    maxWidth: 800,
-                    aspectRatio: "60%"
+                //$("#tabs-header").resizable({
+                //    handles: "all",
+                //    minHeight: 200,
+                //    minWidth: 250,
+                //    maxWidth: 800,
+                //    aspectRatio: "60%"
+                //
+                //});
 
-                });
 
                 $("#tabs-header").draggable({
                     scroll: "true",
@@ -122,6 +123,15 @@ define(['jquery', 'jqueryui'], function ($) {
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
 
+                    // adding handle to resize ResultArea
+                    $("#tabs-header").resizable({
+                        handles: "all",
+                        minHeight: 200,
+                        minWidth: 250,
+                        maxWidth: 800,
+                        aspectRatio: "60%"
+
+                    });
 
                 });
 
