@@ -6,18 +6,7 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-    var contentArea = $("<div id='tabs-header' class='contentArea'><ul></ul>" +
-        "<div id = 'tabs-content'></div></div>").hide();
-
-
-    //var testArea = ('<div id ="tabs">' +
-    //    "<div id='tabs-header'><ul></ul></div>" +
-    //    "<div id = 'tabs-content'></div></div>" +
-    //    "style='position:fixed;width:60%;height:60%;bottom:20px;right:0px;background-color:white;border:1px solid black;z-index:99999;'></div>"
-    //);
-//    var contentArea = $('<div id ="contentArea"> <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '" style="position:fixed;width:60%;height:60%;bottom:20px;right:0px;background-color:white;border:1px solid black;z-index:99999"></div>').hide();
-    //var contentArea = $('<div id ="resizable"> <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '" style="position:fixed;width:60%;height:60%;bottom:20px;right:0px;background-color:white;border:1px solid black;z-index:99999"></div>').hide();
-
+    var contentArea = $("<div id = 'contentArea'><div id='tabs-header' class='tabs-area'><ul></ul><div id = 'tabs-content' class='flex-container intrinsic-container intrinsic-container-4x3'></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div' +
         ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
@@ -78,13 +67,20 @@ define(['jquery', 'jqueryui'], function ($) {
                         $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
                         $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
                         $("#tabs-header").tabs("refresh");
+
+                        $("#tabs-content").addClass("flex-start");
+
+                        $("iframe").attr('style','width: 100%; height: 100%;');
                     }
                 )
 
 
                 // adding handle to resize ResultArea
                 $("#tabs-header").resizable({
-                    handles: "all"
+                    handles: "all",
+                    minHeight: 200,
+                    minWidth: 350,
+                    aspectRatio: "60%"
                 });
                 $("#tabs-header").draggable({
                     scroll: "true"
