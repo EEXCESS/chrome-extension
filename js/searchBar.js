@@ -14,102 +14,140 @@ define(['jquery', 'jqueryui'], function ($) {
         var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
 
         var storage = chrome.storage.local;
-        //var newWidth;
-        //storage.set({'resizeHeight': '0'}, function () {
-        //});
-        //storage.set({'resizeWidth': '0'}, function () {
-        //});
+
         return {
             init: function (triggerFunction) {
 
 
+                $(function setPosition() {
+
+                    //storage.get('resizeHeight', function (result) {
+                    //    if (result.resizeHeight != "0") {
+                    //
+                    //        $("#tabs-header").attr("style", "height:" + result.resizeHeight + ";");
+                    //    }
+                    //});
+                    //storage.get('resizeWidth', function (result) {
+                    //    if (result.resizeWidth != "0") {
+                    //
+                    //        $("#tabs-header").attr("style", "width:" + result.resizeWidth + ";");
+                    //    }
+                    //});
+                    storage.get(null, function (result) {
+                        if (result.resizeHeight) {
+                            if (result.resizeWidth) {
+
+                                $("#tabs-header").attr("style", "height:" + result.resizeHeight + ";" + "width:" + result.resizeWidth + ";");
+                            }
+                        }
+                    });
+
+                });
+
                 $(function generateTabView() {
-                        var tabModel = {
-                            "tabs": [
-                                {
-                                    "id": "1",
-                                    "name": "SearchResultList",
-                                    "icon": "icon.png",
-                                    // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
+                    var tabModel = {
+                        "tabs": [
+                            {
+                                "id": "1",
+                                "name": "SearchResultList",
+                                "icon": "icon.png",
+                                // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
-                                    "content": '<iframe src="' +
-                                    chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
-                                    "renderedHead": "",
-                                    "renderedContent": ""
-                                },
-                                //{
-                                //    "id": "2",
-                                //    "name": "PowerSearch",
-                                //    "icon": "icon.png",
-                                //    "content": '<iframe src="' +
-                                //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
-                                //    "renderedHead": "",
-                                //    "renderedContent": ""
-                                //}, {
-                                //    "id": "3",
-                                //    "name": "Dashboard",
-                                //    "icon": "icon.png",
-                                //    "content": '<iframe src="' +
-                                //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
-                                //    "renderedHead": "",
-                                //    "renderedContent": ""
-                                //}]
-                            ]
-                        };
+                                "content": '<iframe src="' +
+                                chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
+                                "renderedHead": "",
+                                "renderedContent": ""
+                            },
+                            //{
+                            //    "id": "2",
+                            //    "name": "PowerSearch",
+                            //    "icon": "icon.png",
+                            //    "content": '<iframe src="' +
+                            //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
+                            //    "renderedHead": "",
+                            //    "renderedContent": ""
+                            //}, {
+                            //    "id": "3",
+                            //    "name": "Dashboard",
+                            //    "icon": "icon.png",
+                            //    "content": '<iframe src="' +
+                            //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
+                            //    "renderedHead": "",
+                            //    "renderedContent": ""
+                            //}]
+                        ]
+                    };
 
-                        $.each(tabModel.tabs, function (i, tab) {
-                                tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                                $("#tabs-header ul").append(
-                                    tab.renderedHead);
-                                // add tab content corresponding to tab titles
-                                tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
-                                );
-                                $("#tabs-content").append(
-                                    tab.renderedContent
-                                );
-                                // following 3 functions derived from jQuery-UI Tabs
-                                $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-                                $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
-                                $("#tabs-header").tabs("refresh");
+                    $.each(tabModel.tabs, function (i, tab) {
+                            tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                            $("#tabs-header ul").append(
+                                tab.renderedHead);
+                            // add tab content corresponding to tab titles
+                            tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
+                            );
+                            $("#tabs-content").append(
+                                tab.renderedContent
+                            );
+                            // following 3 functions derived from jQuery-UI Tabs
+                            $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                            $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
+                            $("#tabs-header").tabs("refresh");
 
-                                $("#tabs-content").addClass("flex-start");
+                            $("#tabs-content").addClass("flex-start");
 
-                            }
-                        )
+                        }
+                    )
 
 
-                        // adding handle to resize ResultArea
-                        $("#tabs-header").resizable({
-                            handles: "all",
-                            minHeight: 200,
-                            minWidth: 350,
-                            aspectRatio: "60%",
+                    // adding handle to resize ResultArea
+                    $("#tabs-header").resizable({
+                        handles: "all",
+                        minHeight: 200,
+                        minWidth: 350,
+                        aspectRatio: "60%",
 
-                            stop: function (event, ui) {
-                            }
+                        stop: function (event, ui) {
+                        }
 
-                        });
-                        $("#tabs-header").draggable({
-                            scroll: "true"
-                        });
-                    }
-                )
-                ;
-
-                $("#tabs-header").on("resizestop", function (event, ui) {
-                    var resizeHeight1 = $("#tabs-header").height();
-                    var resizeWidth1 = $("#tabs-header").width();
-
-                    storage.set({'resizeHeight': resizeHeight1}, function (result) {
-                        storage.get('resizeHeight', function (result) {
-                            console.log('Settings savedH ' + result.resizeHeight);
-                        });
                     });
-                    storage.set({'resizeWidth': resizeWidth1}, function (result) {
-                        storage.get('resizeWidth', function (result) {
-                            console.log('Settings savedW ' + result.resizeWidth);
-                        });
+                    $("#tabs-header").draggable({
+                        scroll: "true",
+                        //stop: function (event, ui) {
+                        //}
                     });
+
+                    $("#tabs-header").on("resizestop", function (event, ui) {
+                        var resizeHeight1 = $("#tabs-header").height() + "px";
+                        var resizeWidth1 = $("#tabs-header").width() + "px";
+
+                        storage.set({'resizeHeight': resizeHeight1}, function (result) {
+                            storage.get('resizeHeight', function (result) {
+                                console.log('Settings savedH ' + result.resizeHeight);
+                            });
+                        });
+                        storage.set({'resizeWidth': resizeWidth1}, function (result) {
+                            storage.get('resizeWidth', function (result) {
+                                console.log('Settings savedW ' + result.resizeWidth);
+                            });
+                        });
+
+
+                    });
+
+                    //$("#tabs-header").on("dragstop", function (event, ui) {
+                    //    var resizeHeight1 = $("#tabs-header").height();
+                    //    var resizeWidth1 = $("#tabs-header").width();
+                    //
+                    //    storage.set({'resizeHeight': resizeHeight1}, function (result) {
+                    //        storage.get('resizeHeight', function (result) {
+                    //            console.log('Settings savedH ' + result.resizeHeight);
+                    //        });
+                    //    });
+                    //    storage.set({'resizeWidth': resizeWidth1}, function (result) {
+                    //        storage.get('resizeWidth', function (result) {
+                    //            console.log('Settings savedW ' + result.resizeWidth);
+                    //        });
+                    //    });ch
 
 
                 });
