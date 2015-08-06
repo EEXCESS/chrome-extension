@@ -6,85 +6,113 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-    var contentArea = $("<div id = 'contentArea'><div id='tabs-header' class='tabs-area'><ul></ul><div id = 'tabs-content' class='flex-container intrinsic-container intrinsic-container-ratio'></div></div></div>").hide();
-    $('body').append(contentArea);
-    var bar = $('<div' +
-        ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
-    var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
-    var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
-    return {
-        init: function (triggerFunction) {
+        var contentArea = $("<div id = 'contentArea'><div id='tabs-header' class='tabs-area'><ul></ul><div id = 'tabs-content' class='flex-container intrinsic-container intrinsic-container-ratio'></div></div></div>").hide();
+        $('body').append(contentArea);
+        var bar = $('<div' +
+            ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
+        var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
+        var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
+
+        var storage = chrome.storage.local;
+        //var newWidth;
+        //storage.set({'resizeHeight': '0'}, function () {
+        //});
+        //storage.set({'resizeWidth': '0'}, function () {
+        //});
+        return {
+            init: function (triggerFunction) {
 
 
-            $(function generateTabView() {
+                $(function generateTabView() {
+                        var tabModel = {
+                            "tabs": [
+                                {
+                                    "id": "1",
+                                    "name": "SearchResultList",
+                                    "icon": "icon.png",
+                                    // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
+
+                                    "content": '<iframe src="' +
+                                    chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
+                                    "renderedHead": "",
+                                    "renderedContent": ""
+                                },
+                                //{
+                                //    "id": "2",
+                                //    "name": "PowerSearch",
+                                //    "icon": "icon.png",
+                                //    "content": '<iframe src="' +
+                                //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
+                                //    "renderedHead": "",
+                                //    "renderedContent": ""
+                                //}, {
+                                //    "id": "3",
+                                //    "name": "Dashboard",
+                                //    "icon": "icon.png",
+                                //    "content": '<iframe src="' +
+                                //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
+                                //    "renderedHead": "",
+                                //    "renderedContent": ""
+                                //}]
+                            ]
+                        };
+
+                        $.each(tabModel.tabs, function (i, tab) {
+                                tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                                $("#tabs-header ul").append(
+                                    tab.renderedHead);
+                                // add tab content corresponding to tab titles
+                                tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
+                                );
+                                $("#tabs-content").append(
+                                    tab.renderedContent
+                                );
+                                // following 3 functions derived from jQuery-UI Tabs
+                                $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                                $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
+                                $("#tabs-header").tabs("refresh");
+
+                                $("#tabs-content").addClass("flex-start");
+
+                            }
+                        )
 
 
-                var tabModel = {
-                    "tabs": [
-                        {
-                            "id": "1",
-                            "name": "SearchResultList",
-                            "icon": "icon.png",
-                            // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
+                        // adding handle to resize ResultArea
+                        $("#tabs-header").resizable({
+                            handles: "all",
+                            minHeight: 200,
+                            minWidth: 350,
+                            aspectRatio: "60%",
 
-                            "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        },
-                        {
-                            "id": "2",
-                            "name": "PowerSearch",
-                            "icon": "icon.png",
-                            "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }, {
-                            "id": "3",
-                            "name": "Dashboard",
-                            "icon": "icon.png",
-                            "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }]
-                };
+                            stop: function (event, ui) {
+                            }
 
-                $.each(tabModel.tabs, function (i, tab) {
-                        tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                        $("#tabs-header ul").append(
-                            tab.renderedHead);
-
-
-                        // add tab content corresponding to tab titles
-                        tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
-                        );
-                        $("#tabs-content").append(
-                            tab.renderedContent
-                        );
-                        // following 3 functions derived from jQuery-UI Tabs
-                        $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-                        $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
-                        $("#tabs-header").tabs("refresh");
-
-                        $("#tabs-content").addClass("flex-start");
-
+                        });
+                        $("#tabs-header").draggable({
+                            scroll: "true"
+                        });
                     }
                 )
+                ;
+
+                $("#tabs-header").on("resizestop", function (event, ui) {
+                    var resizeHeight1 = $("#tabs-header").height();
+                    var resizeWidth1 = $("#tabs-header").width();
+
+                    storage.set({'resizeHeight': resizeHeight1}, function (result) {
+                        storage.get('resizeHeight', function (result) {
+                            console.log('Settings savedH ' + result.resizeHeight);
+                        });
+                    });
+                    storage.set({'resizeWidth': resizeWidth1}, function (result) {
+                        storage.get('resizeWidth', function (result) {
+                            console.log('Settings savedW ' + result.resizeWidth);
+                        });
+                    });
 
 
-                // adding handle to resize ResultArea
-                $("#tabs-header").resizable({
-                    handles: "all",
-                    minHeight: 200,
-                    minWidth: 350,
-                    aspectRatio: "60%"
                 });
-                $("#tabs-header").draggable({
-                    scroll: "true"
-                });
-            }),
 
 
                 $(function () {
@@ -105,26 +133,22 @@ define(['jquery', 'jqueryui'], function ($) {
                         }
                         contentArea.slideToggle('fast');
 
-                        //$("#resizable").resizable({
-                        //    handles: "nw"
-                        //
-                        //});
-
-
                     });
                     bar.append(toggler);
                     $('body').append(bar);
                 });
-        },
-        show: function () {
-            if (!contentArea.is(':visible')) {
-                toggler.click();
+            },
+            show: function () {
+                if (!contentArea.is(':visible')) {
+                    toggler.click();
+                }
             }
         }
+
+
     }
-
-
-});
+)
+;
 
 
 
