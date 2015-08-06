@@ -19,31 +19,22 @@ define(['jquery', 'jqueryui'], function ($) {
             init: function (triggerFunction) {
 
 
-                $(function setPosition() {
+                $(function setSizeAndPosition() {
 
-                    //storage.get('resizeHeight', function (result) {
-                    //    if (result.resizeHeight != "0") {
-                    //
-                    //        $("#tabs-header").attr("style", "height:" + result.resizeHeight + ";");
-                    //    }
-                    //});
-                    //storage.get('resizeWidth', function (result) {
-                    //    if (result.resizeWidth != "0") {
-                    //
-                    //        $("#tabs-header").attr("style", "width:" + result.resizeWidth + ";");
-                    //    }
-                    //});
                     storage.get(null, function (result) {
                         if (result.resizeHeight) {
-                            if (result.resizeWidth) {
+                            $("#tabs-header").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
 
-                                $("#tabs-header").attr("style", "height:" + result.resizeHeight + ";" + "width:" + result.resizeWidth + ";");
-                            }
+                        }
+
+                        if (result.dragPosition) {
+                            $("#tabs-header").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
                         }
                     });
 
                 });
 
+                //generates
                 $(function generateTabView() {
                     var tabModel = {
                         "tabs": [
@@ -58,24 +49,23 @@ define(['jquery', 'jqueryui'], function ($) {
                                 "renderedHead": "",
                                 "renderedContent": ""
                             },
-                            //{
-                            //    "id": "2",
-                            //    "name": "PowerSearch",
-                            //    "icon": "icon.png",
-                            //    "content": '<iframe src="' +
-                            //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
-                            //    "renderedHead": "",
-                            //    "renderedContent": ""
-                            //}, {
-                            //    "id": "3",
-                            //    "name": "Dashboard",
-                            //    "icon": "icon.png",
-                            //    "content": '<iframe src="' +
-                            //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
-                            //    "renderedHead": "",
-                            //    "renderedContent": ""
-                            //}]
-                        ]
+                            {
+                                "id": "2",
+                                "name": "PowerSearch",
+                                "icon": "icon.png",
+                                "content": '<iframe src="' +
+                                chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
+                                "renderedHead": "",
+                                "renderedContent": ""
+                            }, {
+                                "id": "3",
+                                "name": "Dashboard",
+                                "icon": "icon.png",
+                                "content": '<iframe src="' +
+                                chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
+                                "renderedHead": "",
+                                "renderedContent": ""
+                            }]
                     };
 
                     $.each(tabModel.tabs, function (i, tab) {
@@ -97,61 +87,43 @@ define(['jquery', 'jqueryui'], function ($) {
 
                         }
                     )
+                });
 
-
-                    // adding handle to resize ResultArea
-                    $("#tabs-header").resizable({
-                        handles: "all",
-                        minHeight: 200,
-                        minWidth: 350,
-                        aspectRatio: "60%",
-
-                        stop: function (event, ui) {
-                        }
-
-                    });
-                    $("#tabs-header").draggable({
-                        scroll: "true",
-                        //stop: function (event, ui) {
-                        //}
-                    });
-
-                    $("#tabs-header").on("resizestop", function (event, ui) {
-                        var resizeHeight1 = $("#tabs-header").height() + "px";
-                        var resizeWidth1 = $("#tabs-header").width() + "px";
-
-                        storage.set({'resizeHeight': resizeHeight1}, function (result) {
-                            storage.get('resizeHeight', function (result) {
-                                console.log('Settings savedH ' + result.resizeHeight);
-                            });
-                        });
-                        storage.set({'resizeWidth': resizeWidth1}, function (result) {
-                            storage.get('resizeWidth', function (result) {
-                                console.log('Settings savedW ' + result.resizeWidth);
-                            });
-                        });
-
-
-                    });
-
-                    //$("#tabs-header").on("dragstop", function (event, ui) {
-                    //    var resizeHeight1 = $("#tabs-header").height();
-                    //    var resizeWidth1 = $("#tabs-header").width();
-                    //
-                    //    storage.set({'resizeHeight': resizeHeight1}, function (result) {
-                    //        storage.get('resizeHeight', function (result) {
-                    //            console.log('Settings savedH ' + result.resizeHeight);
-                    //        });
-                    //    });
-                    //    storage.set({'resizeWidth': resizeWidth1}, function (result) {
-                    //        storage.get('resizeWidth', function (result) {
-                    //            console.log('Settings savedW ' + result.resizeWidth);
-                    //        });
-                    //    });ch
-
+                // adding handle to resize ResultArea
+                $("#tabs-header").resizable({
+                    handles: "all",
+                    minHeight: 200,
+                    minWidth: 250,
+                    maxWidth: 800,
+                    aspectRatio: "60%"
 
                 });
 
+                $("#tabs-header").draggable({
+                    scroll: "true",
+                });
+
+
+                //Listening to size change and saving values into storage
+                $("#tabs-header").on("resizestop", function (event, ui) {
+                    var heightToStore = $("#tabs-header").height();
+                    var heightToStore = $("#tabs-header").width();
+                    storage.set({'resizeHeight': heightToStore}, function (result) {
+                    });
+                    storage.set({'resizeWidth': heightToStore}, function (result) {
+                    });
+                });
+
+
+                //Listening to position change and saving values into storage, see jquery-ui offset()
+                $("#tabs-header").on("dragstop", function (event, ui) {
+
+                    var positionToStore = $("#tabs-header").offset();
+                    storage.set({'dragPosition': positionToStore}, function (result) {
+                    });
+
+
+                });
 
                 $(function () {
                     form.submit(function (evt) {
