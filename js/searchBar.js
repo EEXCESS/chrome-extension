@@ -126,7 +126,7 @@ define(['jquery', 'jqueryui'], function ($) {
                         handles: "all",
                         minHeight: 200,
                         minWidth: 250,
-                        maxWidth: 800,
+                       // maxWidth: 800,
                         aspectRatio: "60%"
 
                     });
