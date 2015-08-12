@@ -46,23 +46,24 @@ define(['jquery', 'jqueryui'], function ($) {
                                 "renderedHead": "",
                                 "renderedContent": ""
                             },
-                            {
-                                "id": "2",
-                                "name": "PowerSearch",
-                                //"icon": "icon.png",
-                                "content": '<iframe src="' +
-                                chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
-                                "renderedHead": "",
-                                "renderedContent": ""
-                            }, {
-                                "id": "3",
-                                "name": "Dashboard",
-                                //"icon": "icon.png",
-                                "content": '<iframe src="' +
-                                chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
-                                "renderedHead": "",
-                                "renderedContent": ""
-                            }]
+                            //{
+                            //    "id": "2",
+                            //    "name": "PowerSearch",
+                            //    //"icon": "icon.png",
+                            //    "content": '<iframe src="' +
+                            //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
+                            //    "renderedHead": "",
+                            //    "renderedContent": ""
+                            //}, {
+                            //    "id": "3",
+                            //    "name": "Dashboard",
+                            //    //"icon": "icon.png",
+                            //    "content": '<iframe src="' +
+                            //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
+                            //    "renderedHead": "",
+                            //    "renderedContent": ""
+                            //}
+                        ]
                     };
 
                     $.each(tabModel.tabs, function (i, tab) {
@@ -117,7 +118,8 @@ define(['jquery', 'jqueryui'], function ($) {
                 //Listening to position change and saving values into storage, see jquery-ui offset()
                 $("#tabs-header").on("dragstop", function (event, ui) {
 
-                    var positionToStore = $("#tabs-header").offset();
+                    var positionToStore = $("#tabs-header").position();
+                    console.log(positionToStore);
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
 
@@ -126,7 +128,7 @@ define(['jquery', 'jqueryui'], function ($) {
                         handles: "all",
                         minHeight: 200,
                         minWidth: 250,
-                       // maxWidth: 800,
+                        // maxWidth: 800,
                         aspectRatio: "60%"
 
                     });
