@@ -35,6 +35,7 @@
 }
 
 .tabs-area {
+    cursor: move;
     position: fixed;
     width: 60%;
     height: 40%;
