@@ -6,7 +6,7 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-        var contentArea = $("<div id = 'contentArea'><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
+        var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
         $('body').append(contentArea);
         var bar = $('<div' +
             ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
@@ -23,14 +23,14 @@ define(['jquery', 'jqueryui'], function ($) {
                     storage.get(null, function (result) {
 
                             if (result.resizeWidth && result.dragPosition) {
-                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                                $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
                             }
                             if (result.resizeWidth && !result.dragPosition) {
                                 console.log("heck");
-                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+                                $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
                             }
                             if (result.dragPosition && !result.resizeWidth) {
-                                $("#jQueryTabsHeader").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                                $("#contentArea").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
 
                             }
                         }
@@ -89,7 +89,7 @@ define(['jquery', 'jqueryui'], function ($) {
                             $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
                             $("#jQueryTabsHeader").tabs("refresh");
 
-                            $("#jQueryTabsContent").addClass("flex-start");
+                            $("#contentArea").addClass("flex-start");
 
                         }
                     )
@@ -107,15 +107,24 @@ define(['jquery', 'jqueryui'], function ($) {
                 //});
 
 
-                $("#jQueryTabsHeader").draggable({
+                $("#contentArea").draggable({
                     scroll: "true",
                 });
 
+                $("#contentArea").on("resizestart", function (event, ui) {
 
+//                $("#tabs-header1").wrap("<div id=iframeBlanket></div>");
+                    $("#iframeCover").show();
+
+                });
                 //Listening to size change and saving values into storage
-                $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
-                    var heightToStore = $("#jQueryTabsHeader").height();
-                    var widthToStore = $("#jQueryTabsHeader").width();
+                $("#iframeCover").on("resizestop", function (event, ui) {
+                    $("#iframeCover").hide();
+                });
+                //Listening to size change and saving values into storage
+                $("#contentArea").on("resizestop", function (event, ui) {
+                    var heightToStore = $("#contentArea").height();
+                    var widthToStore = $("#contentArea").width();
 
                     storage.set({'resizeHeight': heightToStore}, function (result) {
                     });
@@ -125,15 +134,15 @@ define(['jquery', 'jqueryui'], function ($) {
 
 
                 //Listening to position change and saving values into storage, see jquery-ui offset()
-                $("#jQueryTabsHeader").on("dragstop", function (event, ui) {
+                $("#contentArea").on("dragstop", function (event, ui) {
 
-                    var positionToStore = $("#jQueryTabsHeader").position();
+                    var positionToStore = $("#contentArea").position();
                     console.log(positionToStore);
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
 
                     // adding handle to resize ResultArea (after drag to ensure no jumping)
-                    $("#jQueryTabsHeader").resizable({
+                    $("#contentArea").resizable({
                         handles: "all",
                         minHeight: 200,
                         minWidth: 250,
