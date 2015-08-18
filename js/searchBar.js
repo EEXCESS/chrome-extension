@@ -6,7 +6,7 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-        var contentArea = $("<div id = 'contentArea'><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio'></div></div></div>").hide();
+        var contentArea = $("<div id = 'contentArea'><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
         $('body').append(contentArea);
         var bar = $('<div' +
             ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
@@ -129,7 +129,7 @@ define(['jquery', 'jqueryui'], function ($) {
                         minHeight: 200,
                         minWidth: 250,
                         // maxWidth: 800,
-                        aspectRatio: "60%"
+                        aspectRatio: "80%"
 
                     });
 
