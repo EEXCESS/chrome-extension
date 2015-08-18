@@ -88,7 +88,7 @@ define(['jquery', 'jqueryui'], function ($) {
                             $("#jQueryTabsHeader").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
                             $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
                             $("#jQueryTabsHeader").tabs("refresh");
-
+                            $("#iframeCover").hide();
                             $("#contentArea").addClass("flex-start");
 
                         }
@@ -117,9 +117,12 @@ define(['jquery', 'jqueryui'], function ($) {
                     $("#iframeCover").show();
 
                 });
-                //Listening to size change and saving values into storage
-                $("#iframeCover").on("resizestop", function (event, ui) {
-                    $("#iframeCover").hide();
+
+                $("#contentArea").on("dragstart", function (event, ui) {
+
+//                $("#tabs-header1").wrap("<div id=iframeBlanket></div>");
+                    $("#iframeCover").show();
+
                 });
                 //Listening to size change and saving values into storage
                 $("#contentArea").on("resizestop", function (event, ui) {
@@ -130,6 +133,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     });
                     storage.set({'resizeWidth': widthToStore}, function (result) {
                     });
+                    $("#iframeCover").hide();
                 });
 
 
@@ -140,6 +144,8 @@ define(['jquery', 'jqueryui'], function ($) {
                     console.log(positionToStore);
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
+
+                    $("#iframeCover").hide();
 
                     // adding handle to resize ResultArea (after drag to ensure no jumping)
                     $("#contentArea").resizable({
