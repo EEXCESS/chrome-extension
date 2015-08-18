@@ -34,7 +34,7 @@
     width: 30em;
 }
 
-.tabs-area {
+#jQueryTabsHeader {
     cursor: move;
     position: fixed;
     width: 60%;

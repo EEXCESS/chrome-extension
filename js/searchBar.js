@@ -6,7 +6,7 @@
 define(['jquery', 'jqueryui'], function ($) {
 
 
-        var contentArea = $("<div id = 'contentArea'><div id='tabs-header' class='tabs-area'><ul></ul><div id = 'tabs-content' class='flex-container intrinsic-container intrinsic-container-ratio'></div></div></div>").hide();
+        var contentArea = $("<div id = 'contentArea'><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio'></div></div></div>").hide();
         $('body').append(contentArea);
         var bar = $('<div' +
             ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
@@ -22,10 +22,10 @@ define(['jquery', 'jqueryui'], function ($) {
                 $(function setSizeAndPosition() {
                     storage.get(null, function (result) {
                         if (result.resizeHeight) {
-                            $("#tabs-header").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+                            $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
                         }
                         if (result.dragPosition) {
-                            $("#tabs-header").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                            $("#jQueryTabsHeader").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
                         }
                     });
 
@@ -68,20 +68,20 @@ define(['jquery', 'jqueryui'], function ($) {
 
                     $.each(tabModel.tabs, function (i, tab) {
                             tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                            $("#tabs-header ul").append(
+                            $("#jQueryTabsHeader ul").append(
                                 tab.renderedHead);
                             // add tab content corresponding to tab titles
                             tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
                             );
-                            $("#tabs-content").append(
+                            $("#jQueryTabsContent").append(
                                 tab.renderedContent
                             );
                             // following 3 functions derived from jQuery-UI Tabs
-                            $("#tabs-header").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-                            $("#tabs-header li").removeClass("ui-corner-top").addClass("ui-corner-left");
-                            $("#tabs-header").tabs("refresh");
+                            $("#jQueryTabsHeader").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                            $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
+                            $("#jQueryTabsHeader").tabs("refresh");
 
-                            $("#tabs-content").addClass("flex-start");
+                            $("#jQueryTabsContent").addClass("flex-start");
 
                         }
                     )
@@ -89,7 +89,7 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 //de-comment to experience jump behavior, comment in dragstop listener function
                 // // adding handle to resize ResultArea
-                //$("#tabs-header").resizable({
+                //$("#jQueryTabsHeader").resizable({
                 //    handles: "all",
                 //    minHeight: 200,
                 //    minWidth: 250,
@@ -99,15 +99,15 @@ define(['jquery', 'jqueryui'], function ($) {
                 //});
 
 
-                $("#tabs-header").draggable({
+                $("#jQueryTabsHeader").draggable({
                     scroll: "true",
                 });
 
 
                 //Listening to size change and saving values into storage
-                $("#tabs-header").on("resizestop", function (event, ui) {
-                    var heightToStore = $("#tabs-header").height();
-                    var heightToStore = $("#tabs-header").width();
+                $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
+                    var heightToStore = $("#jQueryTabsHeader").height();
+                    var heightToStore = $("#jQueryTabsHeader").width();
                     storage.set({'resizeHeight': heightToStore}, function (result) {
                     });
                     storage.set({'resizeWidth': heightToStore}, function (result) {
@@ -116,15 +116,15 @@ define(['jquery', 'jqueryui'], function ($) {
 
 
                 //Listening to position change and saving values into storage, see jquery-ui offset()
-                $("#tabs-header").on("dragstop", function (event, ui) {
+                $("#jQueryTabsHeader").on("dragstop", function (event, ui) {
 
-                    var positionToStore = $("#tabs-header").position();
+                    var positionToStore = $("#jQueryTabsHeader").position();
                     console.log(positionToStore);
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
 
                     // adding handle to resize ResultArea (after drag to ensure no jumping)
-                    $("#tabs-header").resizable({
+                    $("#jQueryTabsHeader").resizable({
                         handles: "all",
                         minHeight: 200,
                         minWidth: 250,
