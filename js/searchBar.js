@@ -21,13 +21,21 @@ define(['jquery', 'jqueryui'], function ($) {
                 //sets size and position of the tab area according to previous adjustments
                 $(function setSizeAndPosition() {
                     storage.get(null, function (result) {
-                        if (result.resizeHeight) {
-                            $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+
+                            if (result.resizeWidth && result.dragPosition) {
+                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                            }
+                            if (result.resizeWidth && !result.dragPosition) {
+                                console.log("heck");
+                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+                            }
+                            if (result.dragPosition && !result.resizeWidth) {
+                                $("#jQueryTabsHeader").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+
+                            }
                         }
-                        if (result.dragPosition) {
-                            $("#jQueryTabsHeader").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
-                        }
-                    });
+                    )
+                    ;
 
                 });
 
@@ -107,10 +115,11 @@ define(['jquery', 'jqueryui'], function ($) {
                 //Listening to size change and saving values into storage
                 $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
                     var heightToStore = $("#jQueryTabsHeader").height();
-                    var heightToStore = $("#jQueryTabsHeader").width();
+                    var widthToStore = $("#jQueryTabsHeader").width();
+
                     storage.set({'resizeHeight': heightToStore}, function (result) {
                     });
-                    storage.set({'resizeWidth': heightToStore}, function (result) {
+                    storage.set({'resizeWidth': widthToStore}, function (result) {
                     });
                 });
 
