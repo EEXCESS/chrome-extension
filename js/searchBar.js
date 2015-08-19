@@ -22,15 +22,20 @@ define(['jquery', 'jqueryui'], function ($) {
                 storage.get(null, function (result) {
 
                     if (result.resizeWidth && result.dragPosition) {
-                        $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                        $("#contentArea").css({
+                            "height": result.resizeHeight,
+                            "width": result.resizeWidth,
+                            "top": result.dragPosition.top,
+                            "left": result.dragPosition.left
+                        });
+
                     }
                     if (result.resizeWidth && !result.dragPosition) {
-                        console.log("heck");
-                        $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+
+                        $("#contentArea").css({"height": result.resizeHeight, "width": result.resizeWidth});
                     }
                     if (result.dragPosition && !result.resizeWidth) {
-                        $("#contentArea").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
-
+                        $("#contentArea").css({"top": result.dragPosition.top, "left": result.dragPosition.left});
                     }
                 });
 
@@ -50,8 +55,8 @@ define(['jquery', 'jqueryui'], function ($) {
                             chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
-                        },
-                        //{
+                        }
+                        //,{
                         //    "id": "2",
                         //    "name": "PowerSearch",
                         //    //"icon": "icon.png",
@@ -86,7 +91,6 @@ define(['jquery', 'jqueryui'], function ($) {
                         $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
                         $("#jQueryTabsHeader").tabs("refresh");
                         $("#iframeCover").hide();
-                        $("#contentArea").addClass("flex-start");
 
                     }
                 )
@@ -99,7 +103,7 @@ define(['jquery', 'jqueryui'], function ($) {
                 minHeight: 200,
                 minWidth: 250,
                 // maxWidth: 800,
-                aspectRatio: "80%",
+                aspectRatio: "60%",
                 alsoResize: $("#contentArea")
             });
             // adding drag functionality to parent div
@@ -116,7 +120,6 @@ define(['jquery', 'jqueryui'], function ($) {
                 $("#iframeCover").show();
             });
 
-
             //storing new values and hide iframeCover after size has been changed
             $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
                 var heightToStore = $("#jQueryTabsHeader").height();
@@ -127,14 +130,13 @@ define(['jquery', 'jqueryui'], function ($) {
                 });
                 $("#iframeCover").hide();
             });
-            //storing new valuesand hide iframeCover after position has been changed
+            //storing new values and hide iframeCover after position has been changed
             $("#contentArea").on("dragstop", function (event, ui) {
                 var positionToStore = $("#contentArea").position();
                 storage.set({'dragPosition': positionToStore}, function (result) {
                 });
                 $("#iframeCover").hide();
             });
-
 
             $(function () {
                 form.submit(function (evt) {
@@ -152,7 +154,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     } else {
                         $(this).text($("<div>").html("&uArr;").text());
                     }
-                    contentArea.slideToggle('fast');
+                    contentArea.toggle('fast');
 
                 });
                 bar.append(toggler);
