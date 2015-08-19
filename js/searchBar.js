@@ -5,7 +5,7 @@
  */
 define(['jquery', 'jqueryui'], function ($) {
 
-
+        var resizeCounter = 0;
         var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
         $('body').append(contentArea);
         var bar = $('<div' +
@@ -106,35 +106,58 @@ define(['jquery', 'jqueryui'], function ($) {
                 //
                 //});
 
+                // adding handle to resize ResultArea (after drag to ensure no jumping)
+                $("#jQueryTabsHeader").resizable({
+                    handles: "all",
+                    minHeight: 200,
+                    minWidth: 250,
+                    // maxWidth: 800,
+                    aspectRatio: "80%",
+                    alsoResize: $("#contentArea")
 
-                $("#contentArea").draggable({
-                    scroll: "true",
                 });
 
-                $("#contentArea").on("resizestart", function (event, ui) {
 
-//                $("#tabs-header1").wrap("<div id=iframeBlanket></div>");
+                $("#contentArea").draggable({
+                    scroll: "true"
+                });
+
+                $("#jQueryTabsHeader").on("resizestart", function (event, ui) {
+                    //if (resizeCounter == 0) {
+                    //    //resizeCounter += 1;
+                    //    $("#contentArea").css({ "top": "auto","right": "0","bottom": "0","left": "auto"});
+                    //console.log(resizeCounter);
+                    //}
                     $("#iframeCover").show();
+                   //var newPosition = $("#jQueryTabsHeader").position();
+                   // $("#contentArea").css({ "top": '"'+newPosition.right+'"',"right": "auto","bottom": "auto","left": '"'+newPosition.left+'"'});
+
 
                 });
 
                 $("#contentArea").on("dragstart", function (event, ui) {
-
-//                $("#tabs-header1").wrap("<div id=iframeBlanket></div>");
                     $("#iframeCover").show();
 
                 });
                 //Listening to size change and saving values into storage
-                $("#contentArea").on("resizestop", function (event, ui) {
-                    var heightToStore = $("#contentArea").height();
-                    var widthToStore = $("#contentArea").width();
+                $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
+                    //console.log(resizeCounter);
+                    var heightToStore = $("#jQueryTabsHeader").height();
+                    var widthToStore = $("#jQueryTabsHeader").width();
 
                     storage.set({'resizeHeight': heightToStore}, function (result) {
                     });
                     storage.set({'resizeWidth': widthToStore}, function (result) {
                     });
                     $("#iframeCover").hide();
-                });
+                    //if (resizeCounter == 0) {
+                    //    resizeCounter += 1;
+                    //    $("#contentArea").css({"top": "auto", "right": "0", "bottom": "0", "left": "auto"});
+                    //    console.log(resizeCounter);
+                    //}
+                    //var newPosition = $("#jQueryTabsHeader").offset();
+                    //$("#contentArea").css({ "top": newPosition.top,"right": "auto","bottom": "auto","left": newPosition.left});
+                     });
 
 
                 //Listening to position change and saving values into storage, see jquery-ui offset()
@@ -147,15 +170,6 @@ define(['jquery', 'jqueryui'], function ($) {
 
                     $("#iframeCover").hide();
 
-                    // adding handle to resize ResultArea (after drag to ensure no jumping)
-                    $("#contentArea").resizable({
-                        handles: "all",
-                        minHeight: 200,
-                        minWidth: 250,
-                        // maxWidth: 800,
-                        aspectRatio: "80%"
-
-                    });
 
                 });
 
