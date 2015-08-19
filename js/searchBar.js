@@ -23,14 +23,14 @@ define(['jquery', 'jqueryui'], function ($) {
                     storage.get(null, function (result) {
 
                             if (result.resizeWidth && result.dragPosition) {
-                                $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px; top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
                             }
                             if (result.resizeWidth && !result.dragPosition) {
                                 console.log("heck");
-                                $("#contentArea").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
+                                $("#jQueryTabsHeader").attr("style", "height:" + result.resizeHeight + "px;" + "width:" + result.resizeWidth + "px;");
                             }
                             if (result.dragPosition && !result.resizeWidth) {
-                                $("#contentArea").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
+                                $("#jQueryTabsHeader").attr("style", "top:" + result.dragPosition.top + "px;" + "left:" + result.dragPosition.left + "px;");
 
                             }
                         }
@@ -95,16 +95,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     )
                 });
 
-                //de-comment to experience jump behavior, comment in dragstop listener function
-                // // adding handle to resize ResultArea
-                //$("#jQueryTabsHeader").resizable({
-                //    handles: "all",
-                //    minHeight: 200,
-                //    minWidth: 250,
-                //    maxWidth: 800,
-                //    aspectRatio: "60%"
-                //
-                //});
+
 
                 // adding handle to resize ResultArea (after drag to ensure no jumping)
                 $("#jQueryTabsHeader").resizable({
@@ -112,49 +103,28 @@ define(['jquery', 'jqueryui'], function ($) {
                     minHeight: 200,
                     minWidth: 250,
                     // maxWidth: 800,
-                    aspectRatio: "80%",
-                    alsoResize: $("#contentArea"),
-                    start: function() {
-                        this.div2pos = $("#contentArea").offset();
-                        $("#iframeCover").show();
-                    },
-                    resize: function(e, ui) {
-                        var left = ui.position.left - ui.originalPosition.left;
-                        console.log("left:" + left);
-                        var top = ui.position.top - ui.originalPosition.top;
-                        var pos = this.div2pos;
-                        $("#contentArea").position({top: pos.top + top, left: pos.left + left});
-                        console.log("offset:" + $("#contentArea").offset());
-                    }
+                    aspectRatio: "60%",
+                    alsoResize: $("#contentArea")
 
 
                 });
 
 
-                $("#contentArea").draggable({
+                $("#jQueryTabsHeader").draggable({
                     scroll: "true"
                 });
 
-                //$("#jQueryTabsHeader").on("resizestart", function (event, ui) {
-                //    //if (resizeCounter == 0) {
-                //    //    //resizeCounter += 1;
-                //    //    $("#contentArea").css({ "top": "auto","right": "0","bottom": "0","left": "auto"});
-                //    //console.log(resizeCounter);
-                //    //}
-                //    $("#iframeCover").show();
-                //   //var newPosition = $("#jQueryTabsHeader").position();
-                //   // $("#contentArea").css({ "top": '"'+newPosition.right+'"',"right": "auto","bottom": "auto","left": '"'+newPosition.left+'"'});
-                //
-                //
-                //});
 
-                $("#contentArea").on("dragstart", function (event, ui) {
+                $("#jQueryTabsHeader").on("dragstart", function (event, ui) {
+                    $("#iframeCover").show();
+
+                });
+                $("#jQueryTabsHeader").on("resizestart", function (event, ui) {
                     $("#iframeCover").show();
 
                 });
                 //Listening to size change and saving values into storage
                 $("#jQueryTabsHeader").on("resizestop", function (event, ui) {
-                    //console.log(resizeCounter);
                     var heightToStore = $("#jQueryTabsHeader").height();
                     var widthToStore = $("#jQueryTabsHeader").width();
 
@@ -163,23 +133,15 @@ define(['jquery', 'jqueryui'], function ($) {
                     storage.set({'resizeWidth': widthToStore}, function (result) {
                     });
                     $("#iframeCover").hide();
-                    //if (resizeCounter == 0) {
-                    //    resizeCounter += 1;
-                    //    $("#contentArea").css({"top": "auto", "right": "0", "bottom": "0", "left": "auto"});
-                    //    console.log(resizeCounter);
-                    //}
-                    //var newPosition = $("#jQueryTabsHeader").offset();
-                    //$("#contentArea").css({ "top": newPosition.top,"right": "auto","bottom": "auto","left": newPosition.left});
 
 
-
-                     });
+                });
 
 
                 //Listening to position change and saving values into storage, see jquery-ui offset()
-                $("#contentArea").on("dragstop", function (event, ui) {
+                $("#jQueryTabsHeader").on("dragstop", function (event, ui) {
 
-                    var positionToStore = $("#contentArea").position();
+                    var positionToStore = $("#jQueryTabsHeader").position();
                     console.log(positionToStore);
                     storage.set({'dragPosition': positionToStore}, function (result) {
                     });
