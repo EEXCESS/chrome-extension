@@ -11,6 +11,7 @@ define(['jquery', 'jqueryui'], function ($) {
         ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
     var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
+    var resetToggle = $('<a href="#" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
 
     var $jQueryTabsHeader = $("#jQueryTabsHeader");
@@ -143,7 +144,7 @@ define(['jquery', 'jqueryui'], function ($) {
             });
             //storing new values and hide iframeCover after position has been changed
             $contentArea.on("dragstop", function (event, ui) {
-                var positionToStore =   $contentArea.position();
+                var positionToStore = $contentArea.position();
                 storage.set({'dragPosition': positionToStore}, function (result) {
                 });
                 $iframeCover.hide();
@@ -168,7 +169,17 @@ define(['jquery', 'jqueryui'], function ($) {
                     contentArea.toggle('fast');
 
                 });
-                bar.append(toggler);
+
+                resetToggle.click(function (e) {
+                    $contentArea.removeAttr('style');
+                    $jQueryTabsHeader.removeAttr('style');
+                    storage.remove('resizeHeight');
+                    storage.remove('resizeWidth');
+                    storage.remove('dragPosition');
+
+                });
+
+                bar.append(toggler, resetToggle);
                 $('body').append(bar);
             });
         },
