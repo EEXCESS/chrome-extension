@@ -37,7 +37,7 @@
 #contentArea {
     position: fixed;
     width: 40%;
-    height: 60%;
+    height: 70%;
     bottom: 20px;
     right: 0px;
     z-index: 99999;
@@ -66,13 +66,13 @@
 
 .intrinsic-container {
     position: relative;
-    height: 0;
+    height: 100%;
     overflow: hidden;
 }
 
-.intrinsic-container-ratio {
-    padding-bottom: 64%;
-}
+/*.intrinsic-container-ratio {*/
+    /*padding-bottom: 64%;*/
+/*}*/
 
 .intrinsic-container iframe {
     position: absolute;

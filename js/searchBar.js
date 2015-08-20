@@ -103,7 +103,6 @@ define(['jquery', 'jqueryui'], function ($) {
                 minHeight: 200,
                 minWidth: 250,
                 // maxWidth: 800,
-                aspectRatio: "60%",
                 alsoResize: $("#contentArea")
             });
             // adding drag functionality to parent div
