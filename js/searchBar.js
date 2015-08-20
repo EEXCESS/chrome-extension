@@ -107,9 +107,8 @@ define(['jquery', 'jqueryui'], function ($) {
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
-                minWidth: 250,
+                minWidth: 250
                 // maxWidth: 800,
-                alsoResize: $contentArea
             });
             // adding drag functionality to parent div
             $contentArea.draggable({
@@ -144,7 +143,7 @@ define(['jquery', 'jqueryui'], function ($) {
             });
             //storing new values and hide iframeCover after position has been changed
             $contentArea.on("dragstop", function (event, ui) {
-                var positionToStore = $contentArea.position();
+                var positionToStore =   $contentArea.position();
                 storage.set({'dragPosition': positionToStore}, function (result) {
                 });
                 $iframeCover.hide();
