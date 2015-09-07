@@ -1,4 +1,4 @@
-require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
+require(['searchBar','eexcessParagraphs', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function( searchBar, paragraphs, paragraphDetection, ner, iframes) {
     searchBar.init(function(profile) {
         chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
         iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
@@ -10,7 +10,10 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
     };
 
     // detect paragraphs
-    var p = paragraphDetection.getParagraphs();
+    var p = paragraphDetection.getParagraphs();    
+
+    EexcessSite.init();
+    EexcessSite.setParagraphs(p);
 
     // enrich paragraphs with entities
     ner.entitiesAndCategories(p.map(function(par) {
