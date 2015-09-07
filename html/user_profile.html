@@ -1,0 +1,142 @@
+<html>
+	<head>
+		<link href="../js/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+		<link href="../js/lib/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet" />
+		<link href="../js/lib/tagit/css/jquery.tagit.css" rel="stylesheet" />
+		<link href="../js/lib/jquery-ui/themes/base/jquery-ui.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="panel panel-primary">
+			<div class="panel-heading" style="background-color: white;">
+				<h3 class="panel-title">
+					<span class="glyphicon glyphicon-user" ></span>
+					User Profile
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							General Information <span class="badge pull-right setting"></span>
+						</h3>
+					</div>
+					<form class="form-horizontal">
+						<!-- User name -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-3">
+									<div class="input-group">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+										<input id="nameInput" type="text" class="form-control eexcess-text" placeholder="Enter your user name">
+									</div>
+								</div>
+								<div class="col-md-3"></div>
+									<div class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-success disabled eexcess-button">Hidden</button>
+								</div>
+								<div class="col-md-4">
+									Your name is not disclosed to the system.
+								</div>
+							</div>
+						</div>
+						<!-- Location -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-3">
+									<div class="input-group">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-globe" id="name"></span></span>
+										<input id="countryInput" type="text" class="form-control eexcess-text" placeholder="Enter the country you live in" />
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="input-group">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-map-marker"></span></span>
+										<input id="cityInput" type="text" class="form-control eexcess-text" placeholder="Enter the city you live in" />
+									</div>
+								</div>
+								<div id="locationPolicy" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Hidden</button>
+									<button type="button" class="btn btn-default eexcess-button">Country</button>
+									<button type="button" class="btn btn-default eexcess-button">City</button>
+								</div>
+								<div class="col-md-4">
+									Values shared with the system: <span id="cityDisplay"></span> <span id="countryDisplay"></span> 
+								</div>
+							</div>
+						</div>
+						<!-- Age range -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-3">
+									<div class="input-group">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+										<select id="ageRangeInput" class="form-control eexcess-select">
+											<option value="0">Child</option>
+											<option value="1">Young adult</option>
+											<option value="2">Adult</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3"></div>
+								<div id="ageRangePolicy" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Hidden</button>
+									<button type="button" class="btn btn-default eexcess-button">Disclosed</button>
+								</div>
+								<div class="col-md-4">
+									Value shared with the system: <span id="ageRangeDisplay"></span>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<div class="panel-body">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Languages <span class="badge pull-right setting"></span>
+						</h3>
+					</div>
+					<form class="form-horizontal">
+						<!-- Languages -->
+						<div id="languages" class="row"></div>
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-12">
+									<a id="addLanguage" href="#x"><span class="glyphicon glyphicon-plus"></span> Add a language</a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<div class="panel-body">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Interests <span class="badge pull-right setting"></span>
+						</h3>
+					</div>
+					<form class="form-horizontal">
+						<!-- Interests -->
+						<div id="interests" class="row"></div>
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-12">
+									<a id="addInterest" href="#x"><span class="glyphicon glyphicon-plus"></span> Add interests</a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script src="../js/lib/jquery/dist/jquery.min.js"></script>
+		<script src="../js/lib/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+		<script src="../js/lib/tagit/js/tag-it.js"></script>
+		<script src="../js/user_profile/profile.js" type="text/javascript"></script>
+	</body>
+</html>
