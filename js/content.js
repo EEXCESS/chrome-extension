@@ -1,19 +1,20 @@
-require(['searchBar','eexcessParagraphs', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function( searchBar, paragraphs, paragraphDetection, ner, iframes) {
+require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     searchBar.init(function(profile) {
         chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
         iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
         searchBar.show();
     });
     window.onmessage = function(e) {
-        console.log(e.data);
+        // console.log(e.data);
         // do something
     };
 
     // detect paragraphs
-    var p = paragraphDetection.getParagraphs();    
+    var p = paragraphDetection.getParagraphs();
 
-    EexcessSite.init();
-    EexcessSite.setParagraphs(p);
+
+//    EexcessSite.init();
+//    EexcessSite.setParagraphs(p);
 
     // enrich paragraphs with entities
     ner.entitiesAndCategories(p.map(function(par) {
@@ -25,28 +26,27 @@ require(['searchBar','eexcessParagraphs', 'c4/paragraphDetection', 'c4/namedEnti
     }), function(result) {
         if (result.status && result.status === 'success') {
             paragraphDetection.enrichParagraphs(p, result.data.paragraphs);
-            console.log(p);
         }
     });
 
     // selection listener
     $(document).mouseup(function() {
         var selection = paragraphDetection.getSelection(p);
-        if(selection.selection.length > 0) {
-                    var profile = {
-                        // TODO: split terms
-                        contextKeywords: [{
-                                text:selection.selection,
-                                weight:1.0
-                        }]
-                    };
-                    if(selection.entities) {
-                        profile.contextNamedEntities = selection.entities;
-                    }
-                    // TODO: provide reason
-                    chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-                    iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-                    searchBar.show();
+        if (selection.selection.length > 0) {
+            var profile = {
+                // TODO: split terms
+                contextKeywords: [{
+                        text: selection.selection,
+                        weight: 1.0
+                    }]
+            };
+            if (selection.entities) {
+                profile.contextNamedEntities = selection.entities;
+            }
+            // TODO: provide reason
+            chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
+            iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
+            searchBar.show();
         }
         console.log(selection);
     });
@@ -84,4 +84,18 @@ require(['searchBar','eexcessParagraphs', 'c4/paragraphDetection', 'c4/namedEnti
             console.log('method not specified');
         }
     });
+
+    $(document).on('paragraphFocused', function(evt) {
+        p.forEach(function(v1) {
+            $(v1.elements[0]).parent().css('border', '1px solid green');
+        });
+        $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid red');
+        console.log(evt.originalEvent.detail);
+        if(evt.originalEvent.detail.entities) {
+            searchBar.setLabels(evt.originalEvent.detail.entities);
+        }
+    });
+
+
+    paragraphDetection.findFocusedParagraph();
 });
