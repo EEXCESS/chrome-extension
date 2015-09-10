@@ -9,7 +9,7 @@
             "matches": ["<all_urls>"],
             "run_at":"document_end",
             "js": ["js/lib/requirejs/require.js","js/requireContent.js","js/common.js","js/content.js"],
-            "css": ["js/lib/jquery-ui/themes/smoothness/jquery-ui.css", "css/tabs.css"]
+            "css": ["js/lib/jquery-ui/themes/smoothness/jquery-ui.css", "css/searchBar.css"]
         }
     ],
 
