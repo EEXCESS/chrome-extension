@@ -112,7 +112,7 @@ define(['jquery', 'jqueryui'], function ($) {
                 // maxWidth: 800,
             });
             // adding drag functionality to parent div
-            $contentArea.draggable({
+            $jQueryTabsHeader.draggable({
                 scroll: "true"
             });
 
