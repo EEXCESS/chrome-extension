@@ -97,3 +97,16 @@
     background:rgba(0,0,0,1.0);
     border:none;
 }
+
+.tagit-label {
+    color:black;
+    font-size: 9pt;
+    font-weight: normal;
+    font-family: sans-serif;
+    margin:0;
+    padding:0;
+}
+
+.ui-icon-close {
+    background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
+}
