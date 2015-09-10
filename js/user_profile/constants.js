@@ -2,268 +2,124 @@
  * Defines all the constants used in the module profile.
  * @class constants
  */
+define([], function (){
 
-/** 
- * @attribute STORAGE_PREFIX 
-*/
-var STORAGE_PREFIX = "privacy.profile.";
+	//*********************
+	//** Local variables **
+	//*********************
+	
+	var prefixStorage = 	"privacy.profile.";
+	var prefixBtn = 		"btn-";
+	var prefixClass = 		"eexcess-"
+	var add = 				"add";
+	var remove =			"remove";
+	var Input = 			"Input";
+	var Display = 			"Display";
+	var Policy =			"Policy";
+	var name =				"name";
+	var city = 				"city";
+	var country = 			"country";
+	var location = 			"location"
+	var ageRange = 			"ageRange";
+	var language = 			"language";
+	var Language = 			"Language";
+	var interest = 			"interest";
+	var Interest = 			"Interest";
+	var Label = 			"Label";
+	var Code = 				"Code";
+	var Skill = 			"Skill";
+	
+	//**********************
+	//** Global variables **
+	//**********************
+	
+	var constants = {
+		
+		STORAGE_PREFIX: prefixStorage,
+		INPUT_SUFFIX: Input,
+		DISPLAY_SUFFIX: Display, 
+		POLICY_SUFFIX: Policy,
+		
+		BUTTON_STYLE_GREY: prefixBtn + "default",
+		BUTTON_STYLE_GREEN: prefixBtn + "success",
+		BUTTON_STYLE_ORANGE: prefixBtn + "warning",
+		BUTTON_STYLE_RED: prefixBtn + "danger",
+		
+		PARENT_ID: "ParentId", 
+		
+		NAME: name,
+		NAME_INPUT: name + Input,
+		NAME_DISPLAY: name + Display,
+		NAME_POLICY: name + Policy,
+		
+		COUNTRY: country,
+		COUNTRY_INPUT: country + Input,
+		COUNTRY_DISPLAY: country + Display,
+		
+		CITY: city,
+		CITY_INPUT: city + Input,
+		CITY_DISPLAY: city + Display,
+		
+		LOCATION: location,
+		LOCATION_POLICY: location + Policy,
+		
+		AGE_RANGE:ageRange,
+		AGE_RANGE_INPUT: ageRange + Input,
+		AGE_RANGE_DISPLAY: ageRange  + Display,
+		AGE_RANGE_POLICY: ageRange + Policy,
+		
+		LANGUAGE: language,
+		LANGUAGES: language + "s",
+		LANGUAGE_LABEL: language + Label,
+		LANGUAGE_CODE: language + Code,
+		LANGUAGE_SKILL: language + Skill,
+		LANGUAGE_LABEL_INPUT: language + Label + Input,
+		LANGUAGE_SKILL_INPUT: language + Skill + Input,
+		LANGUAGE_LABEL_DISPLAY: language + Label + Display,
+		LANGUAGE_SKILL_DISPLAY: language + Skill + Display,
+		LANGUAGE_POLICY: language + Policy,
+		ADD_LANGUAGE: add + Language,
+		REMOVE_LANGUAGE: remove + Language,
+		
+		INTEREST: interest,
+		INTERESTS: interest + "s",
+		INTEREST_INPUT: interest + Input,
+		INTEREST_DISPLAY: interest + Display,
+		INTEREST_POLICY: interest + Policy,
+		ADD_INTEREST: add + Interest,
+		REMOVE_INTEREST: remove + Interest,
+		
+		INPUTS: [name + Input, country + Input, city + Input, ageRange + Input, language + Label + Input, language + Skill + Input, interest + Input],
+		DISPLAYS: [null, country + Display, city + Display, ageRange + Display, language + Label + Display, language + Skill + Display, interest + Display],
+		POLICIES: [name + Policy, location + Policy, location + Policy, ageRange + Policy, language + Policy, language + Policy, interest + Policy],
+		
+		CLASS_TEXT: prefixClass + "text",
+		CLASS_SELECT: prefixClass + "select",
+		CLASS_LANGUAGE: prefixClass + language,
+		CLASS_INTEREST: prefixClass + interest,
+		CLASS_BUTTON: prefixClass + "button",
+		CLASS_BUTTON_GROUP: prefixBtn + "group",
+		
+		TAB_LANGUAGE_LABELS: ["Bulgarian", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French", 
+		                 "German", "Greek", "Hungarian", "Irish", "Italian", "Latvian", "Lithuanian", "Maltese", 
+		                 "Polish", "Portuguese", "Romanian", "Slovak", "Slovenian", "Spanish", "Swedish"],
+		                 
+		TAB_LANGUAGE_CODES: ["bg", "cs", "da", "nl", "en", "et", "fi", "fr",
+		                  "de", "el", "hu", "ga", "it", "lv", "lt", "mt", 
+		                  "pl", "pt", "ro", "sk", "sl", "es", "sv"], 
 
-/** 
- * @attribute ADD_LANGUAGE 
- */
-var ADD_LANGUAGE = "addLanguage";
-/** 
- * @attribute REMOVE_LANGUAGE 
- */
-var REMOVE_LANGUAGE = "removeLanguage";
-/** 
- * @attribute ADD_INTEREST 
- */
-var ADD_INTEREST = "addInterest";
-/** 
- * @attribute REMOVE_INTEREST 
- */
-var REMOVE_INTEREST = "removeInterest";
+		TAB_LANGUAGE_SKILLS: ["Fluent", "Intermediate", "Basic knowledge"],
+		
+		DEFAULT_AGE_RANGE_INDEX: 2, // 2: Adult
+		DEFAULT_LANGUAGE_LABEL_INDEX: 4, // 4: English
+		DEFAULT_LANGUAGE_CODE_INDEX: 4, // 4: en
+		DEFAULT_LANGUAGE_SKILL_INDEX: 0, // 0: fluent
+		DEFAULT_POLICY_LEVEL: 0, // The most restrictive
 
-/** 
- * @attribute BUTTON_STYLE_GREY
- */
-var BUTTON_STYLE_GREY = "btn-default";
-/** 
- * @attribute BUTTON_STYLE_GREEN
- */
-var BUTTON_STYLE_GREEN = "btn-success";
-/** 
- * @attribute BUTTON_STYLE_ORANGE
- */
-var BUTTON_STYLE_ORANGE = "btn-warning";
-/** 
- * @attribute BUTTON_STYLE_RED
- */
-var BUTTON_STYLE_RED = "btn-danger";
+		MAX_POLICY_THRESHOLD: 3 // In the current version there are only 3 levels (0, 1 and 2)
+		
+	}
+	
+	return constants;
 
-/** 
- * @attribute INPUT_SUFFIX
- */
-var INPUT_SUFFIX = "Input";
-/** 
- * @attribute DISPLAY_SUFFIX
- */
-var DISPLAY_SUFFIX = "Display";
-/** 
- * @attribute POLICY_SUFFIX
- */
-var POLICY_SUFFIX = "Policy";
-
-/** 
- * @attribute PARENT_ID
- */
-var PARENT_ID = "ParentId"; 
-
-/** 
- * @attribute NAME
- */
-var NAME = "name";
-/** 
- * @attribute COUNTRY
- */
-var COUNTRY = "country";
-/** 
- * @attribute CITY
- */
-var CITY = "city";
-/** 
- * @attribute LOCATION
- */
-var LOCATION = "location";
-/** 
- * @attribute AGE_RANGE
- */
-var AGE_RANGE ="ageRange";
-/** 
- * @attribute LANGUAGE
- */
-var LANGUAGE = "language";
-/** 
- * @attribute LANGUAGES
- */
-var LANGUAGES = LANGUAGE + "s";
-/** 
- * @attribute LANGUAGE_LABEL
- */
-var LANGUAGE_LABEL = LANGUAGE + "Label";
-/** 
- * @attribute LANGUAGE_SKILL
- */
-var LANGUAGE_SKILL = LANGUAGE + "Skill";
-/** 
- * @attribute INTEREST
- */
-var INTEREST ="interest";
-/** 
- * @attribute INTERESTS
- */
-var INTERESTS =INTEREST + "s";
-
-/** 
- * @attribute CLASS_TEXT
- */
-var CLASS_TEXT = "eexcess-text";
-/** 
- * @attribute CLASS_AGE_RANGE
- */
-var CLASS_SELECT = "eexcess-select";
-/** 
- * @attribute CLASS_LANGUAGE
- */
-var CLASS_LANGUAGE = "eexcess-language";
-/** 
- * @attribute CLASS_INTEREST
- */
-var CLASS_INTEREST = "eexcess-interest";
-/** 
- * @attribute CLASS_BUTTON
- */
-var CLASS_BUTTON = "eexcess-button";
-/** 
- * @attribute CLASS_BUTTON_GROUP
- */
-var CLASS_BUTTON_GROUP ="btn-group";
-
-/** 
- * List of european languages: Bulgarian, Czech, Danish, Dutch, English, Estonian, etc. 
- * @attribute TAB_LANGUAGE_LABELS
- */
-var TAB_LANGUAGE_LABELS = ["Bulgarian", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French", 
-                 "German", "Greek", "Hungarian", "Irish", "Italian", "Latvian", "Lithuanian", "Maltese", 
-                 "Polish", "Portuguese", "Romanian", "Slovak", "Slovenian", "Spanish", "Swedish"];
-/** 
- * List of skill level (Fluent, Intermediate, Basic knowledge). 
- * @attribute TAB_LANGUAGE_SKILLS
- */
-var TAB_LANGUAGE_SKILLS = ["Fluent", "Intermediate", "Basic knowledge"];
-
-/**
- * The default age range value is 2, i.e., Adult
- * @attribute DEFAULT_AGE_RANGE_INDEX
- */
-var DEFAULT_AGE_RANGE_INDEX = 2; // 2 = Adult
-/** 
- * The default language is English (TAB_LANGUAGE_LABELS[4]). 
- * @attribute DEFAULT_LANGUAGE_LABEL_INDEX
- */
-var DEFAULT_LANGUAGE_LABEL_INDEX = 4; // 4 = English
-/** 
- * The default skill level is Fluent (TAB_LANGUAGE_SKILLS[0]). 
- * @attribute DEFAULT_LANGUAGE_SKILL_INDEX
- */
-var DEFAULT_LANGUAGE_SKILL_INDEX = 0; // 0 = fluent
-/** 
- * @attribute DEFAULT_POLICY_LEVEL
- */
-var DEFAULT_POLICY_LEVEL = 0; // The most restrictive
-/** 
- * @attribute MAX_POLICY_THRESHOLD
- */
-var MAX_POLICY_THRESHOLD = 3; // In the current version there are only 3 levels (0, 1 and 2)
-
-// Input elements ends with "Input"
-/** 
- * @attribute NAME_INPUT
- */
-var NAME_INPUT = NAME + INPUT_SUFFIX;
-/** 
- * @attribute COUNTRY_INPUT
- */
-var COUNTRY_INPUT = COUNTRY + INPUT_SUFFIX;
-/** 
- * @attribute CITY_INPUT
- */
-var CITY_INPUT = CITY + INPUT_SUFFIX;
-/** 
- * @attribute AGE_RANGE_INPUT
- */
-var AGE_RANGE_INPUT = AGE_RANGE + INPUT_SUFFIX;
-/** 
- * @attribute LANGUAGE_LABEL_INPUT
- */
-var LANGUAGE_LABEL_INPUT = LANGUAGE_LABEL + INPUT_SUFFIX;
-/** 
- * @attribute LANGUAGE_SKILL_INPUT
- */
-var LANGUAGE_SKILL_INPUT = LANGUAGE_SKILL + INPUT_SUFFIX;
-/** 
- * @attribute INTEREST_INPUT
- */
-var INTEREST_INPUT = INTERESTS + INPUT_SUFFIX;
-
-// Display elements ends with "Display"
-/** 
- * @attribute NAME_DISPLAY
- */
-var NAME_DISPLAY = NAME + DISPLAY_SUFFIX;
-/** 
- * @attribute COUNTRY_DISPLAY
- */
-var COUNTRY_DISPLAY = COUNTRY + DISPLAY_SUFFIX;
-/** 
- * @attribute CITY_DISPLAY
- */
-var CITY_DISPLAY = CITY + DISPLAY_SUFFIX;
-/** 
- * @attribute AGE_RANGE_DISPLAY
- */
-var AGE_RANGE_DISPLAY = AGE_RANGE + DISPLAY_SUFFIX;
-/** 
- * @attribute LANGUAGE_LABEL_DISPLAY
- */
-var LANGUAGE_LABEL_DISPLAY = LANGUAGE_LABEL + DISPLAY_SUFFIX;
-/** 
- * @attribute LANGUAGE_SKILL_DISPLAY
- */
-var LANGUAGE_SKILL_DISPLAY = LANGUAGE_SKILL + DISPLAY_SUFFIX;
-/** 
- * @attribute INTEREST_DISPLAY
- */
-var INTEREST_DISPLAY = INTERESTS + DISPLAY_SUFFIX;
-
-// Policy elements ends with "Policy" but there's not necessarily one policy element per input or display
-/** 
- * @attribute NAME_POLICY
- */
-var NAME_POLICY = NAME + POLICY_SUFFIX;
-/** 
- * @attribute LOCATION_POLICY
- */
-var LOCATION_POLICY= LOCATION + POLICY_SUFFIX;
-/** 
- * @attribute AGE_RANGE_POLICY
- */
-var AGE_RANGE_POLICY = AGE_RANGE + POLICY_SUFFIX;
-/** 
- * @attribute LANGUAGE_POLICY
- */
-var LANGUAGE_POLICY = LANGUAGE + POLICY_SUFFIX;
-/** 
- * @attribute INTEREST_POLICY
- */
-var INTEREST_POLICY = INTERESTS + POLICY_SUFFIX;
-
-// The arrays are sorted so that it's possible to associate input, display and policy elements
-/** 
- * List of all the input elements (e.g., birthDateInput). 
- * @attribute INPUTS
- */
-var INPUTS = [NAME_INPUT, COUNTRY_INPUT, CITY_INPUT, AGE_RANGE_INPUT, LANGUAGE_LABEL_INPUT, LANGUAGE_SKILL_INPUT, INTEREST_INPUT];
-/** 
- * List of all the display element (e.g., birthDateDisplay). 
- * A value can be null if the corresponding input is never displayed (e.g., nameInput). 
- * @attribute DISPLAYS
- */
-var DISPLAYS = [null, COUNTRY_DISPLAY, CITY_DISPLAY, AGE_RANGE_DISPLAY, LANGUAGE_LABEL_DISPLAY, LANGUAGE_SKILL_DISPLAY, INTEREST_DISPLAY];
-/** 
- * List of all the policy elements (e.g., birthDatePolicy). 
- * A value can appear multiple times when several input values depend on the same button (e.g., countryInput and cityInput). 
- * @attribute POLICIES
- */
-var POLICIES = [NAME_POLICY, LOCATION_POLICY, LOCATION_POLICY, AGE_RANGE_POLICY, LANGUAGE_POLICY, LANGUAGE_POLICY, INTEREST_POLICY];
+});

@@ -1,133 +1,191 @@
-/**
- * This module is the main component of the profile management. 
- * It imports all the necessary libraries (i.e., the other components). 
- * @class profile
- */
+define(["./constants.js"], function (cst, ls) {
 
-//*************
-//** IMPORTS **
-//*************
+	//***********************
+	//** Module definition **
+	//***********************
+	
+	var profile = {
+		
+		// Name 
+		
+		getName(){
+			return getValue(cst.NAME);
+		},
+		
+		setName(value){
+			setValue(cst.NAME, value);
+		},
+		
+		isNameDisclosed(){
+			return (getLevel(cst.NAME, "") > 0);
+		}, 
+		
+		// Country
+		
+		getCountry(){
+			return getValue(cst.COUNTRY);
+		}, 
 
-var FILES_TO_IMPORT = ["../js/user_profile/constants.js" 		// contains all the constants used in this module
-                      , "../js/user_profile/common.js" 		// generic functions used to initialize, retrieve or display elements
-                      , "../js/user_profile/storage.js" 		// management the storage of data
-                      , "../js/user_profile/languages.js" 	// management of the languages
-                      , "../js/user_profile/interests.js" 	// management of the interests 
-                      , "../js/user_profile/obfuscation.js" 	// obfuscation and filtering mechanisms
-                      , "../js/user_profile/policy.js" 		// management of policy settings (buttons)
-                      , "../js/user_profile/util-html.js" 	// management of HTML elements + basic functions
-                      ];
+		setCountry(value){
+			setValue(cst.COUNTRY, value);
+		},
+		
+		isCountryDisclosed(){
+			return (getLevel(cst.LOCATION, "") > 0);
+		}, 
+		
+		hideCountry(){
+			setLevel(cst.LOCATION, "", 0); 
+		}, 
+		
+		discloseCountry(){
+			setLevel(cst.LOCATION, "", 1);
+		},
+		
+		// City
+		
+		getCity(){
+			return getValue(cst.CITY);
+		}, 
 
-for (var i = 0 ; i < FILES_TO_IMPORT.length ; i++){
-	var importElement = document.createElement("script");
-	importElement.src = FILES_TO_IMPORT[i];
-	document.head.appendChild(importElement);
-}
+		setCity(value){
+			setValue(cst.CITY, value);
+		},
+		
+		isCityDisclosed(){
+			return (getLevel(cst.LOCATION, "") > 1);
+		}, 
+		
+		hideCity(){
+			if (profile.isCountryDisclosed()){
+				setLevel(cst.LOCATION, "", 1); 
+			} else {
+				setLevel(cst.LOCATION, "", 0); 
+			}
+		}, 
+		
+		discloseCity(){
+			setLevel(cst.LOCATION, "", 2); 
+		},
+		
+		// Age range
+		
+		getAgeRange(){
+			var ageRange = getValue(cst.AGE_RANGE);
+			if (ageRange == null){
+				ageRange = cst.DEFAULT_AGE_RANGE_INDEX;
+			}
+			return ageRange;
+		}, 
 
-//********************
-//** INITIALIZATION **
-//********************
+		setAgeRange(value){
+			setValue(cst.AGE_RANGE, value);
+		},
+		
+		isAgeRangeDisclosed(){
+			return (getLevel(cst.AGE_RANGE, "") > 0);
+		}, 
 
-// Initialization
-window.addEventListener("load", init, true); 
-window.addEventListener("load", display, true);
-window.addEventListener("load", createListeners, false);
+		hideAgeRange(){
+			setLevel(cst.AGE_RANGE, "", 0); 
+		}, 
+		
+		discloseAgeRange(){
+			setLevel(cst.AGE_RANGE, "", 1); 
+		},
+		
+		// Languages
+		
+		getLanguages(){
+			var languages = getJsonValue(cst.LANGUAGES);
+			if (languages == null){
+				languages = [];
+			}
+			return languages;
+		}, 
 
-// Date picker
-/*(function($) {
-    $(".datepicker").datepicker({viewMode: 2}).on("changeDate", function(ev) {  
-    		if (ev.viewMode == "days"){
-        		displayElement(this); 
-        		saveInput(this); 
-    			$(this).datepicker("hide");
-    		}
-    	});
-})(jQuery); */
+		setLanguages(value){
+			setJsonValue(cst.LANGUAGES, value);
+		},
+		
+		isLanguageDisclosed(i){
+			return (getLevel(cst.LANGUAGE, i) > 0);
+		}, 
+		
+		hideLanguage(i){
+			setLevel(cst.LANGUAGE, i, 0); 
+		}, 
+		
+		discloseLanguage(i){
+			setLevel(cst.LANGUAGE, i, 1); 
+		},
+		
+		// Interests
+		
+		getInterests(){
+			var interests = getJsonValue(cst.INTERESTS);
+			if (interests == null){
+				interests = [];
+			}
+			return interests;
+		}, 
 
-//***************
-//** FUNCTIONS **
-//***************
-
-/**
- * Initializes all the attributes of the form (demographics, languages and interests) using the values saved in the data store. 
- * It also initializes the buttons that are used to handle the level of privacy for each attribute. 
- * It is called when the window is loaded. 
- * @method init
- */
-function init(){
-	initTextInputs();
-	initSelectInputs();
-	initLanguages();
-	initInterests();
-	initButtons();
-}
-
-/**
- * Displays the values of the attributes. 
- * The values displayed depends on the level of privacy assigned to each attribute. 
- * It is called when the window is loaded. 
- * @method display
- */
-function display(){
-	displayElements(getTextInputs());
-	displayElements(getSelectInputs());
-	displayElements(getLanguageSelects());
-	displayElements(getInterestInputs());
-}
-
-/**
- * Create the listeners. Some of the listeners are assigned to form input fields (e.g., demographics, languages), 
- * while others are assigned to links (e.g., links that allow the addition or the removal of languages). 
- * The listeners of the interests are not created in the method, as they are related to TagIt. 
- * It is called when the window is loaded. 
- * @method createListeners
- */
-function createListeners(){
-	// Buttons
-	var buttons = getButtons();
-	for (var i = 0 ; i < buttons.length ; i++) {
-		var button = buttons[i];
-		button.addEventListener("click", function(){ policyButtonListener(this); }); 
+		setInterests(value){
+			setJsonValue(cst.INTERESTS, value);
+		},
+		
+		isInterestDisclosed(i){
+			return (getLevel(cst.INTEREST, i) > 0);
+		},
+		
+		hideInterest(i){
+			setLevel(cst.INTEREST, i, 0); 
+		}, 
+		
+		discloseInterest(i){
+			setLevel(cst.INTEREST, i, 1); 
+		},
+			
+	};
+	
+	//*******************
+	//** Local methods **
+	//*******************
+	
+	function getValue(key){
+		return localStorage.getItem(cst.STORAGE_PREFIX + key + cst.INPUT_SUFFIX);
 	}
-	// Text inputs
-	var textInputs = getTextInputs();
-	for (var i = 0 ; i < textInputs.length ; i++) {
-		var textInput = textInputs[i];
-		textInput.addEventListener("change", function(){ elementListener(this, CLASS_TEXT); });
+	
+	function setValue(key, value){
+		localStorage.setItem(cst.STORAGE_PREFIX + key + cst.INPUT_SUFFIX, value);
 	}
-	// Select inputs
-	var selectInputs = getSelectInputs();
-	for (var i = 0 ; i < selectInputs.length ; i++) {
-		var selectInput = selectInputs[i];
-		selectInput.addEventListener("change", function(){ elementListener(this, CLASS_SELECT); });
+	
+	function getJsonValue(key){
+		var jsonValue = null;
+		var value = localStorage.getItem(cst.STORAGE_PREFIX + key);
+		if (value != null){
+			jsonValue = JSON.parse(value)
+		} 
+		return jsonValue;
 	}
-	// Languages
-	var selects = getLanguageSelects();
-	for (var i = 0 ; i < selects.length ; i++) {
-		var select = selects[i];
-		select.addEventListener("change", function(){ elementListener(this, CLASS_LANGUAGE); });
+	
+	function setJsonValue(key, value){
+		localStorage.setItem(cst.STORAGE_PREFIX + key, JSON.stringify(value));
 	}
-	// Interests
-	var interestElements = document.getElementById(INTERESTS);
-	for (var i = 0 ; i < interestElements.length ; i++){
-		addInterestListener();	
+	
+	function getLevel(key, idx){
+		var level = 0;
+		var levelAux = localStorage.getItem(cst.STORAGE_PREFIX + key + cst.POLICY_SUFFIX + idx);
+		if (levelAux != null){
+			level = levelAux;
+		}
+		return level;
 	}
-	// Remove language links
-	var removeLanguageLinks = getRemoveLinks(REMOVE_LANGUAGE);
-	for (var i = 0 ; i < removeLanguageLinks.length ; i++){
-		var removeLanguageLink = removeLanguageLinks[i];
-		removeLanguageLink.addEventListener("click", function(){ removeLanguageListener(this); });
+	
+	function setLevel(key, idx, level){
+		localStorage.setItem(cst.STORAGE_PREFIX + key + cst.POLICY_SUFFIX + idx, level);
 	}
-	// Remove interest links
-	var removeInterestLinks = getRemoveLinks(REMOVE_INTEREST);
-	for (var i = 0 ; i < removeInterestLinks.length ; i++){
-		var removeInterestLink = removeInterestLinks[i];
-		removeInterestLink.addEventListener("click", function(){ removeInterestListener(this); });
-	}
-	// Add language link
-	var addLanguageElement = document.getElementById(ADD_LANGUAGE);
-	addLanguageElement.addEventListener("click", addLanguageListener);
-	// Add interests link
-	var addInterestElement = document.getElementById(ADD_INTEREST);
-	addInterestElement.addEventListener("click", addInterestListener);
-}
+	
+	return profile;
+	
+});
