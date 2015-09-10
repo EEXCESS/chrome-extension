@@ -18,7 +18,7 @@ require(['./common'], function(common) {
                             if (response.status === 'success') {
                                 msgAllTabs({
                                     method: 'newResults',
-                                    data: {profile: msg.data, results: {results: response.data.result}}
+                                    data: response.data
                                 });
                             } else {
                                 msgAllTabs({method: 'error', data: response.data});

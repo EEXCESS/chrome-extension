@@ -58,7 +58,7 @@ define(['jquery', 'jqueryui'], function ($) {
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
                             "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
+                            chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }
