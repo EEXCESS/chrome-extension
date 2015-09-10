@@ -3,12 +3,13 @@
  *
  * @module c4/searchBar
  */
-define(['jquery', 'jqueryui'], function ($) {
+define(['jquery', 'jquery-ui','tag-it'], function ($,ui,tagit) {
 
     var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div' +
-        ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
+        ' style="position:fixed;width:100%;height:30px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
+    var taglist = $('<ul id="taglist"></ul>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
     var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
     var resetToggle = $('<a href="#" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
@@ -158,7 +159,7 @@ define(['jquery', 'jqueryui'], function ($) {
                     };
                     triggerFunction(profile);
                 });
-                bar.append(form);
+                //bar.append(form);
                 toggler.click(function (e) {
                     e.preventDefault();
                     if ($(this).text() === $("<div>").html("&uArr;").text()) {
@@ -180,8 +181,23 @@ define(['jquery', 'jqueryui'], function ($) {
                 });
 
                 bar.append(toggler, resetToggle);
+                taglist.tagit({
+                    allowSpaces:true
+                });
+                bar.append(taglist);
                 $('body').append(bar);
             });
+        },
+        setLabels:function(entities){
+            taglist.tagit('removeAll');
+            for(var type in entities){
+                if(entities.hasOwnProperty(type)) {
+                    console.log(type);
+                    $.each(entities[type], function(){
+                        taglist.tagit('createTag',this.text);
+                    });
+                }
+            }
         },
         show: function () {
             if (!contentArea.is(':visible')) {
