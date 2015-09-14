@@ -110,3 +110,38 @@
 .ui-icon-close {
     background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
 }
+
+.tagit-choice {
+    padding-bottom: 2.2px !important;  
+    padding-top: 2.2px !important;  
+    padding-left: 5.5px !important;  
+    padding-right: 18px !important;  
+    line-height: normal !important;    
+}
+
+.tagit-new {
+    padding:0 !important;
+    margin: 1px 5px 2px 0px !important;
+    background-color: rgba(0,0,0,1.0) !important;
+    background-image: none !important;
+    color: white !important;
+}
+
+input.ui-widget-content {
+    background-image:none;
+    color:white;
+}
+
+#selectmenu {
+    float:left;
+    margin-top: 3px;
+    background-color:black;
+    color:white;
+    font-weight: normal;
+}
+
+#searchbutton {
+    font-weight: normal;
+    float:left;
+    margin-left: 5px;
+}

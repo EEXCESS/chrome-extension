@@ -85,15 +85,23 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
         }
     });
 
+    var lastY = 0;
+
+    $(document).mousemove(function(e) {
+        lastY = e.pageY;
+    });
+
     $(document).on('paragraphFocused', function(evt) {
-        p.forEach(function(v1) {
-            $(v1.elements[0]).parent().css('border', '1px solid green');
-        });
-        $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid red');
-        console.log(evt.originalEvent.detail);
-        if(evt.originalEvent.detail.entities) {
-            searchBar.setLabels(evt.originalEvent.detail.entities);
-        }
+        if (lastY < $(window).scrollTop() + $(window).height() - 90) {
+            p.forEach(function(v1) {
+                $(v1.elements[0]).parent().css('border', '1px solid green');
+            });
+            $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid red');
+            console.log(evt.originalEvent.detail);
+            if (evt.originalEvent.detail.entities) {
+                searchBar.setLabels(evt.originalEvent.detail.entities);
+            } 
+        } 
     });
 
 
