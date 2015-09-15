@@ -7,7 +7,7 @@
 .ui-tabs-vertical .ui-tabs-nav {
     padding: .2em .1em .2em .2em;
     float: left;
-    width: auto;
+    width: 117px;
 }
 
 .ui-tabs-vertical .ui-tabs-nav li {
@@ -47,7 +47,7 @@
 
 #jQueryTabsHeader {
     cursor: move;
-    width: 99%;
+    width: calc(100% - 117px - 8px);
     height: 99%;
     z-index: 9999;
     border: none;
