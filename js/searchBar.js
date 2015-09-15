@@ -5,7 +5,7 @@
  */
 define(['jquery', 'jqueryui'], function ($) {
 
-    var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
+    var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div' +
         ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
@@ -14,9 +14,9 @@ define(['jquery', 'jqueryui'], function ($) {
     var resetToggle = $('<a href="#" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
 
-    var $jQueryTabsHeader = $("#jQueryTabsHeader");
-    var $iframeCover = $("#iframeCover");
-    var $contentArea = $("#contentArea");
+    var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
+    var $iframeCover = $("#eexcess-tabBar-iframeCover");
+    var $contentArea = $("#eexcess-tabBar-contentArea");
 
     return {
         init: function (triggerFunction) {
@@ -84,12 +84,12 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 $.each(tabModel.tabs, function (i, tab) {
                         tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                        $("#jQueryTabsHeader ul").append(
+                        $("#eexcess-tabBar-jQueryTabsHeader ul").append(
                             tab.renderedHead);
                         // add tab content corresponding to tab titles
                         tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
                         );
-                        $("#jQueryTabsContent").append(
+                        $("#eexcess-tabBar-jQueryTabsContent").append(
                             tab.renderedContent
                         );
                         // following 3 functions derived from jQuery-UI Tabs
@@ -109,7 +109,7 @@ define(['jquery', 'jqueryui'], function ($) {
             $jQueryTabsHeader.tabs({
                 activate: function (event, ui) {
                     if (ui.newPanel.attr('id') == "tabs-3") {
-                        $jQueryTabsHeader.resizable("option", "minWidth", 800);
+                        //$jQueryTabsHeader.resizable("option", "minWidth", 800);
                         $jQueryTabsHeader.width(800);
                         $jQueryTabsHeader.resize();
                     }
