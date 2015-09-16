@@ -78,6 +78,15 @@ define(['jquery', 'jqueryui'], function ($) {
                             chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
+                        }, {
+                            "id": "4",
+                            "name": "FacetScape",
+                            //"icon": "icon.png",
+                            "content": '<iframe src="'
+                            +
+                            chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+                            "renderedHead": "",
+                            "renderedContent": ""
                         }
                     ]
                 };
@@ -104,8 +113,8 @@ define(['jquery', 'jqueryui'], function ($) {
             });
 
 
-            // check which tab is activated as Dashboard needs a minSize of 800px to display properly (translates
-            // into 950 px with the jqueryUiTabs)
+// check which tab is activated as Dashboard needs a minSize of 800px to display properly (translates
+// into 950 px with the jqueryUiTabs)
             $jQueryTabsHeader.tabs({
                 activate: function (event, ui) {
                     if (ui.newPanel.attr('id') == "tabs-3") {
@@ -120,20 +129,20 @@ define(['jquery', 'jqueryui'], function ($) {
             });
 
 
-            // adding resize functionality
+// adding resize functionality
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
                 minWidth: 250,
                 alsoResize: $iframeCover
             });
-            // adding drag functionality to parent div
+// adding drag functionality to parent div
             $jQueryTabsHeader.draggable({
                 scroll: "true"
             });
 
 
-            // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
+// on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
             $jQueryTabsHeader.on("resizestart", function (event, ui) {
                 $iframeCover.show();
             });
@@ -141,7 +150,7 @@ define(['jquery', 'jqueryui'], function ($) {
                 $iframeCover.show();
             });
 
-            //storing new values and hide iframeCover after size has been changed
+//storing new values and hide iframeCover after size has been changed
             $jQueryTabsHeader.on("resizestop", function (event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
@@ -158,7 +167,7 @@ define(['jquery', 'jqueryui'], function ($) {
                 });
                 $iframeCover.hide();
             });
-            //storing new values and hide iframeCover after position has been changed
+//storing new values and hide iframeCover after position has been changed
             $contentArea.on("dragstop", function (event, ui) {
                 var positionToStore = $contentArea.position();
                 storage.set({'dragPosition': positionToStore}, function (result) {
@@ -207,7 +216,8 @@ define(['jquery', 'jqueryui'], function ($) {
     }
 
 
-});
+})
+;
 
 
 
