@@ -30,41 +30,41 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
     });
 
     // selection listener
-    $(document).mouseup(function() {
-        var selection = paragraphDetection.getSelection(p);
-        if (selection.selection.length > 0) {
-            var profile = {
-                // TODO: split terms
-                contextKeywords: [{
-                        text: selection.selection,
-                        weight: 1.0
-                    }]
-            };
-            if (selection.entities) {
-                profile.contextNamedEntities = selection.entities;
-            }
-            // TODO: provide reason
-            chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-            iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-            searchBar.show();
-        }
-        console.log(selection);
-    });
+//    $(document).mouseup(function() {
+//        var selection = paragraphDetection.getSelection(p);
+//        if (selection.selection.length > 0) {
+//            var profile = {
+//                // TODO: split terms
+//                contextKeywords: [{
+//                        text: selection.selection,
+//                        weight: 1.0
+//                    }]
+//            };
+//            if (selection.entities) {
+//                profile.contextNamedEntities = selection.entities;
+//            }
+//            // TODO: provide reason
+//            chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
+//            iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
+//            searchBar.show();
+//        }
+//        console.log(selection);
+//    });
 
     // augment links
-    $(function() {
-        paragraphDetection.augmentLinks(
-                $('.' + paragraphDetection.getSettings().classname),
-                chrome.extension.getURL('media/icons/19.png'),
-                function(profile) {
-                    // TODO: provide reason
-                    chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-                    iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-                    searchBar.show();
-                },
-                paragraphDetection.getSettings().classname, p
-                );
-    });
+//    $(function() {
+//        paragraphDetection.augmentLinks(
+//                $('.' + paragraphDetection.getSettings().classname),
+//                chrome.extension.getURL('media/icons/19.png'),
+//                function(profile) {
+//                    // TODO: provide reason
+//                    chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
+//                    iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
+//                    searchBar.show();
+//                },
+//                paragraphDetection.getSettings().classname, p
+//                );
+//    });
 
     chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         console.log(msg);
