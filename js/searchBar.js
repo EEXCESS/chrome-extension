@@ -5,7 +5,7 @@
  */
 define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
-    var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
+    var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div id="searchBar" ' +
             ' style="position:fixed;width:100%;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
@@ -16,9 +16,9 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
     var storage = chrome.storage.local;
     var mainTopic = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel">Liestal</p><p id="eexcess_mainTopicDesc">main topic(s)</p></div>');
 
-    var $jQueryTabsHeader = $("#jQueryTabsHeader");
-    var $iframeCover = $("#iframeCover");
-    var $contentArea = $("#contentArea");
+    var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
+    var $iframeCover = $("#eexcess-tabBar-iframeCover");
+    var $contentArea = $("#eexcess-tabBar-contentArea");
 
     bar.click(function(e) {
         e.preventDefault;
@@ -64,38 +64,51 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
                             "content": '<iframe src="' +
-                                    chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"',
+
+                            chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }
-                        //,{
-                        //    "id": "2",
-                        //    "name": "PowerSearch",
-                        //    //"icon": "icon.png",
-                        //    "content": '<iframe src="' +
-                        //    chrome.extension.getURL('visualization-widgets/PowerSearch/powersearch/index.html') + '"',
-                        //    "renderedHead": "",
-                        //    "renderedContent": ""
-                        //}, {
-                        //    "id": "3",
-                        //    "name": "Dashboard",
-                        //    //"icon": "icon.png",
-                        //    "content": '<iframe src="' +
-                        //    chrome.extension.getURL('visualization-widgets/Dashboard/uRank/test/index.html') + '"',
-                        //    "renderedHead": "",
-                        //    "renderedContent": ""
-                        //}
+                        , {
+                            "id": "2",
+                            "name": "PowerSearch",
+                            //"icon": "icon.png",
+                            "content": '<iframe src="' +
+                            chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
+                            "renderedHead": "",
+                            "renderedContent": ""
+                        }, {
+                            "id": "3",
+                            "name": "Dashboard",
+                            //"icon": "icon.png",
+                            "content": '<iframe src="' +
+                            chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
+                            "renderedHead": "",
+                            "renderedContent": ""
+                        }, {
+                            "id": "4",
+                            "name": "FacetScape",
+                            //"icon": "icon.png",
+                            "content": '<iframe src="'
+                            +
+                            chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+
+                            "renderedHead": "",
+                            "renderedContent": ""
+                        }
                     ]
                 };
 
-                $.each(tabModel.tabs, function(i, tab) {
-                    tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                    $("#jQueryTabsHeader ul").append(
+
+                $.each(tabModel.tabs, function (i, tab) {
+                        tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                        $("#eexcess-tabBar-jQueryTabsHeader ul").append(
                             tab.renderedHead);
-                    // add tab content corresponding to tab titles
-                    tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
-                            );
-                    $("#jQueryTabsContent").append(
+                        // add tab content corresponding to tab titles
+                        tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
+                        );
+                        $("#eexcess-tabBar-jQueryTabsContent").append(
+
                             tab.renderedContent
                             );
                     // following 3 functions derived from jQuery-UI Tabs
@@ -103,6 +116,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                     $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
                     $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
                     $jQueryTabsHeader.tabs("refresh");
+                    $jQueryTabsHeader.tabs({active: 0});
                     $iframeCover.hide();
 
                 }
@@ -110,29 +124,49 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             });
 
 
-            // adding resize functionality
+// check which tab is activated as Dashboard needs a minSize of 800px to display properly (translates
+// into 950 px with the jqueryUiTabs)
+            $jQueryTabsHeader.tabs({
+                activate: function (event, ui) {
+                    if (ui.newPanel.attr('id') == "tabs-3") {
+                        //$jQueryTabsHeader.resizable("option", "minWidth", 800);
+                        $jQueryTabsHeader.width(800);
+                        $jQueryTabsHeader.resize();
+                    }
+                    else {
+                        $jQueryTabsHeader.resizable("option", "minWidth", 250);
+                    }
+                }
+            });
+
+
+// adding resize functionality
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
-                minWidth: 250
-                        // maxWidth: 800,
+
+                minWidth: 250,
+                alsoResize: $iframeCover
             });
-            // adding drag functionality to parent div
-            $contentArea.draggable({
+// adding drag functionality to parent div
+            $jQueryTabsHeader.draggable({
                 scroll: "true"
             });
 
 
-            // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
-            $jQueryTabsHeader.on("resizestart", function(event, ui) {
+
+// on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
+            $jQueryTabsHeader.on("resizestart", function (event, ui) {
+
                 $iframeCover.show();
             });
             $contentArea.on("dragstart", function(event, ui) {
                 $iframeCover.show();
             });
 
-            //storing new values and hide iframeCover after size has been changed
-            $jQueryTabsHeader.on("resizestop", function(event, ui) {
+
+//storing new values and hide iframeCover after size has been changed
+            $jQueryTabsHeader.on("resizestop", function (event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
                 storage.set({'resizeHeight': heightToStore}, function(result) {
@@ -148,8 +182,9 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 });
                 $iframeCover.hide();
             });
-            //storing new values and hide iframeCover after position has been changed
-            $contentArea.on("dragstop", function(event, ui) {
+
+//storing new values and hide iframeCover after position has been changed
+            $contentArea.on("dragstop", function (event, ui) {
                 var positionToStore = $contentArea.position();
                 storage.set({'dragPosition': positionToStore}, function(result) {
                 });
@@ -254,7 +289,8 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
     }
 
 
-});
+})
+;
 
 
 
