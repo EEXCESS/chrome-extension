@@ -24,34 +24,37 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
         e.preventDefault;
     });
 
+
+    //sets size and position of the tab area according to previous changes by the user stored in chrome
+    // local storage
+    $(function setSizeAndPosition() {
+        storage.get(null, function(result) {
+
+            if (result.resizeWidth && result.dragPosition) {
+                $contentArea.css({
+                    "height": result.resizeHeight,
+                    "width": result.resizeWidth,
+                    "top": result.dragPosition.top,
+                    "left": result.dragPosition.left
+                });
+
+            }
+            //should be expendable now that resizestop also stores position
+            if (result.resizeWidth && !result.dragPosition) {
+
+                $contentArea.css({"height": result.resizeHeight, "width": result.resizeWidth});
+            }
+            if (result.dragPosition && !result.resizeWidth) {
+                $contentArea.css({"top": result.dragPosition.top, "left": result.dragPosition.left});
+            }
+        });
+
+    });
+
+
     return {
         init: function(triggerFunction) {
 
-            //sets size and position of the tab area according to previous changes by the user stored in chrome
-            // local storage
-            $(function setSizeAndPosition() {
-                storage.get(null, function(result) {
-
-                    if (result.resizeWidth && result.dragPosition) {
-                        $contentArea.css({
-                            "height": result.resizeHeight,
-                            "width": result.resizeWidth,
-                            "top": result.dragPosition.top,
-                            "left": result.dragPosition.left
-                        });
-
-                    }
-                    //should be expendable now that resizestop also stores position
-                    if (result.resizeWidth && !result.dragPosition) {
-
-                        $contentArea.css({"height": result.resizeHeight, "width": result.resizeWidth});
-                    }
-                    if (result.dragPosition && !result.resizeWidth) {
-                        $contentArea.css({"top": result.dragPosition.top, "left": result.dragPosition.left});
-                    }
-                });
-
-            });
 
             //generates jquery-ui tabs TODO: icons? and move into external json
             $(function generateTabView() {
@@ -122,12 +125,11 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
-
                 minWidth: 250,
                 alsoResize: $iframeCover
             });
 // adding drag functionality to parent div
-            $jQueryTabsHeader.draggable({
+            $contentArea.draggable({
                 scroll: "true"
             });
 
@@ -135,7 +137,6 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
 // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
             $jQueryTabsHeader.on("resizestart", function (event, ui) {
-
                 $iframeCover.show();
             });
             $contentArea.on("dragstart", function(event, ui) {
