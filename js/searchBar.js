@@ -11,8 +11,8 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             ' style="position:fixed;width:100%;height:30px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
     var taglist = $('<ul id="taglist"></ul>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
-    var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
-    var resetToggle = $('<a href="#" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
+    var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
+    var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
 
     var $jQueryTabsHeader = $("#jQueryTabsHeader");
@@ -184,10 +184,34 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
                 });
 
-                var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option><option>Organizations</option><option>Misc</option></select>');
+                var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
                 bar.append(selectmenu);
-//                selectmenu.selectmenu({style:'dropdown'});
-                bar.append($('<input type="submit" value="ok" id="searchbutton" />'));
+                selectmenu.change(function(e){
+                    var type = $(this).children(':selected').text().toLowerCase();
+                    if(type !== 'all') {
+                        $.each(taglist.tagit('getTags'), function(){
+                            if($(this).data('properties').type === type) {
+                                $(this).css('opacity','1.0');
+                            } else {
+                                $(this).css('opacity','0.4');
+                            }
+                        });
+                    } else {
+                        $(taglist.tagit('getTags').css('opacity','1.0'));
+                    }
+                });
+
+                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e){
+                    var tags = taglist.tagit('assignedTags');
+                    
+                    var profile = {
+                        contextKeywords: []
+                    };
+                    $.each(tags,function(){
+                        profile.contextKeywords.push({text:this,weight:1});
+                    });
+                    triggerFunction(profile);
+                }));
                 taglist.tagit({
                     allowSpaces: true,
                     placeholderText: 'add keyword',
@@ -209,7 +233,8 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             for (var type in entities) {
                 if (entities.hasOwnProperty(type)) {
                     $.each(entities[type], function() {
-                        taglist.tagit('createTag', this.text);
+                        this['type'] = type;
+                        taglist.tagit('createTag', this.text, this);
                     });
                 }
             }
