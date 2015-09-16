@@ -156,8 +156,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function ($, ui, tagit) {
                 });
 
                 //whenever a resize happens, but not a drag, the jQueryHeader position changes in another way than
-                // the contentAreas position (due to jquery's alsoResize disregarding top and left). Therefore the
-                // header's offset is stored as the new position.
+                // the contentAreas position (due to jquery's alsoResize disregarding top and left). 
                 var positionToStoreTop = $contentArea.position().top + $jQueryTabsHeader.position().top;
                 var positionToStoreLeft = $contentArea.position().left + $jQueryTabsHeader.position().left;
                 //console.log("Resizestop, Pos+position. HeaderLeft: " +$jQueryTabsHeader.position().left);
