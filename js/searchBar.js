@@ -3,28 +3,37 @@
  *
  * @module c4/searchBar
  */
-define(['jquery', 'jqueryui'], function ($) {
+define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
-    var bar = $('<div' +
-        ' style="position:fixed;width:100%;height:20px;padding:5px;bottom:0;background-color:black;text-align:left;z-index:99999;"></div>');
+    var bar = $('<div id="searchBar" ' +
+            ' style="position:fixed;width:100%;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
+    var taglist = $('<ul id="taglist"></ul>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
-    var toggler = $('<a href="#" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
-    var resetToggle = $('<a href="#" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
+    var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
+    var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
+    var mainTopic = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel">Liestal</p><p id="eexcess_mainTopicDesc">main topic(s)</p></div>');
 
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
     var $contentArea = $("#eexcess-tabBar-contentArea");
+<<<<<<< HEAD
+=======
+
+    bar.click(function(e) {
+        e.preventDefault;
+    });
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
 
     return {
-        init: function (triggerFunction) {
+        init: function(triggerFunction) {
 
             //sets size and position of the tab area according to previous changes by the user stored in chrome
             // local storage
             $(function setSizeAndPosition() {
-                storage.get(null, function (result) {
+                storage.get(null, function(result) {
 
                     if (result.resizeWidth && result.dragPosition) {
                         $contentArea.css({
@@ -58,12 +67,17 @@ define(['jquery', 'jqueryui'], function ($) {
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
                             "content": '<iframe src="' +
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                             chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }
                         , {
                             "id": "2",
+<<<<<<< HEAD
                             "name": "PowerSearch",
                             //"icon": "icon.png",
                             "content": '<iframe src="' +
@@ -72,6 +86,8 @@ define(['jquery', 'jqueryui'], function ($) {
                             "renderedContent": ""
                         }, {
                             "id": "3",
+=======
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                             "name": "Dashboard",
                             //"icon": "icon.png",
                             "content": '<iframe src="' +
@@ -79,17 +95,26 @@ define(['jquery', 'jqueryui'], function ($) {
                             "renderedHead": "",
                             "renderedContent": ""
                         }, {
+<<<<<<< HEAD
                             "id": "4",
+=======
+                            "id": "3",
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                             "name": "FacetScape",
                             //"icon": "icon.png",
                             "content": '<iframe src="'
                             +
                             chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                             "renderedHead": "",
                             "renderedContent": ""
                         }
                     ]
                 };
+
 
                 $.each(tabModel.tabs, function (i, tab) {
                         tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
@@ -99,20 +124,26 @@ define(['jquery', 'jqueryui'], function ($) {
                         tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
                         );
                         $("#eexcess-tabBar-jQueryTabsContent").append(
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                             tab.renderedContent
-                        );
-                        // following 3 functions derived from jQuery-UI Tabs
+                            );
+                    // following 3 functions derived from jQuery-UI Tabs
 
-                        $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-                        $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
-                        $jQueryTabsHeader.tabs("refresh");
-                        $iframeCover.hide();
+                    $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                    $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
+                    $jQueryTabsHeader.tabs("refresh");
+                    $jQueryTabsHeader.tabs({active: 0});
+                    $iframeCover.hide();
 
-                    }
+                }
                 )
             });
 
 
+<<<<<<< HEAD
 // check which tab is activated as Dashboard needs a minSize of 800px to display properly (translates
 // into 950 px with the jqueryUiTabs)
             $jQueryTabsHeader.tabs({
@@ -127,12 +158,18 @@ define(['jquery', 'jqueryui'], function ($) {
                     }
                 }
             });
+=======
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
 
 
 // adding resize functionality
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
                 minWidth: 250,
                 alsoResize: $iframeCover
             });
@@ -142,49 +179,62 @@ define(['jquery', 'jqueryui'], function ($) {
             });
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
 // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
             $jQueryTabsHeader.on("resizestart", function (event, ui) {
+
                 $iframeCover.show();
             });
-            $contentArea.on("dragstart", function (event, ui) {
+            $contentArea.on("dragstart", function(event, ui) {
                 $iframeCover.show();
             });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
 //storing new values and hide iframeCover after size has been changed
             $jQueryTabsHeader.on("resizestop", function (event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
-                storage.set({'resizeHeight': heightToStore}, function (result) {
+                storage.set({'resizeHeight': heightToStore}, function(result) {
                 });
-                storage.set({'resizeWidth': widthToStore}, function (result) {
+                storage.set({'resizeWidth': widthToStore}, function(result) {
                 });
 
                 //whenever a resize happens, but not a drag, the jQueryHeader position changes in another way than
                 // the contentAreas position (due to jquery's alsoResize disregarding top and left). Therefore the
                 // header's offset is stored as the new position.
                 var positionToStore = $jQueryTabsHeader.offset();
-                storage.set({'dragPosition': positionToStore}, function (result) {
+                storage.set({'dragPosition': positionToStore}, function(result) {
                 });
                 $iframeCover.hide();
             });
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6b040b75625d416c2a081a1d44f71f453d8e386
 //storing new values and hide iframeCover after position has been changed
             $contentArea.on("dragstop", function (event, ui) {
                 var positionToStore = $contentArea.position();
-                storage.set({'dragPosition': positionToStore}, function (result) {
+                storage.set({'dragPosition': positionToStore}, function(result) {
                 });
                 $iframeCover.hide();
             });
 
-            $(function () {
-                form.submit(function (evt) {
+            $(function() {
+                form.submit(function(evt) {
                     evt.preventDefault();
                     var profile = {
                         contextKeywords: [{text: $('#eexcess_search').val(), weight: 1}]
                     };
                     triggerFunction(profile);
                 });
-                bar.append(form);
-                toggler.click(function (e) {
+                //bar.append(form);
+                toggler.click(function(e) {
                     e.preventDefault();
                     if ($(this).text() === $("<div>").html("&uArr;").text()) {
                         $(this).text($("<div>").html("&dArr;").text());
@@ -195,7 +245,7 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 });
 
-                resetToggle.click(function (e) {
+                resetToggle.click(function(e) {
                     $contentArea.removeAttr('style');
                     $jQueryTabsHeader.removeAttr('style');
                     storage.remove('resizeHeight');
@@ -204,11 +254,68 @@ define(['jquery', 'jqueryui'], function ($) {
 
                 });
 
+
+                var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
+                bar.append(selectmenu);
+                selectmenu.change(function(e){
+                    var type = $(this).children(':selected').text().toLowerCase();
+                    if(type !== 'all') {
+                        $.each(taglist.tagit('getTags'), function(){
+                            if($(this).data('properties').type === type) {
+                                $(this).css('opacity','1.0');
+                            } else {
+                                $(this).css('opacity','0.4');
+                            }
+                        });
+                    } else {
+                        $(taglist.tagit('getTags').css('opacity','1.0'));
+                    }
+                });
+
+                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e){
+                    var tags = taglist.tagit('assignedTags');
+                    
+                    var profile = {
+                        contextKeywords: []
+                    };
+                    $.each(tags,function(){
+                        profile.contextKeywords.push({text:this,weight:1});
+                    });
+                    triggerFunction(profile);
+                }));
+                
+                
+                //bar.append(mainTopic);
+                
+                taglist.tagit({
+                    allowSpaces: true,
+                    placeholderText: 'add keyword',
+                    onTagClicked: function(e, ui) {
+                        if($(ui.tag[0]).css('opacity') === '0.4') {
+                            $(ui.tag[0]).css('opacity','1.0');
+                        } else {
+                            $(ui.tag[0]).css('opacity','0.4');
+                        }
+                    }
+                });
+                bar.append(taglist);
+                taglist.children('.tagit-new').addClass('no_bg');
                 bar.append(toggler, resetToggle);
                 $('body').append(bar);
             });
         },
-        show: function () {
+        setLabels: function(entities) {
+            taglist.tagit('removeAll');
+            for (var type in entities) {
+                if (entities.hasOwnProperty(type)) {
+                    $.each(entities[type], function() {
+                        this['type'] = type;
+                        taglist.tagit('createTag', this.text, this);
+                    });
+                }
+            }
+        },
+        show: function() {
             if (!contentArea.is(':visible')) {
                 toggler.click();
             }
