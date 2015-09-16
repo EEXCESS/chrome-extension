@@ -216,7 +216,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 }));
                 
                 
-                bar.append(mainTopic);
+                //bar.append(mainTopic);
                 
                 taglist.tagit({
                     allowSpaces: true,
