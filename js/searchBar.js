@@ -116,20 +116,6 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             });
 
 
-// check which tab is activated as Dashboard needs a minSize of 800px to display properly (translates
-// into 950 px with the jqueryUiTabs)
-            $jQueryTabsHeader.tabs({
-                activate: function (event, ui) {
-                    if (ui.newPanel.attr('id') == "tabs-3") {
-                        //$jQueryTabsHeader.resizable("option", "minWidth", 800);
-                        $jQueryTabsHeader.width(800);
-                        $jQueryTabsHeader.resize();
-                    }
-                    else {
-                        $jQueryTabsHeader.resizable("option", "minWidth", 250);
-                    }
-                }
-            });
 
 
 // adding resize functionality
