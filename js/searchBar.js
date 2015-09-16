@@ -71,14 +71,6 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                         }
                         , {
                             "id": "2",
-                            "name": "PowerSearch",
-                            //"icon": "icon.png",
-                            "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }, {
-                            "id": "3",
                             "name": "Dashboard",
                             //"icon": "icon.png",
                             "content": '<iframe src="' +
@@ -86,7 +78,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                             "renderedHead": "",
                             "renderedContent": ""
                         }, {
-                            "id": "4",
+                            "id": "3",
                             "name": "FacetScape",
                             //"icon": "icon.png",
                             "content": '<iframe src="'
