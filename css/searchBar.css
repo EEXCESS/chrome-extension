@@ -314,7 +314,7 @@ font-variant-ligatures: normal;
 font-weight: normal;
 glyph-orientation-horizontal: 0deg;
 glyph-orientation-vertical: auto;
-height: 30px;
+height: 40px;
 image-rendering: auto;
 isolation: auto;
 justify-content: start;
@@ -1973,4 +1973,31 @@ zoom: 1;
 
 .no_bg {
     background-color: rgba(0,0,0,0) !important;
+}
+
+#eexcess_mainTopic {
+    display:inline;
+    float:left;
+    text-align: center;
+    padding-top: 6px;
+    padding-right:8px;
+    padding-left:8px;
+    background-color:rgba(255,255,255,0.7);
+    border-radius:5px 5px 0px 0px;
+    height:100%;
+}
+
+#eexcess_mainTopicLabel{
+        margin: 0;
+    padding: 0;
+    font-size: 15px;
+    color: white;
+}
+
+#eexcess_mainTopicDesc{
+    margin: 0;
+    padding: 0;
+    opacity:0.8;
+    margin-top:6px;
+    border-top:1px solid gray;
 }

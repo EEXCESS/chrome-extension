@@ -8,12 +8,13 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
     var contentArea = $("<div id = 'contentArea'><div id='iframeCover'></div><div id='jQueryTabsHeader'><ul></ul><div id = 'jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div id="searchBar" ' +
-            ' style="position:fixed;width:100%;height:30px;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
+            ' style="position:fixed;width:100%;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
     var taglist = $('<ul id="taglist"></ul>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
     var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
     var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
+    var mainTopic = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel">Liestal</p><p id="eexcess_mainTopicDesc">main topic(s)</p></div>');
 
     var $jQueryTabsHeader = $("#jQueryTabsHeader");
     var $iframeCover = $("#iframeCover");
@@ -184,6 +185,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
                 });
 
+
                 var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
                 bar.append(selectmenu);
                 selectmenu.change(function(e){
@@ -212,6 +214,10 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                     });
                     triggerFunction(profile);
                 }));
+                
+                
+                bar.append(mainTopic);
+                
                 taglist.tagit({
                     allowSpaces: true,
                     placeholderText: 'add keyword',
