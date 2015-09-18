@@ -234,6 +234,10 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 taglist.tagit({
                     allowSpaces: true,
                     placeholderText: 'add keyword',
+                    tagLimit:17,
+                    onTagLimitExceeded: function(e,ui){
+                        // TODO: inform the user
+                    },
                     onTagClicked: function(e, ui) {
                         if($(ui.tag[0]).css('opacity') === '0.4') {
                             $(ui.tag[0]).css('opacity','1.0');
