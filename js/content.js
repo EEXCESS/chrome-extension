@@ -94,9 +94,9 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
     $(document).on('paragraphFocused', function(evt) {
         if (lastY < $(window).scrollTop() + $(window).height() - 90) {
             p.forEach(function(v1) {
-                $(v1.elements[0]).parent().css('border', '1px solid green');
+                $(v1.elements[0]).parent().css('border', '1px solid gray');
             });
-            $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid red');
+            $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid green');
             console.log(evt.originalEvent.detail);
             if (evt.originalEvent.detail.entities) {
                 searchBar.setLabels(evt.originalEvent.detail.entities);
