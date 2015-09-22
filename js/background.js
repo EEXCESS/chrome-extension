@@ -1,5 +1,6 @@
 require(['./common'], function(common) {
     require(['c4/APIconnector'], function(APIconnector) {
+        APIconnector.init({base_url:'http://eexcess-demo.know-center.tugraz.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'});
         var msgAllTabs = function(msg) {
             chrome.tabs.query({}, function(tabs) {
                 for (var i = 0, len = tabs.length; i < len; i++) {

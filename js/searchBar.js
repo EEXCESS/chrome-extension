@@ -4,6 +4,7 @@
  * @module c4/searchBar
  */
 define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
+    var mainTopic;
 
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
@@ -14,7 +15,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
     var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
     var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
     var storage = chrome.storage.local;
-    var mainTopic = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel">Liestal</p><p id="eexcess_mainTopicDesc">main topic(s)</p></div>');
+    var mainTopicDiv = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel"></p><p id="eexcess_mainTopicDesc">main topic</p></div>');
 
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
@@ -87,6 +88,13 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
                             "renderedHead": "",
                             "renderedContent": ""
+                        }, {
+                            id:4,
+                            name:"PowerSearch",
+                            "content":'<iframe src="' +
+                                    chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
+                            "renderedHead":"",
+                            "renderedContent":""
                         }
                     ]
                 };
@@ -217,19 +225,33 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 });
 
                 bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e){
-                    var tags = taglist.tagit('assignedTags');
-                    
+                    var tags = taglist.tagit('getTags');
                     var profile = {
                         contextKeywords: []
                     };
+                    var mainTopicSet = false;
                     $.each(tags,function(){
-                        profile.contextKeywords.push({text:this,weight:1});
+                        var keyword = $(this).data('properties');
+                        delete keyword.confidence;
+                        delete keyword.weight;
+                        if(mainTopic && keyword.text === mainTopic.text) {
+                            keyword.isMainTopic = true;
+                            mainTopicSet = true;
+                        } else {
+                            keyword.isMainTopic = false;
+                        }
+                        if(!mainTopicSet && mainTopic) {
+                            profile.contextKeywords.push(mainTopic);
+                        }
+                        profile.contextKeywords.push(keyword);
                     });
+                    // TODO: set main topic flag
+                    console.log(profile);
                     triggerFunction(profile);
                 }));
                 
                 
-                //bar.append(mainTopic);
+                bar.append(mainTopicDiv);
                 
                 taglist.tagit({
                     allowSpaces: true,
@@ -248,13 +270,21 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 $('body').append(bar);
             });
         },
+        setMainTopic:function(entity) {
+            delete entity.weight;
+            delete entity.confidence;
+            mainTopic = entity;
+            $('#eexcess_mainTopicLabel').text(entity.text);
+        },
         setLabels: function(entities) {
             taglist.tagit('removeAll');
             for (var type in entities) {
                 if (entities.hasOwnProperty(type)) {
                     $.each(entities[type], function() {
                         this['type'] = type;
+                        if(!mainTopic || mainTopic.text !== this.text) {
                         taglist.tagit('createTag', this.text, this);
+                        }
                     });
                 }
             }
