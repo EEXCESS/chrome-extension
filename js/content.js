@@ -4,7 +4,11 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
         iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
         searchBar.show();
     });
-    window.onmessage = function(e) {
+    window.onmessage = function(msg) {
+        if (msg.data.event && msg.data.event === 'eexcess.queryTriggered') {
+            chrome.runtime.sendMessage({method: 'triggerQuery', data: msg.data.data});
+            iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: msg.data.data});
+        }
         // console.log(e.data);
         // do something
     };
@@ -98,17 +102,18 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
                 $(v1.elements[0]).parent().css('border', '1px solid silver');
             });
             $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid green');
-            if(evt.originalEvent.detail.mainTopic) {
+            if (evt.originalEvent.detail.topic) {
+                // TODO: adapt
                 searchBar.setMainTopic({
-                   uri: evt.originalEvent.detail.mainTopic,
-                   text:evt.originalEvent.detail.mainTopic.slice(28).replace(/_/g," "),
-                   isMainTopic:true
+                    uri: evt.originalEvent.detail.topic.entityUri,
+                    text: evt.originalEvent.detail.mainTopic.text,
+                    isMainTopic: true
                 });
             }
             if (evt.originalEvent.detail.entities) {
                 searchBar.setLabels(evt.originalEvent.detail.entities);
-            } 
-        } 
+            }
+        }
     });
 
 
