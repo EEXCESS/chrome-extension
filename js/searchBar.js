@@ -4,8 +4,6 @@
  * @module c4/searchBar
  */
 define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
-    var mainTopic;
-
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div id="searchBar" ' +
@@ -65,8 +63,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                             // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
 
                             "content": '<iframe src="' +
-
-                            chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
+                                    chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }
@@ -75,7 +72,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                             "name": "Dashboard",
                             //"icon": "icon.png",
                             "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
+                                    chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }, {
@@ -83,32 +80,30 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                             "name": "FacetScape",
                             //"icon": "icon.png",
                             "content": '<iframe src="'
-                            +
-                            chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
-
+                                    +
+                                    chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
                             "renderedHead": "",
                             "renderedContent": ""
                         }, {
-                            id:4,
-                            name:"PowerSearch",
-                            "content":'<iframe src="' +
+                            id: 4,
+                            name: "PowerSearch",
+                            "content": '<iframe src="' +
                                     chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
-                            "renderedHead":"",
-                            "renderedContent":""
+                            "renderedHead": "",
+                            "renderedContent": ""
                         }
                     ]
                 };
 
 
-                $.each(tabModel.tabs, function (i, tab) {
-                        tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                        $("#eexcess-tabBar-jQueryTabsHeader ul").append(
+                $.each(tabModel.tabs, function(i, tab) {
+                    tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                    $("#eexcess-tabBar-jQueryTabsHeader ul").append(
                             tab.renderedHead);
-                        // add tab content corresponding to tab titles
-                        tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
-                        );
-                        $("#eexcess-tabBar-jQueryTabsContent").append(
-
+                    // add tab content corresponding to tab titles
+                    tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
+                            );
+                    $("#eexcess-tabBar-jQueryTabsContent").append(
                             tab.renderedContent
                             );
                     // following 3 functions derived from jQuery-UI Tabs
@@ -130,7 +125,6 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
-
                 minWidth: 250,
                 alsoResize: $iframeCover
             });
@@ -142,7 +136,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
 
 // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
-            $jQueryTabsHeader.on("resizestart", function (event, ui) {
+            $jQueryTabsHeader.on("resizestart", function(event, ui) {
 
                 $iframeCover.show();
             });
@@ -152,7 +146,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
 
 //storing new values and hide iframeCover after size has been changed
-            $jQueryTabsHeader.on("resizestop", function (event, ui) {
+            $jQueryTabsHeader.on("resizestop", function(event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
                 storage.set({'resizeHeight': heightToStore}, function(result) {
@@ -170,7 +164,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
             });
 
 //storing new values and hide iframeCover after position has been changed
-            $contentArea.on("dragstop", function (event, ui) {
+            $contentArea.on("dragstop", function(event, ui) {
                 var positionToStore = $contentArea.position();
                 storage.set({'dragPosition': positionToStore}, function(result) {
                 });
@@ -209,58 +203,49 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
                 var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
                 bar.append(selectmenu);
-                selectmenu.change(function(e){
+                selectmenu.change(function(e) {
                     var type = $(this).children(':selected').text().toLowerCase();
-                    if(type !== 'all') {
-                        $.each(taglist.tagit('getTags'), function(){
-                            if($(this).data('properties').type === type) {
-                                $(this).css('opacity','1.0');
+                    if (type !== 'all') {
+                        $.each(taglist.tagit('getTags'), function() {
+                            if ($(this).data('properties').type.toLowerCase() + 's' === type) {
+                                $(this).css('opacity', '1.0');
                             } else {
-                                $(this).css('opacity','0.4');
+                                $(this).css('opacity', '0.4');
                             }
                         });
                     } else {
-                        $(taglist.tagit('getTags').css('opacity','1.0'));
+                        $(taglist.tagit('getTags').css('opacity', '1.0'));
                     }
                 });
 
-                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e){
+                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e) {
                     var tags = taglist.tagit('getTags');
                     var profile = {
                         contextKeywords: []
                     };
-                    var mainTopicSet = false;
-                    $.each(tags,function(){
-                        var keyword = $(this).data('properties');
-                        delete keyword.confidence;
-                        delete keyword.weight;
-                        if(mainTopic && keyword.text === mainTopic.text) {
-                            keyword.isMainTopic = true;
-                            mainTopicSet = true;
-                        } else {
-                            keyword.isMainTopic = false;
-                        }
-                        if(!mainTopicSet && mainTopic) {
-                            profile.contextKeywords.push(mainTopic);
-                        }
-                        profile.contextKeywords.push(keyword);
+                    $.each(tags, function() {
+                        profile.contextKeywords.push($(this).data('properties'));
                     });
-                    // TODO: set main topic flag
+                    // add main topic (TODO: support multiple topics? topic-attributes)
+                    var mainTopicText = $('#eexcess_mainTopicLabel').text();
+                    if (mainTopicText !== '') {
+                        profile.contextKeywords.push({isMainTopic: true, text: mainTopicText});
+                    }
                     console.log(profile);
                     triggerFunction(profile);
                 }));
-                
-                
+
+
                 bar.append(mainTopicDiv);
-                
+
                 taglist.tagit({
                     allowSpaces: true,
                     placeholderText: 'add keyword',
                     onTagClicked: function(e, ui) {
-                        if($(ui.tag[0]).css('opacity') === '0.4') {
-                            $(ui.tag[0]).css('opacity','1.0');
+                        if ($(ui.tag[0]).css('opacity') === '0.4') {
+                            $(ui.tag[0]).css('opacity', '1.0');
                         } else {
-                            $(ui.tag[0]).css('opacity','0.4');
+                            $(ui.tag[0]).css('opacity', '0.4');
                         }
                     }
                 });
@@ -270,24 +255,17 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 $('body').append(bar);
             });
         },
-        setMainTopic:function(entity) {
-            delete entity.weight;
-            delete entity.confidence;
-            mainTopic = entity;
-            $('#eexcess_mainTopicLabel').text(entity.text);
-        },
-        setLabels: function(entities) {
+        setQuery: function(contextKeywords) {
             taglist.tagit('removeAll');
-            for (var type in entities) {
-                if (entities.hasOwnProperty(type)) {
-                    $.each(entities[type], function() {
-                        this['type'] = type;
-                        if(!mainTopic || mainTopic.text !== this.text) {
-                        taglist.tagit('createTag', this.text, this);
-                        }
-                    });
+            $.each(contextKeywords, function() {
+                if (this.isMainTopic) {
+                    // TODO: support multiple topics?
+                    // TODO: topic attributes
+                    $('#eexcess_mainTopicLabel').text(this.text);
+                } else {
+                    taglist.tagit('createTag', this.text, this);
                 }
-            }
+            });
         },
         show: function() {
             if (!contentArea.is(':visible')) {
@@ -298,7 +276,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
 
 
 })
-;
+        ;
 
 
 

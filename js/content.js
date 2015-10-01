@@ -1,7 +1,7 @@
 require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     searchBar.init(function(profile) {
         chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-        iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
+        iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: profile});
         searchBar.show();
     });
     window.onmessage = function(msg) {
@@ -15,24 +15,9 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
 
     // detect paragraphs
     var p = paragraphDetection.getParagraphs();
+    console.log('PARAGRAPHS');
+    console.log(p);
 
-
-//    EexcessSite.init();
-//    EexcessSite.setParagraphs(p);
-
-    // enrich paragraphs with entities
-    ner.entitiesAndCategories(p.map(function(par) {
-        return {
-            id: par.id,
-            headline: par.headline,
-            content: par.content
-        };
-    }), function(result) {
-        console.log(result);
-        if (result.status && result.status === 'success') {
-            paragraphDetection.enrichParagraphs(p, result.data.paragraphs);
-        }
-    });
 
     // selection listener
 //    $(document).mouseup(function() {
@@ -91,27 +76,46 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
     });
 
     var lastY = 0;
-
     $(document).mousemove(function(e) {
         lastY = e.pageY;
     });
-
+    var focusedParagraph;
     $(document).on('paragraphFocused', function(evt) {
+        // prevent focused paragraph updates when the user moves the mouse down to the searchbar
         if (lastY < $(window).scrollTop() + $(window).height() - 90) {
+            console.log('paragraph focused');
+            // set focused paragraph variable
+            focusedParagraph = evt.originalEvent.detail;
+            // reset border on all paragraphs
             p.forEach(function(v1) {
                 $(v1.elements[0]).parent().css('border', '1px solid silver');
             });
-            $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid green');
-            if (evt.originalEvent.detail.topic) {
-                // TODO: adapt
-                searchBar.setMainTopic({
-                    uri: evt.originalEvent.detail.topic.entityUri,
-                    text: evt.originalEvent.detail.mainTopic.text,
-                    isMainTopic: true
-                });
+            // green border for focused paragraph
+            $(focusedParagraph.elements[0]).parent().css('border', '2px solid green');
+            // check if entities have already been extracted for paragraph
+            var entitiesExracted = false;
+            var tmp_idx;
+            for (var i = 0; i < p.length; i++) {
+                if (p[i].id === focusedParagraph.id) {
+                    if (typeof p[i].query !== 'undefined') {
+                        entitiesExracted = true;
+                    }
+                    tmp_idx = i;
+                    break;
+                }
             }
-            if (evt.originalEvent.detail.entities) {
-                searchBar.setLabels(evt.originalEvent.detail.entities);
+            if (entitiesExracted) {
+                searchBar.setQuery(p[tmp_idx].query.contextKeywords);
+            } else {
+                paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).text(), function(res) {
+                    if(typeof res.query !== 'undefined') {
+                        p[tmp_idx].query = res.query;
+                        searchBar.setQuery(res.query.contextKeywords);
+                    } else {
+                        // TODO: error handling?
+                        // optional error message in res.error
+                    }
+                });
             }
         }
     });
