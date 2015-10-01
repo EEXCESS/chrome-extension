@@ -112,15 +112,21 @@
     border: none;
 }
 
-#taglist {
+#eexcess_taglist {
     margin:0;
-    background:rgba(0,0,0,1.0);
+    background:rgba(0,0,0,0);
     border:none;
     float:left;
     margin-top:1px;
 }
 
-.tagit-label {
+
+
+.ui-icon-close {
+    background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
+}
+
+#eexcess_searchBar.tagit-label {
     color:rgb(85,85,85) !important;
     font-size: 9pt;
     font-weight: normal;
@@ -129,11 +135,7 @@
     padding:0;
 }
 
-.ui-icon-close {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
-}
-
-.tagit-choice {
+#eexcess_searchBar.tagit-choice {
     padding-bottom: 2.2px !important;  
     padding-top: 2.2px !important;  
     padding-left: 5.5px !important;  
@@ -141,7 +143,7 @@
     line-height: normal !important;    
 }
 
-.tagit-new {
+#eexcess_searchBar.tagit-new {
     padding:0 !important;
     margin: 1px 5px 2px 0px !important;
     background-color: rgba(0,0,0,1.0) !important;
@@ -150,39 +152,25 @@
     height:24px;
 }
 
-input.ui-widget-content {
-    background-image:none;
-    color:white;
-    padding:0;
-    margin:0;
-    font-size: 13px;
-    font-weight:normal;
+.eexcess_BoxShadowHelper(@level: 1){
+	    & when (@level = 1) {
+	        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	    }
+	    & when (@level = 2) {
+	        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	    }
+	    & when (@level = 3) {
+	        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+	    }
+	    & when (@level = 4) {
+	        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	    }
+	    & when (@level = 5) {
+	        box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+	    }
 }
 
-#selectmenu {
-    float:left;
-    margin-top: 3px;
-    background-color:black;
-    color:white;
-    font-weight: normal;
-}
-
-#searchbutton {
-    font-weight: normal;
-    float:left;
-    margin-left: 5px;
-    margin-top: 4px;
-    width:30px;
-    height:20px;
-    color: rgb(85,85,85);
-    text-align: center;
-    padding: 0;
-}
-
-#taglist {
-    background-color: rgba(0,0,0,0);
-}
-#searchBar {
+#eexcess_searchBar {
     -webkit-app-region: no-drag;
 -webkit-appearance: none;
 -webkit-background-composite: source-over;
@@ -262,7 +250,7 @@ backface-visibility: visible;
 background-attachment: scroll;
 background-blend-mode: normal;
 background-clip: border-box;
-background-color: rgba(0, 0, 0,0.6);
+background-color: rgba(244, 244, 244,0.9);
 background-image: none;
 background-origin: padding-box;
 background-position: 0% 0%;
@@ -293,7 +281,7 @@ border-top-right-radius: 0px;
 border-top-style: none;
 border-top-width: 0px;
 bottom: 0px;
-box-shadow: none;
+box-shadow: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
 box-sizing: content-box;
 buffered-rendering: auto;
 caption-side: top;
@@ -334,7 +322,6 @@ font-variant-ligatures: normal;
 font-weight: normal;
 glyph-orientation-horizontal: 0deg;
 glyph-orientation-vertical: auto;
-height: 40px;
 image-rendering: auto;
 isolation: auto;
 justify-content: start;
@@ -356,7 +343,7 @@ mask: none;
 mask-type: luminance;
 max-height: none;
 max-width: none;
-min-height: 0px;
+min-height: 30px;
 min-width: 0px;
 mix-blend-mode: normal;
 object-fit: fill;
@@ -440,7 +427,7 @@ z-index: 99999;
 zoom: 1;
 }
 
-#selectmenu {
+#eexcess_selectmenu {
     -webkit-app-region: no-drag;
 -webkit-appearance: menulist-button;
 -webkit-background-composite: source-over;
@@ -461,7 +448,7 @@ zoom: 1;
 -webkit-column-break-inside: auto;
 -webkit-column-count: auto;
 -webkit-column-gap: normal;
--webkit-column-rule-color: rgb(255, 255, 255);
+-webkit-column-rule-color: #484847;
 -webkit-column-rule-style: none;
 -webkit-column-rule-width: 0px;
 -webkit-column-span: none;
@@ -490,16 +477,16 @@ zoom: 1;
 -webkit-mask-size: auto;
 -webkit-print-color-adjust: economy;
 -webkit-rtl-ordering: logical;
--webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+-webkit-tap-highlight-color: #484847;
 -webkit-text-combine: none;
 -webkit-text-decorations-in-effect: none;
--webkit-text-emphasis-color: rgb(255, 255, 255);
+-webkit-text-emphasis-color: #484847;
 -webkit-text-emphasis-position: over;
 -webkit-text-emphasis-style: none;
--webkit-text-fill-color: rgb(255, 255, 255);
+-webkit-text-fill-color: #484847;
 -webkit-text-orientation: vertical-right;
 -webkit-text-security: none;
--webkit-text-stroke-color: rgb(255, 255, 255);
+-webkit-text-stroke-color: #484847;
 -webkit-text-stroke-width: 0px;
 -webkit-user-drag: auto;
 -webkit-user-modify: read-only;
@@ -559,7 +546,7 @@ clear: none;
 clip: auto;
 clip-path: none;
 clip-rule: nonzero;
-color: rgb(255, 255, 255);
+color: #484847;
 color-interpolation: sRGB;
 color-interpolation-filters: linearRGB;
 color-rendering: auto;
@@ -598,7 +585,7 @@ isolation: auto;
 justify-content: start;
 left: auto;
 letter-spacing: normal;
-lighting-color: rgb(255, 255, 255);
+lighting-color: #484847;
 line-height: normal;
 list-style-image: none;
 list-style-position: outside;
@@ -622,7 +609,7 @@ object-position: 50% 50%;
 opacity: 1;
 order: 0;
 orphans: auto;
-outline-color: rgb(255, 255, 255);
+outline-color: #484847;
 outline-offset: 0px;
 outline-style: none;
 outline-width: 0px;
@@ -698,7 +685,7 @@ z-index: auto;
 zoom: 1;
 }
 
-#searchbutton {
+#eexcess_searchbutton {
     -webkit-app-region: no-drag;
 -webkit-appearance: none;
 -webkit-background-composite: source-over;
@@ -959,7 +946,7 @@ zoom: 1;
 
 
 
-.tagit-new {
+#eexcess_searchBar.tagit-new {
     -webkit-app-region: no-drag;
 -webkit-appearance: none;
 -webkit-background-composite: source-over;
@@ -1217,7 +1204,7 @@ z-index: auto;
 zoom: 1;
 }
 
-input.ui-widget-content {
+#eexcess_searchBar input.ui-widget-content {
     -webkit-app-region: no-drag;
 -webkit-appearance: none;
 -webkit-background-composite: source-over;

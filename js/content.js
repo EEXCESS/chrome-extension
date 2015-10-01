@@ -91,7 +91,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
                 $(v1.elements[0]).parent().css('border', '1px solid silver');
             });
             // green border for focused paragraph
-            $(focusedParagraph.elements[0]).parent().css('border', '2px solid green');
+            $(focusedParagraph.elements[0]).parent().css('border', '2px solid #1d904e');
             // check if entities have already been extracted for paragraph
             var entitiesExracted = false;
             var tmp_idx;

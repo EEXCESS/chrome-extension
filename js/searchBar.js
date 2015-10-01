@@ -6,9 +6,9 @@
 define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
-    var bar = $('<div id="searchBar" ' +
+    var bar = $('<div id="eexcess_searchBar" ' +
             ' style="position:fixed;width:100%;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
-    var taglist = $('<ul id="taglist"></ul>');
+    var taglist = $('<ul id="eexcess_taglist"></ul>');
     var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
     var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
     var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
@@ -201,7 +201,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                 });
 
 
-                var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
+                var selectmenu = $('<select id="eexcess_selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
                 bar.append(selectmenu);
                 selectmenu.change(function(e) {
                     var type = $(this).children(':selected').text().toLowerCase();
@@ -218,7 +218,7 @@ define(['jquery', 'jquery-ui', 'tag-it'], function($, ui, tagit) {
                     }
                 });
 
-                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function(e) {
+                bar.append($('<input type="submit" value="ok" id="eexcess_searchbutton" />').click(function(e) {
                     var tags = taglist.tagit('getTags');
                     var profile = {
                         contextKeywords: []
