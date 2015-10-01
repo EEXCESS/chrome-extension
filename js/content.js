@@ -20,26 +20,21 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
 
 
     // selection listener
-//    $(document).mouseup(function() {
-//        var selection = paragraphDetection.getSelection(p);
-//        if (selection.selection.length > 0) {
-//            var profile = {
-//                // TODO: split terms
-//                contextKeywords: [{
-//                        text: selection.selection,
-//                        weight: 1.0
-//                    }]
-//            };
-//            if (selection.entities) {
-//                profile.contextNamedEntities = selection.entities;
-//            }
-//            // TODO: provide reason
-//            chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-//            iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-//            searchBar.show();
-//        }
-//        console.log(selection);
-//    });
+    var selection;
+    $(document).mouseup(function() {
+        var tmp_selection = document.getSelection().toString();
+        if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
+            selection = tmp_selection;
+            paragraphDetection.paragraphToQuery(selection, function(res) {
+                if (typeof res.query !== 'undefined') {
+                    searchBar.setQuery(res.query.contextKeywords);
+                } else {
+                    // TODO: error handling?
+                    // optional error message in res.error
+                }
+            });
+        }
+    });
 
     // augment links
 //    $(function() {
@@ -108,7 +103,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
                 searchBar.setQuery(p[tmp_idx].query.contextKeywords);
             } else {
                 paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).text(), function(res) {
-                    if(typeof res.query !== 'undefined') {
+                    if (typeof res.query !== 'undefined') {
                         p[tmp_idx].query = res.query;
                         searchBar.setQuery(res.query.contextKeywords);
                     } else {
