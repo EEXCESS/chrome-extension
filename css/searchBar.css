@@ -126,7 +126,7 @@
     background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
 }
 
-#eexcess_searchBar.tagit-label {
+.tagit-label {
     color:rgb(85,85,85) !important;
     font-size: 9pt;
     font-weight: normal;
@@ -135,7 +135,7 @@
     padding:0;
 }
 
-#eexcess_searchBar.tagit-choice {
+.tagit-choice {
     padding-bottom: 2.2px !important;  
     padding-top: 2.2px !important;  
     padding-left: 5.5px !important;  
@@ -143,7 +143,7 @@
     line-height: normal !important;    
 }
 
-#eexcess_searchBar.tagit-new {
+.tagit-new {
     padding:0 !important;
     margin: 1px 5px 2px 0px !important;
     background-color: rgba(0,0,0,1.0) !important;
