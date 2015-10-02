@@ -1,23 +1,41 @@
 require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
-    searchBar.init(function(profile) {
-        chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-        iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: profile});
-        searchBar.show();
-    });
-    window.onmessage = function(msg) {
-        if (msg.data.event && msg.data.event === 'eexcess.queryTriggered') {
-            chrome.runtime.sendMessage({method: 'triggerQuery', data: msg.data.data});
-            iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: msg.data.data});
+    var tabs = [{
+            "id": "1",
+            "name": "SearchResultList",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
         }
-        // console.log(e.data);
-        // do something
-    };
+        , {
+            "id": "2",
+            "name": "Dashboard",
+            //"icon": "icon.png",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }, {
+            "id": "3",
+            "name": "FacetScape",
+            //"icon": "icon.png",
+            "content": '<iframe src="'
+                    +
+                    chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }, {
+            id: 4,
+            name: "PowerSearch",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }];
+    searchBar.init(tabs, chrome.extension.getURL('js/lib/c4/searchBar/img/'));
 
     // detect paragraphs
     var p = paragraphDetection.getParagraphs();
-    console.log('PARAGRAPHS');
-    console.log(p);
-
 
     // selection listener
     var selection;
@@ -51,34 +69,15 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
 //                );
 //    });
 
-    chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-        console.log(msg);
-        if (msg.method) {
-            switch (msg.method) {
-                case 'newResults':
-                    iframes.sendMsgAll({event: 'eexcess.newResults', data: msg.data});
-                    break;
-                case 'error':
-                    iframes.sendMsgAll({event: 'eexcess.error', data: msg.data});
-                    break;
-                default:
-                    console.log('unknown method');
-                    break;
-            }
-        } else {
-            console.log('method not specified');
-        }
-    });
-
     var lastY = 0;
     $(document).mousemove(function(e) {
         lastY = e.pageY;
     });
-    var focusedParagraph;
+    var focusedParagraph = {};
     $(document).on('paragraphFocused', function(evt) {
         // prevent focused paragraph updates when the user moves the mouse down to the searchbar
-        if (lastY < $(window).scrollTop() + $(window).height() - 90) {
-            console.log('paragraph focused');
+        // update only when focused paragraph changes
+        if (lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
             // set focused paragraph variable
             focusedParagraph = evt.originalEvent.detail;
             // reset border on all paragraphs
@@ -114,7 +113,5 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             }
         }
     });
-
-
     paragraphDetection.findFocusedParagraph();
 });
