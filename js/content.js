@@ -32,7 +32,13 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             "renderedHead": "",
             "renderedContent": ""
         }];
-    searchBar.init(tabs, chrome.extension.getURL('js/lib/c4/searchBar/img/'));
+    searchBar.init(tabs, chrome.extension.getURL('js/lib/c4/searchBar/img/'), function(queryProfile, callback) {
+        console.log(queryProfile);
+        chrome.runtime.sendMessage({method:'triggerQuery', data: queryProfile}, function(response) {
+            console.log(response);
+            callback(response);
+        });
+    });
 
     // detect paragraphs
     var p = paragraphDetection.getParagraphs();

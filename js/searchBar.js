@@ -7,6 +7,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     var results = {};
     var lastQuery = {};
     api.init({base_url: 'http://eexcess-demo.know-center.tugraz.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'}); // TODO: remove
+    var query = api.query;
     var imgPATH = 'img/';
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
@@ -75,7 +76,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: msg.data.data});
             result_indicator.hide();
             loader.show();
-            api.query(lastQuery, function(response) {
+            query(lastQuery, function(response) {
                 if (response.status === 'success') {
                     results = response.data;
                     loader.hide();
@@ -94,7 +95,10 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     };
 
     return {
-        init: function(tabs, imgPath) {
+        init: function(tabs, imgPath, queryFn) {
+            if (typeof queryFn !== 'undefined') {
+                query = queryFn;
+            }
             if (typeof imgPath !== 'undefined') {
                 imgPATH = imgPath;
             }
@@ -216,13 +220,14 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             loader.show();
             result_indicator.hide();
             lastQuery = {contextKeywords: contextKeywords};
-            api.query({contextKeywords: contextKeywords}, function(response) {
+            query({contextKeywords: contextKeywords}, function(response) {
                 if (response.status === 'success') {
                     results = response.data;
                     loader.hide();
                     result_indicator.text(response.data.totalResults + ' results');
                     result_indicator.show();
                 } else {
+                    loader.hide();
                     result_indicator.text('error');
                     result_indicator.show();
                 }

@@ -14,19 +14,8 @@ require(['./common'], function(common) {
             if (typeof msg.method !== 'undefined') {
                 switch (msg.method) {
                     case 'triggerQuery':
-                        console.log(msg.data);
-                        APIconnector.query(msg.data, function(response) {
-                            if (response.status === 'success') {
-                                msgAllTabs({
-                                    method: 'newResults',
-                                    data: response.data
-                                });
-                            } else {
-                                msgAllTabs({method: 'error', data: response.data});
-                            }
-                            console.log(response.status);
-                            console.log(response.data);
-                        });
+                        APIconnector.query(msg.data, sendResponse);
+                        return true;
                         break;
                     default:
                         console.log('unknown method: ' + msg.method);
