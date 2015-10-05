@@ -126,6 +126,14 @@
     background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
 }
 
+.mainTopicDropActive {
+    background-color:orange !important;
+}
+
+.mainTopicDropHover {
+    background-color:green !important;
+}
+
 #eexcess_logo {
     position:absolute;
     width:100px;
@@ -140,7 +148,8 @@
 #eexcess_result_indicator {
     text-decoration: none;
     font-weight: bold;
-    color: #FFA706;
+    color: #FFA706;    
+    -webkit-text-fill-color: #FFA706;
     font-size: 12px;
     position: absolute;
     right: 44px;
@@ -997,7 +1006,18 @@
     margin: 0;
     padding: 0;
     font-size: 15px;
-    color: white;
+    text-align:center;
+    border:none;
+    background-color:rgba(0,0,0,0.0);
+}
+
+.eexcess_hiddenLabelSpan{
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    text-align:center;
+    border:none;
+    background-color:rgba(0,0,0,0.0);
 }
 
 #eexcess_mainTopicDesc{

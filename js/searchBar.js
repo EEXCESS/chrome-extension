@@ -4,11 +4,39 @@
  * @module c4/searchBar
  */
 define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], function($, ui, tagit, api, iframes) {
+    var cachedMainTopicSize;
+    var util = {
+        cachedMainTopicSize:0,
+        resizeForText: function(text) {
+            var $this = $(this);
+            var $span = $this.parent().find('span');
+            $span.text(text);
+            var $inputSize = $span.width();
+            if ($this.width() < $inputSize) {
+                $this.css("width", $inputSize);
+            }
+        },
+        queryUpdater: function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                // get keywords
+                lastQuery.contextKeywords = taglist.tagit('getActiveTagsProperties');
+                // TODO: get main topic
+                settings.queryFn(lastQuery, resultHandler);
+            }, settings.queryModificationDelay);
+        },
+        test: function() {
+            console.log(this);
+        }
+    };
     var results = {};
     var lastQuery = {};
-    api.init({base_url: 'http://eexcess-demo.know-center.tugraz.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'}); // TODO: remove
-    var query = api.query;
-    var imgPATH = 'img/';
+    var settings = {
+        queryFn: api.query,
+        imgPATH: 'img/',
+        queryModificationDelay: 500,
+        queryDelay: 2000
+    };
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var bar = $('<div id="eexcess_searchBar"></div>');
@@ -16,9 +44,12 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     var logo;
     var loader;
     var result_indicator;
+    var timeout;
+    util.test();
 
     var selectmenu = $('<select id="eexcess_selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
     selectmenu.change(function(e) {
+        lastQuery = {contextKeywords: []};
         var type = $(this).children(':selected').text().toLowerCase();
         if (type !== 'all') {
             $.each(taglist.tagit('getTags'), function() {
@@ -31,11 +62,56 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         } else {
             $(taglist.tagit('getTags').css('opacity', '1.0'));
         }
+        loader.show();
+        result_indicator.hide();
+        util.queryUpdater();
     });
     left.append(selectmenu);
 
-    var mainTopicDiv = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel"></p><p id="eexcess_mainTopicDesc">main topic</p></div>');
+    var mainTopicDiv = $('<div id="eexcess_mainTopic"></div>');
+    mainTopicDiv.droppable({
+        activeClass: "mainTopicDropActive",
+        hoverClass: "mainTopicDropHover",
+        drop: function(event, ui) {
+            console.log(this);
+            console.log(event);
+            console.log(ui);
+            var label = $(ui.draggable[0]).data('properties').text;
+            $('#eexcess_mainTopicLabel').val(label);
+            taglist.tagit('removeTagByLabel', label);
+        }
+    });
     left.append(mainTopicDiv);
+    var mainTopicLabel = $('<input id="eexcess_mainTopicLabel" />');
+    mainTopicLabel.on('focus', function() {
+        var $this = $(this)
+                .one('mouseup.mouseupSelect', function() {
+            $this.select();
+            return false;
+        })
+                .one('mousedown', function() {
+            $this.off('mouseup.mouseupSelect');
+        })
+                .select();
+    });
+    mainTopicLabel.keypress(function(e) {
+        if (e.which && e.charCode) {
+            var c = String.fromCharCode(e.keyCode | e.charCode);
+            var $this = $(this);
+            util.resizeForText.call($this, $this.val() + c);
+        }
+    });
+//    mainTopicLabel.keyup(function (e) { 
+//        if (e.keyCode === 8 || e.keyCode === 46) {
+//            util.resizeForText.call($(this), $(this).val());
+//        }
+//    });
+    mainTopicDiv.append(mainTopicLabel);
+    var mainTopicLabelHidden = $('<span style="display:none" class="eexcess_hiddenLabelSpan"></span>');
+    mainTopicLabel.after(mainTopicLabelHidden);
+    var mainTopicDesc = $('<p id="eexcess_mainTopicDesc">main topic</p>');
+    mainTopicDiv.append(mainTopicDesc);
+
     var main = $('<div id="eexcess_barMain"></div>');
 
     var taglist = $('<ul id="eexcess_taglist" class="eexcess"></ul>');
@@ -44,6 +120,11 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         placeholderText: 'add keyword',
         beforeTagAdded: function(event, ui) {
             $(ui.tag).addClass('eexcess');
+            $(ui.tag).draggable({
+                revert: 'invalid',
+                scroll: false,
+                stack: '#eexcess_mainTopic'
+            });
         },
         onTagClicked: function(e, ui) {
             if ($(ui.tag[0]).css('opacity') === '0.4') {
@@ -67,8 +148,8 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     var tabModel = {
         tabs: []
     };
-    
-    
+
+
     window.onmessage = function(msg) {
         // visualization has triggered a query -> widgets must be visible
         if (msg.data.event && msg.data.event === 'eexcess.queryTriggered') {
@@ -76,7 +157,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: msg.data.data});
             result_indicator.hide();
             loader.show();
-            query(lastQuery, function(response) {
+            settings.queryFn(lastQuery, function(response) {
                 if (response.status === 'success') {
                     results = response.data;
                     loader.hide();
@@ -94,17 +175,25 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         // do something
     };
 
+    var resultHandler = function(response) {
+        if (response.status === 'success') {
+            results = response.data;
+            loader.hide();
+            result_indicator.text(response.data.totalResults + ' results');
+            result_indicator.show();
+        } else {
+            loader.hide();
+            result_indicator.text('error');
+            result_indicator.show();
+        }
+    };
+
     return {
-        init: function(tabs, imgPath, queryFn) {
-            if (typeof queryFn !== 'undefined') {
-                query = queryFn;
-            }
-            if (typeof imgPath !== 'undefined') {
-                imgPATH = imgPath;
-            }
-            logo = $('<img id="eexcess_logo" src="' + imgPATH + 'eexcess_Logo.png" />');
+        init: function(tabs, config) {
+            settings = $.extend(settings, config);
+            logo = $('<img id="eexcess_logo" src="' + settings.imgPATH + 'eexcess_Logo.png" />');
             right.append(logo);
-            loader = $('<img id="eexcess_loader" src="' + imgPATH + 'eexcess_loader.gif" />').hide();
+            loader = $('<img id="eexcess_loader" src="' + settings.imgPATH + 'eexcess_loader.gif" />').hide();
             right.append(loader);
             result_indicator = $('<a id="eexcess_result_indicator" href="#">16 results</a>').click(function(e) {
                 e.preventDefault();
@@ -212,26 +301,18 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 if (this.isMainTopic) {
                     // TODO: support multiple topics?
                     // TODO: topic attributes
-                    $('#eexcess_mainTopicLabel').text(this.text);
+                    $('#eexcess_mainTopicLabel').val(this.text).data('properties', this);
                 } else {
                     taglist.tagit('createTag', this.text, this);
                 }
             });
-            loader.show();
-            result_indicator.hide();
-            lastQuery = {contextKeywords: contextKeywords};
-            query({contextKeywords: contextKeywords}, function(response) {
-                if (response.status === 'success') {
-                    results = response.data;
-                    loader.hide();
-                    result_indicator.text(response.data.totalResults + ' results');
-                    result_indicator.show();
-                } else {
-                    loader.hide();
-                    result_indicator.text('error');
-                    result_indicator.show();
-                }
-            });
+            clearTimeout(timeout);
+            setTimeout(function() {
+                loader.show();
+                result_indicator.hide();
+                lastQuery = {contextKeywords: contextKeywords};
+                settings.queryFn({contextKeywords: contextKeywords}, resultHandler);
+            }, settings.queryDelay);
         }
     };
 });
