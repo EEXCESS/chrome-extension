@@ -25,7 +25,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 // get main topic
                 var mainTopic = mainTopicLabel.data('properties');
                 if (mainTopic.text && mainTopic.text !== '') {
-                    mainTopic.isMainTopic = true;
                     lastQuery.contextKeywords.push(mainTopic);
                 }
                 // query
@@ -33,6 +32,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             }, settings.queryModificationDelay);
         },
         setMainTopic: function(topic) {
+            topic.isMainTopic = true;
             mainTopicLabel.val(topic.text).data('properties', topic);
             this.resizeForText.call(mainTopicLabel, topic.text, true);
         }
@@ -105,8 +105,8 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     mainTopicLabel.keypress(function(e) {
         var $this = $(this);
         if (e.keyCode === 13) {
-            $this.data('properties', {text: $this.val()});
             $this.blur();
+            util.setMainTopic({text:$this.val()});
             util.queryUpdater();
         } else {
             if (e.which && e.charCode) {
