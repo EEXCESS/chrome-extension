@@ -36,7 +36,6 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
         imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
         queryFn: function(queryProfile, callback) {
             chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
-                console.log(response);
                 callback(response);
             });
         }});

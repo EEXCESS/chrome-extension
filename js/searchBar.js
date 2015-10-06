@@ -4,29 +4,37 @@
  * @module c4/searchBar
  */
 define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], function($, ui, tagit, api, iframes) {
-    var cachedMainTopicSize;
     var util = {
-        cachedMainTopicSize:0,
-        resizeForText: function(text) {
+        preventQuery: false,
+        resizeForText: function(text, minify) {
             var $this = $(this);
             var $span = $this.parent().find('span');
             $span.text(text);
             var $inputSize = $span.width();
-            if ($this.width() < $inputSize) {
+            if ($this.width() < $inputSize || minify) {
                 $this.css("width", $inputSize);
             }
         },
         queryUpdater: function() {
+            loader.show();
+            result_indicator.hide();
             clearTimeout(timeout);
             timeout = setTimeout(function() {
                 // get keywords
                 lastQuery.contextKeywords = taglist.tagit('getActiveTagsProperties');
-                // TODO: get main topic
+                // get main topic
+                var mainTopic = mainTopicLabel.data('properties');
+                if (mainTopic.text && mainTopic.text !== '') {
+                    mainTopic.isMainTopic = true;
+                    lastQuery.contextKeywords.push(mainTopic);
+                }
+                // query
                 settings.queryFn(lastQuery, resultHandler);
             }, settings.queryModificationDelay);
         },
-        test: function() {
-            console.log(this);
+        setMainTopic: function(topic) {
+            mainTopicLabel.val(topic.text).data('properties', topic);
+            this.resizeForText.call(mainTopicLabel, topic.text, true);
         }
     };
     var results = {};
@@ -45,7 +53,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     var loader;
     var result_indicator;
     var timeout;
-    util.test();
 
     var selectmenu = $('<select id="eexcess_selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
     selectmenu.change(function(e) {
@@ -62,8 +69,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         } else {
             $(taglist.tagit('getTags').css('opacity', '1.0'));
         }
-        loader.show();
-        result_indicator.hide();
         util.queryUpdater();
     });
     left.append(selectmenu);
@@ -72,13 +77,16 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     mainTopicDiv.droppable({
         activeClass: "mainTopicDropActive",
         hoverClass: "mainTopicDropHover",
+        accept: ".eexcess",
         drop: function(event, ui) {
-            console.log(this);
-            console.log(event);
-            console.log(ui);
-            var label = $(ui.draggable[0]).data('properties').text;
-            $('#eexcess_mainTopicLabel').val(label);
-            taglist.tagit('removeTagByLabel', label);
+            var tag = $(ui.draggable[0]).data('properties');
+            var old_topic = mainTopicLabel.data('properties');
+            util.preventQuery = true;
+            taglist.tagit('removeTagByLabel', tag.text);
+            util.preventQuery = false;
+            taglist.tagit('createTag', old_topic.text, old_topic);
+            util.setMainTopic(tag);
+            util.queryUpdater();
         }
     });
     left.append(mainTopicDiv);
@@ -95,17 +103,18 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 .select();
     });
     mainTopicLabel.keypress(function(e) {
-        if (e.which && e.charCode) {
-            var c = String.fromCharCode(e.keyCode | e.charCode);
-            var $this = $(this);
-            util.resizeForText.call($this, $this.val() + c);
+        var $this = $(this);
+        if (e.keyCode === 13) {
+            $this.data('properties', {text: $this.val()});
+            $this.blur();
+            util.queryUpdater();
+        } else {
+            if (e.which && e.charCode) {
+                var c = String.fromCharCode(e.keyCode | e.charCode);
+                util.resizeForText.call($this, $this.val() + c, false);
+            }
         }
     });
-//    mainTopicLabel.keyup(function (e) { 
-//        if (e.keyCode === 8 || e.keyCode === 46) {
-//            util.resizeForText.call($(this), $(this).val());
-//        }
-//    });
     mainTopicDiv.append(mainTopicLabel);
     var mainTopicLabelHidden = $('<span style="display:none" class="eexcess_hiddenLabelSpan"></span>');
     mainTopicLabel.after(mainTopicLabelHidden);
@@ -123,8 +132,25 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             $(ui.tag).draggable({
                 revert: 'invalid',
                 scroll: false,
-                stack: '#eexcess_mainTopic'
+                stack: '#eexcess_mainTopic',
+                appendTo: 'body',
+                start: function() {
+                    $(this).css('z-index', '100000');
+                },
+                stop: function() {
+                    $(this).css('z-index', '99999');
+                }
             });
+        },
+        afterTagAdded: function(e, ui) {
+            if (!util.preventQuery) {
+                util.queryUpdater();
+            }
+        },
+        afterTagRemoved: function(e, ui) {
+            if (!util.preventQuery) {
+                util.queryUpdater();
+            }
         },
         onTagClicked: function(e, ui) {
             if ($(ui.tag[0]).css('opacity') === '0.4') {
@@ -132,6 +158,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             } else {
                 $(ui.tag[0]).css('opacity', '0.4');
             }
+            util.queryUpdater();
         }
     });
     main.append(taglist);
@@ -296,16 +323,17 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
 
         },
         setQuery: function(contextKeywords) {
+            util.preventQuery = true;
             taglist.tagit('removeAll');
             $.each(contextKeywords, function() {
                 if (this.isMainTopic) {
                     // TODO: support multiple topics?
-                    // TODO: topic attributes
-                    $('#eexcess_mainTopicLabel').val(this.text).data('properties', this);
+                    util.setMainTopic(this);
                 } else {
                     taglist.tagit('createTag', this.text, this);
                 }
             });
+            util.preventQuery = false;
             clearTimeout(timeout);
             setTimeout(function() {
                 loader.show();

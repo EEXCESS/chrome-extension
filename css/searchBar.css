@@ -118,6 +118,7 @@
     border:none;
     float:left;
     margin-top:1px;
+    overflow: initial;
 }
 
 
