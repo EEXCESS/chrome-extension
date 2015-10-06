@@ -88,7 +88,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             focusedParagraph = evt.originalEvent.detail;
             // reset border on all paragraphs
             p.forEach(function(v1) {
-                $(v1.elements[0]).parent().css('border', '1px solid silver');
+                $(v1.elements[0]).parent().css('border', 'none');
             });
             // green border for focused paragraph
             $(focusedParagraph.elements[0]).parent().css('border', '2px solid #1d904e');

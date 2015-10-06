@@ -1028,3 +1028,12 @@
     margin-top:6px;
     border-top:1px solid gray;
 }
+
+#eexcess_taglistDesc{
+    margin: 0;
+    padding: 0;
+    opacity:0.8;
+    text-align:center;
+    clear:both;
+    margin-bottom:4px;
+}

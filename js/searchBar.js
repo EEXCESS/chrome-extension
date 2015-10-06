@@ -162,6 +162,8 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         }
     });
     main.append(taglist);
+    var taglistDesc = $('<p id="eexcess_taglistDesc">Drag and Drop keywords to change the main topic, click to (de)activate</p>');
+    taglist.after(taglistDesc);
 
     var right = $('<div id="eexcess_barRight"></div>');
     bar.append(left, main, right);
