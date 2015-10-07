@@ -2,8 +2,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
     var tabs = [{
             "id": "1",
             "name": "SearchResultList",
-            "content": '<iframe src="' +
-                    chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
+            "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
             "renderedHead": "",
             "renderedContent": ""
         }
@@ -11,24 +10,20 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             "id": "2",
             "name": "Dashboard",
             //"icon": "icon.png",
-            "content": '<iframe src="' +
-                    chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
+            "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html'),
             "renderedHead": "",
             "renderedContent": ""
         }, {
             "id": "3",
             "name": "FacetScape",
             //"icon": "icon.png",
-            "content": '<iframe src="'
-                    +
-                    chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+            "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
             "renderedHead": "",
             "renderedContent": ""
         }, {
             id: 4,
             name: "PowerSearch",
-            "content": '<iframe src="' +
-                    chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
+            "url": chrome.extension.getURL('visualization-widgets/PowerSearch/index.html'),
             "renderedHead": "",
             "renderedContent": ""
         }];
@@ -59,21 +54,6 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             });
         }
     });
-
-    // augment links
-//    $(function() {
-//        paragraphDetection.augmentLinks(
-//                $('.' + paragraphDetection.getSettings().classname),
-//                chrome.extension.getURL('media/icons/19.png'),
-//                function(profile) {
-//                    // TODO: provide reason
-//                    chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-//                    iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-//                    searchBar.show();
-//                },
-//                paragraphDetection.getSettings().classname, p
-//                );
-//    });
 
     var lastY = 0;
     $(document).mousemove(function(e) {

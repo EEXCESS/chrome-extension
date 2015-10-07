@@ -178,7 +178,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         tabs: []
     };
 
-
     window.onmessage = function(msg) {
         // visualization has triggered a query -> widgets must be visible
         if (msg.data.event && msg.data.event === 'eexcess.queryTriggered') {
@@ -200,8 +199,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 }
             });
         }
-        // console.log(e.data);
-        // do something
+        // TODO: handle other events?
     };
 
     var resultHandler = function(response) {
@@ -234,127 +232,91 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             }).hide();
             right.append(result_indicator);
 
-   //sets size and position of the tab area according to previous changes by the user stored in chrome
-    // local storage
-    $(function setSizeAndPosition() {
-        storage.get(null, function (result) {
+            //sets size and position of the tab area according to previous changes by the user stored in chrome
+            // local storage
+            $(function setSizeAndPosition() {
+                storage.get(null, function(result) {
+                    if (result.resizeWidth && result.dragPositionLeft) {
+                        $contentArea.css({
+                            "height": result.resizeHeight,
+                            "width": result.resizeWidth,
+                            "top": result.dragPositionTop,
+                            "left": result.dragPositionLeft
+                        });
 
-            if (result.resizeWidth && result.dragPositionLeft) {
-                $contentArea.css({
-                    "height": result.resizeHeight,
-                    "width": result.resizeWidth,
-                    "top": result.dragPositionTop,
-                    "left": result.dragPositionLeft
+                    }
+                    //should be expendable now that resizestop also stores position
+                    else if (result.resizeWidth && !result.dragPosition) {
+                        $contentArea.css({"height": result.resizeHeight, "width": result.resizeWidth});
+                    }
+                    else if (result.dragPositionLeft && !result.resizeWidth) {
+                        $contentArea.css({
+                            "top": result.dragPositionTop,
+                            "left": result.dragPositionLeft
+                        });
+                    }
                 });
-                //console.log("Pos&&Size: Left: "+ result.dragPositionLeft + " Top:" +result.dragPositionTop);
-
-            }
-            //should be expendable now that resizestop also stores position
-            else if (result.resizeWidth && !result.dragPosition) {
-
-                $contentArea.css({"height": result.resizeHeight, "width": result.resizeWidth});
-                //console.log("Size: Height: "+ result.resizeHeight + " Width:" +result.resizeWidth);
-            }
-            else if (result.dragPositionLeft && !result.resizeWidth) {
-                $contentArea.css({
-                    "top": result.dragPositionTop,
-                    "left": result.dragPositionLeft
-                });
-                //console.log("Pos: Left: "+ result.dragPositionLeft + " Top:" +result.dragPositionTop);
-            }
-        });
-
-    });
-
-
-
-
-
-            //generates jquery-ui tabs TODO: icons? and move into external json
-            tabModel.tabs = tabs;
-                            $.each(tabModel.tabs, function (i, tab) {
-                        tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
-                        $("#eexcess-tabBar-jQueryTabsHeader ul").append(
-                            tab.renderedHead);
-                        // add tab content corresponding to tab titles
-                        tab.renderedContent = $("<div id='tabs-" + tab.id + "'>" + tab.content + "</div>"
-                        );
-                        $("#eexcess-tabBar-jQueryTabsContent").append(
-                            tab.renderedContent
-                        );
-                        // following 3 functions derived from jQuery-UI Tabs
-
-                        $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
-                        $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
-                        $jQueryTabsHeader.tabs("refresh");
-                        $jQueryTabsHeader.tabs({active: 0});
-                        $iframeCover.hide();
 
             });
 
+            //generates jquery-ui tabs TODO: icons? and move into external json
+            tabModel.tabs = tabs;
+            $.each(tabModel.tabs, function(i, tab) {
+                tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                $("#eexcess-tabBar-jQueryTabsHeader ul").append(tab.renderedHead);
+                // add tab content corresponding to tab titles
+                tab.renderedContent = $("<div id='tabs-" + tab.id + "'><iframe src='" + tab.url + "'</div>");
+                $("#eexcess-tabBar-jQueryTabsContent").append(tab.renderedContent);
+                // following 3 functions derived from jQuery-UI Tabs
+                $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
+                $jQueryTabsHeader.tabs("refresh");
+                $jQueryTabsHeader.tabs({active: 0});
+                $iframeCover.hide();
+            });
 
-// adding resize functionality
+            // adding resize functionality
             $jQueryTabsHeader.resizable({
                 handles: "all",
                 minHeight: 200,
                 minWidth: 250,
                 alsoResize: [$iframeCover, $contentArea]
             });
-// adding drag functionality to parent div
-            $contentArea.draggable({
-                scroll: "true"
-            });
 
+            // adding drag functionality to parent div
+            $contentArea.draggable({scroll: "true"});
 
-// on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
-            $jQueryTabsHeader.on("resizestart", function (event, ui) {
+            // on resize or drag start, show iframeCover to allow changes when mouse pointer is entering iframe area
+            $jQueryTabsHeader.on("resizestart", function(event, ui) {
                 $iframeCover.show();
             });
-            $contentArea.on("dragstart", function (event, ui) {
+            $contentArea.on("dragstart", function(event, ui) {
                 $iframeCover.show();
             });
 
-
-//storing new values and hide iframeCover after size has been changed
-            $jQueryTabsHeader.on("resizestop", function (event, ui) {
+            //storing new values and hide iframeCover after size has been changed
+            $jQueryTabsHeader.on("resizestop", function(event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
-                storage.set({'resizeHeight': heightToStore}, function (result) {
-                });
-                storage.set({'resizeWidth': widthToStore}, function (result) {
-                });
-
+                storage.set({'resizeHeight': heightToStore});
+                storage.set({'resizeWidth': widthToStore});
                 //whenever a resize happens, but not a drag, the jQueryHeader position changes in another way than
                 // the contentAreas position (due to jquery's alsoResize disregarding top and left). 
                 var positionToStoreTop = $contentArea.position().top + $jQueryTabsHeader.position().top;
                 var positionToStoreLeft = $contentArea.position().left + $jQueryTabsHeader.position().left;
-                //console.log("Resizestop, Pos+position. HeaderLeft: " +$jQueryTabsHeader.position().left);
-                //console.log("Resizestop, Pos+position. HeaderTop: " +$jQueryTabsHeader.position().top);
-                //console.log("Resizestop, Pos+position. CALeft: " +$contentArea.position().left);
-
-                storage.set({'dragPositionTop': positionToStoreTop}, function (result) {
-                });
-                storage.set({'dragPositionLeft': positionToStoreLeft}, function (result) {
-                });
-
-                console.log("Resizestop, Pos+Offset. Left: " + positionToStoreLeft + "px Top: " + positionToStoreTop);
+                storage.set({'dragPositionTop': positionToStoreTop});
+                storage.set({'dragPositionLeft': positionToStoreLeft});
                 $iframeCover.hide();
             });
 
-//storing new values and hide iframeCover after position has been changed
-            $contentArea.on("dragstop", function (event, ui) {
+            //storing new values and hide iframeCover after position has been changed
+            $contentArea.on("dragstop", function(event, ui) {
                 var positionToStoreTop = $contentArea.position().top;
                 var positionToStoreLeft = $contentArea.position().left;
-
-                storage.set({'dragPositionTop': positionToStoreTop}, function (result) {
-                });
-                storage.set({'dragPositionLeft': positionToStoreLeft}, function (result) {
-                });
+                storage.set({'dragPositionTop': positionToStoreTop});
+                storage.set({'dragPositionLeft': positionToStoreLeft});
                 $iframeCover.hide();
-                console.log("Dragstop. Left: " + positionToStoreLeft + "px Top: " + positionToStoreTop)
             });
-
-
         },
         setQuery: function(contextKeywords) {
             util.preventQuery = true;
