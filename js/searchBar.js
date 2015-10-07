@@ -3,29 +3,238 @@
  *
  * @module c4/searchBar
  */
-define(['jquery', 'jquery-ui', 'tag-it'], function ($, ui, tagit) {
-
+define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], function($, ui, tagit, api, iframes) {
+    var util = {
+        preventQuery: false,
+        resizeForText: function(text, minify) {
+            var $this = $(this);
+            var $span = $this.parent().find('span');
+            $span.text(text);
+            var $inputSize = $span.width();
+            if ($this.width() < $inputSize || minify) {
+                $this.css("width", $inputSize);
+            }
+        },
+        queryUpdater: function() {
+            loader.show();
+            result_indicator.hide();
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                // get keywords
+                lastQuery.contextKeywords = taglist.tagit('getActiveTagsProperties');
+                // get main topic
+                var mainTopic = mainTopicLabel.data('properties');
+                if (mainTopic.text && mainTopic.text !== '') {
+                    lastQuery.contextKeywords.push(mainTopic);
+                }
+                // query
+                settings.queryFn(lastQuery, resultHandler);
+            }, settings.queryModificationDelay);
+        },
+        setMainTopic: function(topic) {
+            topic.isMainTopic = true;
+            mainTopicLabel.val(topic.text).data('properties', topic);
+            this.resizeForText.call(mainTopicLabel, topic.text, true);
+        }
+    };
+    var results = {};
+    var lastQuery = {};
+    var settings = {
+        queryFn: api.query,
+        imgPATH: 'img/',
+        queryModificationDelay: 500,
+        queryDelay: 2000
+    };
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
-    var bar = $('<div id="searchBar" ' +
-        ' style="position:fixed;width:100%;padding:5px;bottom:0;text-align:left;z-index:99999;"></div>');
-    var taglist = $('<ul id="taglist"></ul>');
-    var form = $('<form style="display:inline;"><input id="eexcess_search" type="text" size="20" /><input type="submit" /></form>');
-    var toggler = $('<a href="#" id="eexcess_toggler" style="float:right;color:white;margin-right:10px;">&uArr;</a>');
-    var resetToggle = $('<a href="#" id="eexcess_reset" style="float:right;color:white;margin-right:20px;font-size: 10px">reset</a>');
-    var storage = chrome.storage.local;
-    var mainTopic = $('<div id="eexcess_mainTopic"><p id="eexcess_mainTopicLabel">Liestal</p><p id="eexcess_mainTopicDesc">main topic(s)</p></div>');
+    var bar = $('<div id="eexcess_searchBar"></div>');
+    var left = $('<div id="eexcess_barLeft"></div>');
+    var logo;
+    var loader;
+    var result_indicator;
+    var timeout;
 
+    var selectmenu = $('<select id="eexcess_selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
+    selectmenu.change(function(e) {
+        lastQuery = {contextKeywords: []};
+        var type = $(this).children(':selected').text().toLowerCase();
+        if (type !== 'all') {
+            $.each(taglist.tagit('getTags'), function() {
+                if ($(this).data('properties').type && $(this).data('properties').type.toLowerCase() + 's' === type) {
+                    $(this).css('opacity', '1.0');
+                } else {
+                    $(this).css('opacity', '0.4');
+                }
+            });
+        } else {
+            $(taglist.tagit('getTags').css('opacity', '1.0'));
+        }
+        util.queryUpdater();
+    });
+    left.append(selectmenu);
+
+    var mainTopicDiv = $('<div id="eexcess_mainTopic"></div>');
+    mainTopicDiv.droppable({
+        activeClass: "mainTopicDropActive",
+        hoverClass: "mainTopicDropHover",
+        accept: ".eexcess",
+        drop: function(event, ui) {
+            var tag = $(ui.draggable[0]).data('properties');
+            var old_topic = mainTopicLabel.data('properties');
+            util.preventQuery = true;
+            taglist.tagit('removeTagByLabel', tag.text);
+            util.preventQuery = false;
+            taglist.tagit('createTag', old_topic.text, old_topic);
+            util.setMainTopic(tag);
+            util.queryUpdater();
+        }
+    });
+    left.append(mainTopicDiv);
+    var mainTopicLabel = $('<input id="eexcess_mainTopicLabel" />');
+    mainTopicLabel.on('focus', function() {
+        var $this = $(this)
+                .one('mouseup.mouseupSelect', function() {
+            $this.select();
+            return false;
+        })
+                .one('mousedown', function() {
+            $this.off('mouseup.mouseupSelect');
+        })
+                .select();
+    });
+    mainTopicLabel.keypress(function(e) {
+        var $this = $(this);
+        if (e.keyCode === 13) {
+            $this.blur();
+            util.setMainTopic({text: $this.val()});
+            util.queryUpdater();
+        } else {
+            if (e.which && e.charCode) {
+                var c = String.fromCharCode(e.keyCode | e.charCode);
+                util.resizeForText.call($this, $this.val() + c, false);
+            }
+        }
+    });
+    mainTopicDiv.append(mainTopicLabel);
+    var mainTopicLabelHidden = $('<span style="display:none" class="eexcess_hiddenLabelSpan"></span>');
+    mainTopicLabel.after(mainTopicLabelHidden);
+    var mainTopicDesc = $('<p id="eexcess_mainTopicDesc">main topic</p>');
+    mainTopicDiv.append(mainTopicDesc);
+
+    var main = $('<div id="eexcess_barMain"></div>');
+
+    var taglist = $('<ul id="eexcess_taglist" class="eexcess"></ul>');
+    taglist.tagit({
+        allowSpaces: true,
+        placeholderText: 'add keyword',
+        beforeTagAdded: function(event, ui) {
+            $(ui.tag).addClass('eexcess');
+            $(ui.tag).draggable({
+                revert: 'invalid',
+                scroll: false,
+                stack: '#eexcess_mainTopic',
+                appendTo: 'body',
+                start: function() {
+                    $(this).css('z-index', '100000');
+                },
+                stop: function() {
+                    $(this).css('z-index', '99999');
+                }
+            });
+        },
+        afterTagAdded: function(e, ui) {
+            if (!util.preventQuery) {
+                util.queryUpdater();
+            }
+        },
+        afterTagRemoved: function(e, ui) {
+            if (!util.preventQuery) {
+                util.queryUpdater();
+            }
+        },
+        onTagClicked: function(e, ui) {
+            if ($(ui.tag[0]).css('opacity') === '0.4') {
+                $(ui.tag[0]).css('opacity', '1.0');
+            } else {
+                $(ui.tag[0]).css('opacity', '0.4');
+            }
+            util.queryUpdater();
+        }
+    });
+    main.append(taglist);
+    var taglistDesc = $('<p id="eexcess_taglistDesc">Drag and Drop keywords to change the main topic, click to (de)activate</p>');
+    taglist.after(taglistDesc);
+
+    var right = $('<div id="eexcess_barRight"></div>');
+    bar.append(left, main, right);
+    $('body').append(bar);
+
+    var storage = chrome.storage.local;
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
     var $contentArea = $("#eexcess-tabBar-contentArea");
 
-    bar.click(function (e) {
-        e.preventDefault;
-    });
+    var tabModel = {
+        tabs: []
+    };
 
 
-    //sets size and position of the tab area according to previous changes by the user stored in chrome
+    window.onmessage = function(msg) {
+        // visualization has triggered a query -> widgets must be visible
+        if (msg.data.event && msg.data.event === 'eexcess.queryTriggered') {
+            lastQuery = msg.data.data;
+            iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: msg.data.data});
+            result_indicator.hide();
+            loader.show();
+            settings.queryFn(lastQuery, function(response) {
+                if (response.status === 'success') {
+                    results = response.data;
+                    loader.hide();
+                    result_indicator.text(response.data.totalResults + ' results');
+                    result_indicator.show();
+                    iframes.sendMsgAll({event: 'eexcess.newResults', data: results});
+                } else {
+                    iframes.sendMsgAll({event: 'eexcess.error', data: response.data});
+                    result_indicator.text('error');
+                    result_indicator.show();
+                }
+            });
+        }
+        // console.log(e.data);
+        // do something
+    };
+
+    var resultHandler = function(response) {
+        if (response.status === 'success') {
+            results = response.data;
+            loader.hide();
+            result_indicator.text(response.data.totalResults + ' results');
+            result_indicator.show();
+        } else {
+            loader.hide();
+            result_indicator.text('error');
+            result_indicator.show();
+        }
+    };
+
+    return {
+        init: function(tabs, config) {
+            settings = $.extend(settings, config);
+            logo = $('<img id="eexcess_logo" src="' + settings.imgPATH + 'eexcess_Logo.png" />');
+            right.append(logo);
+            loader = $('<img id="eexcess_loader" src="' + settings.imgPATH + 'eexcess_loader.gif" />').hide();
+            right.append(loader);
+            result_indicator = $('<a id="eexcess_result_indicator" href="#">16 results</a>').click(function(e) {
+                e.preventDefault();
+                iframes.sendMsgAll({event: 'eexcess.queryTriggered', data: lastQuery});
+                iframes.sendMsgAll({event: 'eexcess.newResults', data: results});
+                if (!contentArea.is(':visible')) {
+                    contentArea.show('fast');
+                }
+            }).hide();
+            right.append(result_indicator);
+
+   //sets size and position of the tab area according to previous changes by the user stored in chrome
     // local storage
     $(function setSizeAndPosition() {
         storage.get(null, function (result) {
@@ -58,50 +267,12 @@ define(['jquery', 'jquery-ui', 'tag-it'], function ($, ui, tagit) {
     });
 
 
-    return {
-        init: function (triggerFunction) {
+
 
 
             //generates jquery-ui tabs TODO: icons? and move into external json
-            $(function generateTabView() {
-                var tabModel = {
-                    "tabs": [
-                        {
-                            "id": "1",
-                            "name": "SearchResultList",
-                            //"icon": "icon.png",
-                            // <iframe src="' + chrome.extension.getURL('visualization-widgets/SearchResultList/index.html') + '"
-
-                            "content": '<iframe src="' +
-
-                            chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }
-                        , {
-                            "id": "2",
-                            "name": "Dashboard",
-                            //"icon": "icon.png",
-                            "content": '<iframe src="' +
-                            chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }, {
-                            "id": "3",
-                            "name": "FacetScape",
-                            //"icon": "icon.png",
-                            "content": '<iframe src="'
-                            +
-                            chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
-
-                            "renderedHead": "",
-                            "renderedContent": ""
-                        }
-                    ]
-                };
-
-
-                $.each(tabModel.tabs, function (i, tab) {
+            tabModel.tabs = tabs;
+                            $.each(tabModel.tabs, function (i, tab) {
                         tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
                         $("#eexcess-tabBar-jQueryTabsHeader ul").append(
                             tab.renderedHead);
@@ -119,8 +290,6 @@ define(['jquery', 'jquery-ui', 'tag-it'], function ($, ui, tagit) {
                         $jQueryTabsHeader.tabs({active: 0});
                         $iframeCover.hide();
 
-                    }
-                )
             });
 
 
@@ -185,111 +354,30 @@ define(['jquery', 'jquery-ui', 'tag-it'], function ($, ui, tagit) {
                 console.log("Dragstop. Left: " + positionToStoreLeft + "px Top: " + positionToStoreTop)
             });
 
-            $(function () {
-                form.submit(function (evt) {
-                    evt.preventDefault();
-                    var profile = {
-                        contextKeywords: [{text: $('#eexcess_search').val(), weight: 1}]
-                    };
-                    triggerFunction(profile);
-                });
-                //bar.append(form);
-                toggler.click(function (e) {
-                    e.preventDefault();
-                    if ($(this).text() === $("<div>").html("&uArr;").text()) {
-                        $(this).text($("<div>").html("&dArr;").text());
-                    } else {
-                        $(this).text($("<div>").html("&uArr;").text());
-                    }
-                    contentArea.toggle('fast');
 
-                });
-
-                resetToggle.click(function (e) {
-                    $contentArea.removeAttr('style');
-                    $jQueryTabsHeader.removeAttr('style');
-                    storage.remove('resizeHeight');
-                    storage.remove('resizeWidth');
-                    storage.remove('dragPositionLeft');
-                    storage.remove('dragPositionTop');
-
-                });
-
-
-                var selectmenu = $('<select id="selectmenu"><option selected="selected">All</option><option>Persons</option><option>Locations</option></select>');
-                bar.append(selectmenu);
-                selectmenu.change(function (e) {
-                    var type = $(this).children(':selected').text().toLowerCase();
-                    if (type !== 'all') {
-                        $.each(taglist.tagit('getTags'), function () {
-                            if ($(this).data('properties').type === type) {
-                                $(this).css('opacity', '1.0');
-                            } else {
-                                $(this).css('opacity', '0.4');
-                            }
-                        });
-                    } else {
-                        $(taglist.tagit('getTags').css('opacity', '1.0'));
-                    }
-                });
-
-                bar.append($('<input type="submit" value="ok" id="searchbutton" />').click(function (e) {
-                    var tags = taglist.tagit('assignedTags');
-
-                    var profile = {
-                        contextKeywords: []
-                    };
-                    $.each(tags, function () {
-                        profile.contextKeywords.push({text: this, weight: 1});
-                    });
-                    triggerFunction(profile);
-                }));
-
-
-                //bar.append(mainTopic);
-
-                taglist.tagit({
-                    allowSpaces: true,
-                    placeholderText: 'add keyword',
-                    tagLimit:17,
-                    onTagLimitExceeded: function(e,ui){
-                        // TODO: inform the user
-                    },
-                    onTagClicked: function(e, ui) {
-                        if($(ui.tag[0]).css('opacity') === '0.4') {
-                            $(ui.tag[0]).css('opacity','1.0');
-                        } else {
-                            $(ui.tag[0]).css('opacity', '0.4');
-                        }
-                    }
-                });
-                bar.append(taglist);
-                taglist.children('.tagit-new').addClass('no_bg');
-                bar.append(toggler, resetToggle);
-                $('body').append(bar);
-            });
         },
-        setLabels: function (entities) {
+        setQuery: function(contextKeywords) {
+            util.preventQuery = true;
             taglist.tagit('removeAll');
-            for (var type in entities) {
-                if (entities.hasOwnProperty(type)) {
-                    $.each(entities[type], function () {
-                        this['type'] = type;
-                        taglist.tagit('createTag', this.text, this);
-                    });
+            $.each(contextKeywords, function() {
+                if (this.isMainTopic) {
+                    // TODO: support multiple topics?
+                    util.setMainTopic(this);
+                } else {
+                    taglist.tagit('createTag', this.text, this);
                 }
-            }
-        },
-        show: function () {
-            if (!contentArea.is(':visible')) {
-                toggler.click();
-            }
+            });
+            util.preventQuery = false;
+            clearTimeout(timeout);
+            setTimeout(function() {
+                loader.show();
+                result_indicator.hide();
+                lastQuery = {contextKeywords: contextKeywords};
+                settings.queryFn({contextKeywords: contextKeywords}, resultHandler);
+            }, settings.queryDelay);
         }
-    }
-
-
-})
-;
+    };
+});
 
 
 

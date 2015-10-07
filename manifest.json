@@ -1,6 +1,6 @@
 {
     "name": "EEXCESS_DEV",
-    "version": "0.51",
+    "version": "0.52",
     "background": {
         "page": "html/background.html"
     },
@@ -23,8 +23,6 @@
     "permissions": [
         "tabs",
         "<all_urls>",
-        "geolocation",
-        "history",
         "background",
         "storage"
     ],

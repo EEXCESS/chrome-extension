@@ -1,55 +1,64 @@
 require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
-    searchBar.init(function(profile) {
-        chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-        iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-        searchBar.show();
-    });
-    window.onmessage = function(e) {
-        // console.log(e.data);
-        // do something
-    };
+    var tabs = [{
+            "id": "1",
+            "name": "SearchResultList",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }
+        , {
+            "id": "2",
+            "name": "Dashboard",
+            //"icon": "icon.png",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/Dashboard/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }, {
+            "id": "3",
+            "name": "FacetScape",
+            //"icon": "icon.png",
+            "content": '<iframe src="'
+                    +
+                    chrome.extension.getURL('visualization-widgets/FacetScape/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }, {
+            id: 4,
+            name: "PowerSearch",
+            "content": '<iframe src="' +
+                    chrome.extension.getURL('visualization-widgets/PowerSearch/index.html') + '"',
+            "renderedHead": "",
+            "renderedContent": ""
+        }];
+    searchBar.init(tabs, {
+        imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
+        queryFn: function(queryProfile, callback) {
+            chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
+                callback(response);
+            });
+        }});
 
     // detect paragraphs
     var p = paragraphDetection.getParagraphs();
 
-
-//    EexcessSite.init();
-//    EexcessSite.setParagraphs(p);
-
-    // enrich paragraphs with entities
-    ner.entitiesAndCategories(p.map(function(par) {
-        return {
-            id: par.id,
-            headline: par.headline,
-            content: par.content
-        };
-    }), function(result) {
-        if (result.status && result.status === 'success') {
-            paragraphDetection.enrichParagraphs(p, result.data.paragraphs);
+    // selection listener
+    var selection;
+    $(document).mouseup(function() {
+        var tmp_selection = document.getSelection().toString();
+        if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
+            selection = tmp_selection;
+            paragraphDetection.paragraphToQuery(selection, function(res) {
+                if (typeof res.query !== 'undefined') {
+                    searchBar.setQuery(res.query.contextKeywords);
+                } else {
+                    // TODO: error handling?
+                    // optional error message in res.error
+                }
+            });
         }
     });
-
-    // selection listener
-//    $(document).mouseup(function() {
-//        var selection = paragraphDetection.getSelection(p);
-//        if (selection.selection.length > 0) {
-//            var profile = {
-//                // TODO: split terms
-//                contextKeywords: [{
-//                        text: selection.selection,
-//                        weight: 1.0
-//                    }]
-//            };
-//            if (selection.entities) {
-//                profile.contextNamedEntities = selection.entities;
-//            }
-//            // TODO: provide reason
-//            chrome.runtime.sendMessage({method: 'triggerQuery', data: profile});
-//            iframes.sendMsgAll({event: 'eexcess.queryTriggered'});
-//            searchBar.show();
-//        }
-//        console.log(selection);
-//    });
 
     // augment links
 //    $(function() {
@@ -66,44 +75,49 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
 //                );
 //    });
 
-    chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-        console.log(msg);
-        if (msg.method) {
-            switch (msg.method) {
-                case 'newResults':
-                    iframes.sendMsgAll({event: 'eexcess.newResults', data: msg.data});
-                    break;
-                case 'error':
-                    iframes.sendMsgAll({event: 'eexcess.error', data: msg.data});
-                    break;
-                default:
-                    console.log('unknown method');
-                    break;
-            }
-        } else {
-            console.log('method not specified');
-        }
-    });
-
     var lastY = 0;
-
     $(document).mousemove(function(e) {
         lastY = e.pageY;
     });
-
+    var focusedParagraph = {};
     $(document).on('paragraphFocused', function(evt) {
-        if (lastY < $(window).scrollTop() + $(window).height() - 90) {
+        // prevent focused paragraph updates when the user moves the mouse down to the searchbar
+        // update only when focused paragraph changes
+        if (lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
+            // set focused paragraph variable
+            focusedParagraph = evt.originalEvent.detail;
+            // reset border on all paragraphs
             p.forEach(function(v1) {
-                $(v1.elements[0]).parent().css('border', '1px solid gray');
+                $(v1.elements[0]).parent().css('border', 'none');
             });
-            $(evt.originalEvent.detail.elements[0]).parent().css('border', '2px solid green');
-            console.log(evt.originalEvent.detail);
-            if (evt.originalEvent.detail.entities) {
-                searchBar.setLabels(evt.originalEvent.detail.entities);
-            } 
-        } 
+            // green border for focused paragraph
+            $(focusedParagraph.elements[0]).parent().css('border', '2px solid #1d904e');
+            // check if entities have already been extracted for paragraph
+            var entitiesExracted = false;
+            var tmp_idx;
+            for (var i = 0; i < p.length; i++) {
+                if (p[i].id === focusedParagraph.id) {
+                    if (typeof p[i].query !== 'undefined') {
+                        entitiesExracted = true;
+                    }
+                    tmp_idx = i;
+                    break;
+                }
+            }
+            if (entitiesExracted) {
+                searchBar.setQuery(p[tmp_idx].query.contextKeywords);
+            } else {
+                paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).text(), function(res) {
+                    if (typeof res.query !== 'undefined') {
+                        p[tmp_idx].query = res.query;
+                        searchBar.setQuery(res.query.contextKeywords);
+                    } else {
+                        // TODO: error handling?
+                        // optional error message in res.error
+                    }
+                });
+            }
+        }
     });
-
-
     paragraphDetection.findFocusedParagraph();
 });
