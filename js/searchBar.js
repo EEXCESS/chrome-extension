@@ -43,7 +43,30 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
         queryFn: api.query,
         imgPATH: 'img/',
         queryModificationDelay: 500,
-        queryDelay: 2000
+        queryDelay: 2000,
+        storage: {
+            set: function(item, callback) {
+                for (var key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        localStorage.setItem(key, item[key]);
+                    }
+                }
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            },
+            get: function(key, callback) {
+                var response = {};
+                if (Array.isArray(key)) {
+                    key.forEach(function(entry) {
+                        response[entry] = localStorage.getItem(entry);
+                    });
+                } else {
+                    response[key] = localStorage.getItem(key);
+                }
+                callback(response);
+            }
+        }
     };
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
@@ -169,7 +192,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     bar.append(left, main, right);
     $('body').append(bar);
 
-    var storage = chrome.storage.local;
+    // TODO: check for bugs
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
     var $contentArea = $("#eexcess-tabBar-contentArea");
@@ -232,33 +255,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             }).hide();
             right.append(result_indicator);
 
-            //sets size and position of the tab area according to previous changes by the user stored in chrome
-            // local storage
-            $(function setSizeAndPosition() {
-                storage.get(null, function(result) {
-                    if (result.resizeWidth && result.dragPositionLeft) {
-                        $contentArea.css({
-                            "height": result.resizeHeight,
-                            "width": result.resizeWidth,
-                            "top": result.dragPositionTop,
-                            "left": result.dragPositionLeft
-                        });
-
-                    }
-                    //should be expendable now that resizestop also stores position
-                    else if (result.resizeWidth && !result.dragPosition) {
-                        $contentArea.css({"height": result.resizeHeight, "width": result.resizeWidth});
-                    }
-                    else if (result.dragPositionLeft && !result.resizeWidth) {
-                        $contentArea.css({
-                            "top": result.dragPositionTop,
-                            "left": result.dragPositionLeft
-                        });
-                    }
-                });
-
-            });
-
             //generates jquery-ui tabs TODO: icons? and move into external json
             tabModel.tabs = tabs;
             $.each(tabModel.tabs, function(i, tab) {
@@ -298,24 +294,43 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             $jQueryTabsHeader.on("resizestop", function(event, ui) {
                 var heightToStore = $jQueryTabsHeader.height();
                 var widthToStore = $jQueryTabsHeader.width();
-                storage.set({'resizeHeight': heightToStore});
-                storage.set({'resizeWidth': widthToStore});
+                settings.storage.set({'resizeHeight': heightToStore});
+                settings.storage.set({'resizeWidth': widthToStore});
                 //whenever a resize happens, but not a drag, the jQueryHeader position changes in another way than
                 // the contentAreas position (due to jquery's alsoResize disregarding top and left). 
                 var positionToStoreTop = $contentArea.position().top + $jQueryTabsHeader.position().top;
                 var positionToStoreLeft = $contentArea.position().left + $jQueryTabsHeader.position().left;
-                storage.set({'dragPositionTop': positionToStoreTop});
-                storage.set({'dragPositionLeft': positionToStoreLeft});
+                settings.storage.set({'dragPositionTop': positionToStoreTop});
+                settings.storage.set({'dragPositionLeft': positionToStoreLeft});
                 $iframeCover.hide();
             });
 
             //storing new values and hide iframeCover after position has been changed
             $contentArea.on("dragstop", function(event, ui) {
-                var positionToStoreTop = $contentArea.position().top;
-                var positionToStoreLeft = $contentArea.position().left;
-                storage.set({'dragPositionTop': positionToStoreTop});
-                storage.set({'dragPositionLeft': positionToStoreLeft});
+                var positionToStoreTop = $contentArea.position().top + $jQueryTabsHeader.position().top;
+                var positionToStoreLeft = $contentArea.position().left + $jQueryTabsHeader.position().left;
+                settings.storage.set({'dragPositionTop': positionToStoreTop});
+                settings.storage.set({'dragPositionLeft': positionToStoreLeft});
                 $iframeCover.hide();
+            });
+
+            //sets size and position of the tab area according to previous changes by the user stored in chrome
+            // local storage
+            $(function setSizeAndPosition() {
+                settings.storage.get(['resizeHeight', 'resizeWidth', 'dragPositionTop', 'dragPositionLeft'], function(result) {
+                    var dim = {};
+                    if (result.resizeWidth) {
+                        // if width is set, height is also
+                        dim.width = result.resizeWidth + 'px';
+                        dim.height = result.resizeHeight + 'px';
+                    }
+                    if (result.dragPositionLeft) {
+                        // if left is set, top is also
+                        dim.left = result.dragPositionLeft + 'px';
+                        dim.top = result.dragPositionTop + 'px';
+                    }
+                    $contentArea.css(dim);
+                });
             });
         },
         setQuery: function(contextKeywords) {

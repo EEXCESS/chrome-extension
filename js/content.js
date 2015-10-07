@@ -28,6 +28,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
             "renderedContent": ""
         }];
     searchBar.init(tabs, {
+        storage:chrome.storage.local,
         imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
         queryFn: function(queryProfile, callback) {
             chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
