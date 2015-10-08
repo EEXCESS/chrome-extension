@@ -68,8 +68,6 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             }
         }
     };
-    var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
-    $('body').append(contentArea);
     var bar = $('<div id="eexcess_searchBar"></div>');
     var left = $('<div id="eexcess_barLeft"></div>');
     var logo;
@@ -192,7 +190,9 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     bar.append(left, main, right);
     $('body').append(bar);
 
-    // TODO: check for bugs
+
+    var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
+    $('body').append(contentArea);
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
     var $contentArea = $("#eexcess-tabBar-contentArea");
@@ -254,6 +254,12 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 }
             }).hide();
             right.append(result_indicator);
+
+            // close button
+            var $close_button = $('<a id="eexcess_close"></a>').css('background-image', 'url("' + settings.imgPATH + 'close.png")').click(function(e){
+                contentArea.hide();
+            });
+            $jQueryTabsHeader.append($close_button);
 
             //generates jquery-ui tabs TODO: icons? and move into external json
             tabModel.tabs = tabs;

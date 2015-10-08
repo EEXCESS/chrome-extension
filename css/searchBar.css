@@ -53,6 +53,16 @@
 
 }
 
+#eexcess_close {
+    position: absolute;
+    z-index: 99999;
+    width: 35px;
+    height: 35px;
+    top: -19px;
+    right: -18px;
+    cursor: pointer;
+}
+
 #eexcess-tabBar-contentArea {
     position: fixed;
     width: 40%;
