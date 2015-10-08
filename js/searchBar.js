@@ -164,6 +164,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             });
         },
         afterTagAdded: function(e, ui) {
+            ui.tag.find('.ui-icon-close').css('background-image', 'url("' + settings.imgPATH + 'ui-icons_cd0a0a_256x240.png")');
             if (!util.preventQuery) {
                 util.queryUpdater();
             }
@@ -264,10 +265,10 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             //generates jquery-ui tabs TODO: icons? and move into external json
             tabModel.tabs = tabs;
             $.each(tabModel.tabs, function(i, tab) {
-                tab.renderedHead = $("<li><a href='#tabs-" + tab.id + "'>" + tab.name + " </a></li>");
+                tab.renderedHead = $("<li><a href='#tabs-" + i + "'>" + tab.name + " </a></li>");
                 $("#eexcess-tabBar-jQueryTabsHeader ul").append(tab.renderedHead);
                 // add tab content corresponding to tab titles
-                tab.renderedContent = $("<div id='tabs-" + tab.id + "'><iframe src='" + tab.url + "'</div>");
+                tab.renderedContent = $("<div id='tabs-" + i + "'><iframe src='" + tab.url + "'</div>");
                 $("#eexcess-tabBar-jQueryTabsContent").append(tab.renderedContent);
                 // following 3 functions derived from jQuery-UI Tabs
                 $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix eexcess");

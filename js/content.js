@@ -1,31 +1,19 @@
 require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     var tabs = [{
-            "id": "1",
             "name": "SearchResultList",
-            "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
-            "renderedHead": "",
-            "renderedContent": ""
+            "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html')
         }
         , {
-            "id": "2",
             "name": "Dashboard",
             //"icon": "icon.png",
-            "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html'),
-            "renderedHead": "",
-            "renderedContent": ""
+            "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
         }, {
-            "id": "3",
             "name": "FacetScape",
             //"icon": "icon.png",
-            "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
-            "renderedHead": "",
-            "renderedContent": ""
+            "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html')
         }, {
-            id: 4,
             name: "PowerSearch",
-            "url": chrome.extension.getURL('visualization-widgets/PowerSearch/index.html'),
-            "renderedHead": "",
-            "renderedContent": ""
+            "url": chrome.extension.getURL('visualization-widgets/PowerSearch/index.html')
         }];
     searchBar.init(tabs, {
         storage:chrome.storage.local,

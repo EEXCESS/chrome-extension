@@ -112,10 +112,6 @@
 
 
 
-.ui-icon-close {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/js/lib/jquery-ui/themes/smoothness/images/ui-icons_cd0a0a_256x240.png') !important;
-}
-
 .mainTopicDropActive {
     background-color:orange !important;
 }
