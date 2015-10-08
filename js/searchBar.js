@@ -270,7 +270,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
                 tab.renderedContent = $("<div id='tabs-" + tab.id + "'><iframe src='" + tab.url + "'</div>");
                 $("#eexcess-tabBar-jQueryTabsContent").append(tab.renderedContent);
                 // following 3 functions derived from jQuery-UI Tabs
-                $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+                $jQueryTabsHeader.tabs().addClass("ui-tabs-vertical ui-helper-clearfix eexcess");
                 $("#jQueryTabsHeader li").removeClass("ui-corner-top").addClass("ui-corner-left");
                 $jQueryTabsHeader.tabs("refresh");
                 $jQueryTabsHeader.tabs({active: 0});

@@ -1,22 +1,22 @@
-
-.ui-tabs-vertical {
+/* remove for horizontal tab bar */
+.ui-tabs-vertical.eexcess {
     width: 45em;
     font-size: 11px !important;
     color: grey !important;
 
 }
 
-.ui-tabs-vertical a:link {
+.ui-tabs-vertical.eexcess a:link {
     color: grey !important;
 }
 
-.ui-tabs-vertical .ui-tabs-nav {
+.ui-tabs-vertical.eexcess .ui-tabs-nav {
     padding: .2em .1em .2em .2em;
     float: left;
     width: auto;
 }
 
-.ui-tabs-vertical .ui-tabs-nav li {
+.ui-tabs-vertical.eexcess .ui-tabs-nav li {
     clear: left;
     width: 100%;
     border-bottom-width: 1px !important;
@@ -24,34 +24,23 @@
     margin: 0 -1px .2em 0;
 }
 
-.ui-tabs-vertical .ui-tabs-nav li a {
+.ui-tabs-vertical.eexcess .ui-tabs-nav li a {
     display: block;
 }
 
-.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active {
+.ui-tabs-vertical.eexcess .ui-tabs-nav li.ui-tabs-active {
     padding-bottom: 0;
     padding-right: .1em;
     border-right-width: 1px;
 }
 
-.ui-tabs-vertical .ui-tabs-panel {
+.ui-tabs-vertical.eexcess .ui-tabs-panel {
     padding: 1em;
     float: right;
     width: 30em;
 }
 
-.ui-widget-header {
-    border: 1px solid rgb(170, 170, 170) !important;
-    border-image-source: initial !important;
-    border-image-slice: initial !important;
-    border-image-width: initial !important;
-    border-image-outset: initial !important;
-    border-image-repeat: initial !important;
-    background: url(https://en.wikipedia.org/wiki/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x rgb(204, 204, 204) !important;
-    color: grey !important;
-    font-weight: bold !important;
-
-}
+/*####################################################*/
 
 #eexcess_close {
     position: absolute;
@@ -80,10 +69,13 @@
     height: 99%;
     z-index: 9999;
     border: none;
+    background-color: rgba(0,0,0,0.0);
 }
 
 #eexcess-tabBar-jQueryTabsContent {
-
+    position: relative;
+    height: 100%;
+    overflow: hidden;
     border: 1px solid rgb(170, 170, 170);
     background-color: white;
 }
@@ -96,23 +88,10 @@
     height: 100%;
 }
 
-.flex-start {
-    display: -webkit-flex; /* Safari */
-    -webkit-justify-content: flex-start;
-    justify-content: flex-start;
-}
 
-.intrinsic-container {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-}
 
-/*.intrinsic-container-ratio {*/
-/*padding-bottom: 64%;*/
-/*}*/
 
-.intrinsic-container iframe {
+#eexcess-tabBar-jQueryTabsContent iframe {
     position: absolute;
     top: 0;
     left: 0;
