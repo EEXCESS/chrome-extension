@@ -6,6 +6,8 @@
 define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], function($, ui, tagit, api, iframes) {
     var util = {
         preventQuery: false,
+        preventQuerySetting: false,
+        cachedQuery: null,
         resizeForText: function(text, minify) {
             var $this = $(this);
             var $span = $this.parent().find('span');
@@ -35,6 +37,26 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             topic.isMainTopic = true;
             mainTopicLabel.val(topic.text).data('properties', topic);
             this.resizeForText.call(mainTopicLabel, topic.text, true);
+        },
+        setQuery: function(contextKeywords) {
+            util.preventQuery = true;
+            taglist.tagit('removeAll');
+            $.each(contextKeywords, function() {
+                if (this.isMainTopic) {
+                    // TODO: support multiple topics?
+                    util.setMainTopic(this);
+                } else {
+                    taglist.tagit('createTag', this.text, this);
+                }
+            });
+            util.preventQuery = false;
+            clearTimeout(timeout);
+            setTimeout(function() {
+                loader.show();
+                result_indicator.hide();
+                lastQuery = {contextKeywords: contextKeywords};
+                settings.queryFn({contextKeywords: contextKeywords}, resultHandler);
+            }, settings.queryDelay);
         }
     };
     var results = {};
@@ -195,6 +217,16 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
     var contentArea = $("<div id = 'eexcess-tabBar-contentArea'><div id='eexcess-tabBar-iframeCover'></div><div id='eexcess-tabBar-jQueryTabsHeader'><ul></ul><div id = 'eexcess-tabBar-jQueryTabsContent' class='flex-container intrinsic-container intrinsic-container-ratio' ></div></div></div>").hide();
     $('body').append(contentArea);
     var $jQueryTabsHeader = $("#eexcess-tabBar-jQueryTabsHeader");
+    // prevent changes of query while the mouse is over the widget area
+    $jQueryTabsHeader.mouseenter(function() {
+        util.preventQuerySetting = true;
+    }).mouseleave(function() {
+        util.preventQuerySetting = false;
+        if (util.cachedQuery) {
+            util.setQuery(util.cachedQuery);
+            util.cachedQuery = null;
+        }
+    });
     var $iframeCover = $("#eexcess-tabBar-iframeCover");
     var $contentArea = $("#eexcess-tabBar-contentArea");
 
@@ -257,7 +289,7 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             right.append(result_indicator);
 
             // close button
-            var $close_button = $('<a id="eexcess_close"></a>').css('background-image', 'url("' + settings.imgPATH + 'close.png")').click(function(e){
+            var $close_button = $('<a id="eexcess_close"></a>').css('background-image', 'url("' + settings.imgPATH + 'close.png")').click(function(e) {
                 contentArea.hide();
             });
             $jQueryTabsHeader.append($close_button);
@@ -341,24 +373,11 @@ define(['jquery', 'jquery-ui', 'tag-it', 'c4/APIconnector', 'c4/iframes'], funct
             });
         },
         setQuery: function(contextKeywords) {
-            util.preventQuery = true;
-            taglist.tagit('removeAll');
-            $.each(contextKeywords, function() {
-                if (this.isMainTopic) {
-                    // TODO: support multiple topics?
-                    util.setMainTopic(this);
-                } else {
-                    taglist.tagit('createTag', this.text, this);
-                }
-            });
-            util.preventQuery = false;
-            clearTimeout(timeout);
-            setTimeout(function() {
-                loader.show();
-                result_indicator.hide();
-                lastQuery = {contextKeywords: contextKeywords};
-                settings.queryFn({contextKeywords: contextKeywords}, resultHandler);
-            }, settings.queryDelay);
+            if(util.preventQuerySetting) {
+                util.cachedQuery = contextKeywords;
+            } else {
+                util.setQuery(contextKeywords);
+            }
         }
     };
 });
