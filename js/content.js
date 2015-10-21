@@ -1,4 +1,4 @@
-require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
+require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     var tabs = [{
             "name": "SearchResultList",
             "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html')
