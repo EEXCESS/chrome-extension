@@ -6,7 +6,7 @@ require(['searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/
         , {
             "name": "Dashboard",
             //"icon": "icon.png",
-            "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
+            "url": "https://eexcess.github.io/visualization-widgets/Dashboard/index.html?a"//chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
         }, {
             "name": "FacetScape",
             //"icon": "icon.png",
