@@ -51,15 +51,18 @@ require(['../js/common'], function(common) {
                     });
                 };
                 chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
+                    var eexcess_off = result.EEXCESS_off;
+                    var blacklist = result.blacklist || [];
+                    var whitelist = result.whitelist || [];
                     var check_blacklist = function() {
-                        if (result.blacklist && result.blacklist.indexOf(currentHostname) !== -1) {
+                        if (blacklist.indexOf(currentHostname) !== -1) {
                             inactive('tmp');
                         } else {
                             active('tmp');
                         }
                     };
                     var check_whitelist = function() {
-                        if (result.whitelist && result.whitelist.indexOf(currentHostname) !== -1) {
+                        if (whitelist.indexOf(currentHostname) !== -1) {
                             active('tmp');
                         } else {
                             inactive('tmp');
@@ -67,7 +70,7 @@ require(['../js/common'], function(common) {
                     };
 
                     // current state
-                    if (result.EEXCESS_off) {
+                    if (eexcess_off) {
                         inactive('power');
                         check_whitelist();
                     } else {
@@ -75,59 +78,65 @@ require(['../js/common'], function(common) {
                         check_blacklist();
                     }
 
-                    // handle interaction
+                    // global on/off
                     $('#power').click(function(e) {
                         if ($('#power_txt').text() === 'EEXCESS is inactive') {
+                            eexcess_off = false;
                             active('power');
                             chrome.storage.local.set({EEXCESS_off: false});
                             broadcast_msg({status: 'on'});
                             check_blacklist();
                         } else {
+                            eexcess_off = true;
                             inactive('power');
                             chrome.storage.local.set({EEXCESS_off: true});
                             broadcast_msg({status: 'off'});
                             check_whitelist();
                         }
                     });
+                    
+                    // local on/off
                     $('#tmp').click(function(e) {
                         if ($('#tmp_txt').text() === 'EEXCESS is active') {
                             inactive('tmp');
-                            chrome.tabs.sendMessage(tabid, {status: 'off'});
-                            if (result.EEXCESS_off) {
+                            broadcast_msg({status: 'off', site:currentHostname});
+                            if (eexcess_off) {
                                 // remove from whitelist
-                                result.whitelist.splice(result.whitelist.indexOf(currentHostname),1);
-                                chrome.storage.local.set({whitelist:result.whitelist});
+                                whitelist.splice(whitelist.indexOf(currentHostname),1);
+                                chrome.storage.local.set({whitelist:whitelist});
                             } else {
                                 // add to blacklist
-                                if(!result.blacklist) {
-                                    result.blacklist = [];
+                                blacklist.push(currentHostname);
+                                chrome.storage.local.set({blacklist:blacklist});
+                                // remove from whitelist
+                                var whitelist_idx = whitelist.indexOf(currentHostname);
+                                if(whitelist_idx !== -1) {
+                                    whitelist.splice(whitelist_idx, 1);
+                                    chrome.storage.local.set({whitelist:whitelist});
                                 }
-                                result.blacklist.push(currentHostname);
-                                chrome.storage.local.set({blacklist:result.blacklist});
                             }
                         } else {
                             active('tmp');
-                            chrome.tabs.sendMessage(tabid, {status: 'on'});
-                            if (result.EEXCESS_off) {
-                                if(!result.whitelist) {
-                                    result.whitelist = [];
+                            broadcast_msg({status: 'on', site:currentHostname});
+                            if (eexcess_off) {
+                                // add to whitelist
+                                whitelist.push(currentHostname);
+                                chrome.storage.local.set({whitelist:whitelist});
+                                // remove from blacklist
+                                var blacklist_idx = blacklist.indexOf(currentHostname);
+                                if(blacklist_idx !== -1) {
+                                    blacklist.splice(blacklist_idx,1);
+                                    chrome.storage.local.set({blacklist:blacklist});
                                 }
-                                result.whitelist.push(currentHostname);
-                                chrome.storage.local.set({whitelist:result.whitelist});
                             } else {
                                 // remove from blacklist
-                                result.blacklist.splice(result.blacklist.indexOf(currentHostname),1);
-                                chrome.storage.local.set({blacklist:result.blacklist});
+                                blacklist.splice(blacklist.indexOf(currentHostname),1);
+                                chrome.storage.local.set({blacklist:blacklist});
                             }
                         }
                     });
                 });
             }
-
-
-
-
-
         });
     });
 });

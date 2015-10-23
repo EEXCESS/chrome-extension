@@ -124,9 +124,33 @@
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request && request.status === 'off') {
-            kill();
+            if (request.site) {
+                // local turnoff, check site
+                if(request.site === window.location.hostname) {
+                    kill();
+                }
+            } else {
+                // global turn off, check whitelist
+                chrome.storage.local.get('whitelist', function (response) {
+                    if (!response.whitelist || response.whitelist.indexOf(window.location.hostname) === -1) {
+                        kill();
+                    }
+                });
+            }
         } else if (request && request.status === 'on') {
-            run();
+            if (request.site) {
+                // local turn on, check site and EEXCESS not running
+                if (request.site === window.location.hostname && $('#eexcess_searchBar').length === 0) {
+                    run();
+                }
+            } else {
+                // global turn on, check blacklist and EEXCESS not running
+                chrome.storage.local.get('blacklist', function (response) {
+                    if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && $('#eexcess_searchBar').length === 0) {
+                        run();
+                    }
+                });
+            }
         }
     });
 })();
