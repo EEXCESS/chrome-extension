@@ -140,13 +140,13 @@
         } else if (request && request.status === 'on') {
             if (request.site) {
                 // local turn on, check site and EEXCESS not running
-                if (request.site === window.location.hostname && $('#eexcess_searchBar').length === 0) {
+                if (request.site === window.location.hostname && !document.getElementById('eexcess_searchBar')) {
                     run();
                 }
             } else {
                 // global turn on, check blacklist and EEXCESS not running
                 chrome.storage.local.get('blacklist', function (response) {
-                    if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && $('#eexcess_searchBar').length === 0) {
+                    if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && !document.getElementById('eexcess_searchBar')) {
                         run();
                     }
                 });
