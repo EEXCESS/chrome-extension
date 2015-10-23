@@ -1,98 +1,133 @@
-require(['../js/common'], function (common) {
-    require(['jquery'], function ($) {
-        chrome.tabs.query({'active': true}, function (tabs) {
+require(['../js/common'], function(common) {
+    require(['jquery'], function($) {
+        chrome.tabs.query({'active': true}, function(tabs) {
             var url = tabs[0].url;
             var tabid = tabs[0].id;
             var tmp = document.createElement('a');
             tmp.href = url;
-            var currentHostname = tmp.hostname;
+            if (url.startsWith('chrome') && !url.startsWith('chrome://newtab')) {
+                $('#internal').show();
+                $('#switch').hide();
+            } else {
+                var currentHostname = tmp.hostname;
+                $('#current_host').text(currentHostname);
 
-            chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function (result) {
-                if (result.EEXCESS_off) {
-                    $('#power_txt').text('switch on');
-                    $('#power_img').attr('src', '../media/buttons/green.png');
-                    // whitelist
-                    if (result.whitelist && result.whitelist.indexOf(currentHostname) !== -1) {
-                        $('#tmp_txt').text('switch off for ' + currentHostname);
+                var active_mouseenter = function() {
+                    $(this).attr('src', '../media/buttons/red2.png');
+                };
+                var active_mouseleave = function() {
+                    $(this).attr('src', '../media/buttons/green.png');
+                };
+                var inactive_mouseenter = function() {
+                    $(this).attr('src', '../media/buttons/green2.png');
+                };
+                var inactive_mouseleave = function() {
+                    $(this).attr('src', '../media/buttons/red.png');
+                };
+
+                var active = function(id) {
+                    $('#' + id + '_img').unbind('mouseenter', inactive_mouseenter);
+                    $('#' + id + '_img').unbind('mouseleave', inactive_mouseleave);
+                    $('#' + id + '_img').attr('src', '../media/buttons/green.png');
+                    $('#' + id).attr('title', 'switch off');
+                    $('#' + id + '_txt').text('EEXCESS is active');
+                    $('#' + id + '_img').bind('mouseenter', active_mouseenter);
+                    $('#' + id + '_img').bind('mouseleave', active_mouseleave);
+                };
+                var inactive = function(id) {
+                    $('#' + id + '_img').unbind('mouseenter', active_mouseenter);
+                    $('#' + id + '_img').unbind('mouseleave', active_mouseleave);
+                    $('#' + id + '_img').attr('src', '../media/buttons/red.png');
+                    $('#' + id).attr('title', 'switch on');
+                    $('#' + id + '_txt').text('EEXCESS is inactive');
+                    $('#' + id + '_img').bind('mouseenter', inactive_mouseenter);
+                    $('#' + id + '_img').bind('mouseleave', inactive_mouseleave);
+                };
+                var broadcast_msg = function(msg) {
+                    chrome.tabs.query({}, function(tabs) {
+                        for (var i = 0, len = tabs.length; i < len; i++) {
+                            chrome.tabs.sendMessage(tabs[i].id, msg);
+                        }
+                    });
+                };
+                chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
+                    var check_blacklist = function() {
+                        if (result.blacklist && result.blacklist.indexOf(currentHostname) !== -1) {
+                            inactive('tmp');
+                        } else {
+                            active('tmp');
+                        }
+                    };
+                    var check_whitelist = function() {
+                        if (result.whitelist && result.whitelist.indexOf(currentHostname) !== -1) {
+                            active('tmp');
+                        } else {
+                            inactive('tmp');
+                        }
+                    };
+
+                    // current state
+                    if (result.EEXCESS_off) {
+                        inactive('power');
+                        check_whitelist();
                     } else {
-                        $('#tmp_txt').text('switch on for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/green.png');
+                        active('power');
+                        check_blacklist();
                     }
-                } else {
-                    // blacklist
-                    if (result.blacklist && result.blacklist.indexOf(currentHostname) !== -1) {
-                        $('#tmp_txt').text('switch on for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/green.png');
-                    } else {
-                        $('#tmp_txt').text('switch off for ' + currentHostname);
-                    }
-                }
 
-
-
-                $('#power').click(function (e) {
-                    var power_txt = $('#power_txt');
-                    if (power_txt.text() === 'switch on') {
-                        chrome.storage.local.set({EEXCESS_off: false});
-                        power_txt.text('switch off');
-                        $('#power_img').attr('src', '../media/buttons/red.png');
-                        chrome.tabs.query({}, function (tabs) {
-                            for (var i = 0, len = tabs.length; i < len; i++) {
-                                chrome.tabs.sendMessage(tabs[i].id, {status: 'on'});
+                    // handle interaction
+                    $('#power').click(function(e) {
+                        if ($('#power_txt').text() === 'EEXCESS is inactive') {
+                            active('power');
+                            chrome.storage.local.set({EEXCESS_off: false});
+                            broadcast_msg({status: 'on'});
+                            check_blacklist();
+                        } else {
+                            inactive('power');
+                            chrome.storage.local.set({EEXCESS_off: true});
+                            broadcast_msg({status: 'off'});
+                            check_whitelist();
+                        }
+                    });
+                    $('#tmp').click(function(e) {
+                        if ($('#tmp_txt').text() === 'EEXCESS is active') {
+                            inactive('tmp');
+                            chrome.tabs.sendMessage(tabid, {status: 'off'});
+                            if (result.EEXCESS_off) {
+                                // remove from whitelist
+                                result.whitelist.splice(result.whitelist.indexOf(currentHostname),1);
+                                chrome.storage.local.set({whitelist:result.whitelist});
+                            } else {
+                                // add to blacklist
+                                if(!result.blacklist) {
+                                    result.blacklist = [];
+                                }
+                                result.blacklist.push(currentHostname);
+                                chrome.storage.local.set({blacklist:result.blacklist});
                             }
-                        });
-                    } else {
-                        chrome.storage.local.set({EEXCESS_off: true});
-                        power_txt.text('switch on');
-                        $('#power_img').attr('src', '../media/buttons/green.png');
-                        chrome.tabs.query({}, function (tabs) {
-                            for (var i = 0, len = tabs.length; i < len; i++) {
-                                chrome.tabs.sendMessage(tabs[i].id, {status: 'off'});
+                        } else {
+                            active('tmp');
+                            chrome.tabs.sendMessage(tabid, {status: 'on'});
+                            if (result.EEXCESS_off) {
+                                if(!result.whitelist) {
+                                    result.whitelist = [];
+                                }
+                                result.whitelist.push(currentHostname);
+                                chrome.storage.local.set({whitelist:result.whitelist});
+                            } else {
+                                // remove from blacklist
+                                result.blacklist.splice(result.blacklist.indexOf(currentHostname),1);
+                                chrome.storage.local.set({blacklist:result.blacklist});
                             }
-                        });
-                    }
+                        }
+                    });
                 });
-                $('#tmp').click(function (e) {
-                    if(result.EEXCESS_off) {
-                        // whitelist
-                    } else {
-                        // blacklist
-                    }
-                    // msg content script
-                    
-                    var tmp_txt = $('#tmp_txt');
-                    if (tmp_txt.text() === 'switch off for ' + currentHostname) {
-                        tmp_txt.text('switch on for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/green.png');
-                        chrome.tabs.sendMessage(tabid, {status: 'off'});
-                    } else {
-                        tmp_txt.text('switch off for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/red.png');
-                        chrome.tabs.sendMessage(tabid, {status: 'on'});
-                    }
-                    
-                    
-                    
-                    
-                    if (!result.blacklist) {
-                        result.blacklist = [];
-                    }
-                    var idx = result.blacklist.indexOf(currentHostname);
-                    var tmp_txt = $('#tmp_txt');
-                    if (tmp_txt.text() === 'switch off for ' + currentHostname) {
-                        result.blacklist.push(currentHostname);
-                        tmp_txt.text('switch on for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/green.png');
-                        chrome.tabs.sendMessage(tabid, {status: 'off'});
-                    } else {
-                        result.blacklist.splice(idx, 1);
-                        tmp_txt.text('switch off for ' + currentHostname);
-                        $('#tmp_img').attr('src', '../media/buttons/red.png');
-                        chrome.tabs.sendMessage(tabid, {status: 'on'});
-                    }
-                    chrome.storage.local.set({blacklist: result.blacklist});
-                });
-            });
+            }
+
+
+
+
+
         });
     });
 });

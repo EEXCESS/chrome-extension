@@ -112,6 +112,7 @@
     };
 
     chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function (result) {
+        console.log(window.location.href);
         if (result.EEXCESS_off) {
             if (result.whitelist && result.whitelist.indexOf(window.location.hostname) !== -1) {
                 run();

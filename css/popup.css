@@ -1,0 +1,16 @@
+#internal {
+    display:none;
+    min-width: 200px;
+}
+
+#switch{
+    min-width: 200px;
+}
+
+#switch .inline {
+    display: inline;
+}
+
+#buttons {
+    float:right;
+}

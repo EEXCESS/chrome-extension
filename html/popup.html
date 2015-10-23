@@ -9,12 +9,22 @@ and open the template in the editor.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../css/popup.css" />
     </head>
     <body>
-        <ul style="width:250px;list-style-type: none;">
-            <li><a href="#" id="power"><image id="power_img" src="../media/buttons/red.png" alt="switch EEXCESS off"/><p id="power_txt">switch off</p></a></li>
-            <li><a href="#" id="tmp"><image id="tmp_img" src="../media/buttons/red.png" alt="switch EEXCESS off for this site"/><p id="tmp_txt"></p></a></li>
-        </ul>
+        <div id="internal">EEXCESS cannot be activated on Chrome-internal pages</div>
+        <div id="switch">
+            <div id="global">
+                <p>general</p>
+                <a href="#" id="power"><image id="power_img" src="../media/buttons/red.png" alt="power button" /></a><p id="power_txt" class="inline"></p>
+            </div>
+            <hr>
+            <div id="local">
+                <p id="current_host"></p>
+                <a href="#" id="tmp"><image id="tmp_img" src="../media/buttons/red.png" alt="power button" /></a><p id="tmp_txt" class="inline"></p>
+            </div>
+        </div>
+        <div id="buttons"><a href="user_profile.html" target="_blank">profile</a> | <a href="settings.html" target="_blank">settings</a></div>
         <script type="text/javascript" data-main="../js/popup" src="../js/lib/requirejs/require.js"></script>
     </body>
 </html>
