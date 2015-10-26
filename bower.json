@@ -19,18 +19,19 @@
     "tests"
   ],
   "dependencies": {
-    "requirejs": "~2.1.17",
-    "jquery": "~2.1.4",
+    "bootstrap": "3.3.4",
     "c4": "https://github.com/EEXCESS/c4.git",
+    "jquery": "~2.1.4",
     "jquery-ui": "~1.11.4",
     "tagit": "https://github.com/aehlke/tag-it.git",
-    "bootstrap": "3.3.4"
+    "bootstrap": "3.3.4",
+    "peas": "https://github.com/EEXCESS/peas.git",
+    "requirejs": "~2.1.17"
   },
   "devDependencies": {
     "requirejs": "~2.1.17",
     "jquery": "~2.1.4",
     "jquery-ui": "~1.11.4",
-    "tagit": "https://github.com/aehlke/tag-it.git",
     "bootstrap": "3.3.4",
     "peas": "https://github.com/EEXCESS/peas.git"
   }
