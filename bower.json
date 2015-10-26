@@ -20,18 +20,20 @@
   ],
   "dependencies": {
     "bootstrap": "3.3.4",
+    "requirejs": "~2.1.17",
     "c4": "https://github.com/EEXCESS/c4.git",
     "jquery": "~2.1.4",
     "jquery-ui": "~1.11.4",
-    "peas": "https://github.com/EEXCESS/peas.git",
-    "requirejs": "~2.1.17",
+    "peas": "https://github.com/EEXCESS/peas.git",   
     "tag-it": "https://github.com/schloett/tag-it.git"
   },
   "devDependencies": {
+    "bootstrap": "3.3.4",
     "requirejs": "~2.1.17",
+    "c4": "https://github.com/EEXCESS/c4.git",
     "jquery": "~2.1.4",
     "jquery-ui": "~1.11.4",
-    "bootstrap": "3.3.4",
-    "peas": "https://github.com/EEXCESS/peas.git"
+    "peas": "https://github.com/EEXCESS/peas.git",   
+    "tag-it": "https://github.com/schloett/tag-it.git"
   }
 }

@@ -20,6 +20,10 @@ define(["up/constants"], function (cst) {
 			return (getLevel(cst.NAME, "") > 0);
 		}, 
 		
+		getNamePolicy(){
+			return getLevel(cst.NAME, "");
+		},
+		
 		// Country
 		
 		getCountry(){
@@ -40,6 +44,10 @@ define(["up/constants"], function (cst) {
 		
 		discloseCountry(){
 			setLevel(cst.LOCATION, "", 1);
+		},
+		
+		getLocationPolicy(){
+			return getLevel(cst.LOCATION, "");
 		},
 		
 		// City
@@ -94,6 +102,10 @@ define(["up/constants"], function (cst) {
 			setLevel(cst.AGE_RANGE, "", 1); 
 		},
 		
+		getAgeRangePolicy(){
+			return getLevel(cst.AGE_RANGE, "");
+		}, 
+		
 		// Languages
 		
 		getLanguages(){
@@ -120,6 +132,10 @@ define(["up/constants"], function (cst) {
 			setLevel(cst.LANGUAGE, i, 1); 
 		},
 		
+		getLanguagePolicy(i){
+			return getLevel(cst.LANGUAGE, i);
+		}, 
+		
 		// Interests
 		
 		getInterests(){
@@ -145,6 +161,10 @@ define(["up/constants"], function (cst) {
 		discloseInterest(i){
 			setLevel(cst.INTEREST, i, 1); 
 		},
+		
+		getInterestPolicy(i){
+			return getLevel(cst.INTEREST, i);
+		}
 			
 	};
 	
