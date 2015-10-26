@@ -2,7 +2,7 @@
  * Provides methods to initialize, retrieve or display elements. 
  * @class common
  */
-define(["./constants", "./interests", "./languages", "./storage", "./util"], function (constants, interests, languages, storage, util) {
+define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"], function (constants, interests, languages, storage, util) {
 	
 	var common = {
 		

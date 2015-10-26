@@ -1,4 +1,4 @@
-define(["./constants.js"], function (cst, ls) {
+define(["up/constants"], function (cst) {
 
 	//***********************
 	//** Module definition **
@@ -189,3 +189,4 @@ define(["./constants.js"], function (cst, ls) {
 	return profile;
 	
 });
+

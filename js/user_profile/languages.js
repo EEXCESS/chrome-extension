@@ -2,7 +2,7 @@
  * Provides methods to manage the languages. 
  * @class languages
  */
-define(["./constants", "./storage", "./policy", "./util"], function (constants, storage, policy, util) {
+define(["up/constants", "up/storage", "up/policy", "up/util"], function (constants, storage, policy, util) {
 
 	var languages = {
 		
@@ -106,7 +106,6 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 				var selected = "";
 				var cond1 = (languageCode != null) && (currentCode == languageCode);
 				var cond2 = (languageCode == null) && (i == constants.DEFAULT_LANGUAGE_CODE_INDEX);
-				console.log(languageCode + ": " + cond1 + " "+ cond2);
 				if (cond1 || cond2){
 					selected = " selected=\"selected\"";
 				} 

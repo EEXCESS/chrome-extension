@@ -2,7 +2,7 @@
  * Provides methods to manage the storage of data. 
  * @class storage
  */
-define(["./constants"], function (constants) {
+define(["up/constants"], function (constants) {
 	
 	var storage = {
 

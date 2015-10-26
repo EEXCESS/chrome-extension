@@ -24,8 +24,7 @@
     "c4": "https://github.com/EEXCESS/c4.git",
     "jquery-ui": "~1.11.4",
     "tagit": "https://github.com/aehlke/tag-it.git",
-    "bootstrap": "3.3.4",
-    "peas": "https://github.com/EEXCESS/peas.git"
+    "bootstrap": "3.3.4"
   },
   "devDependencies": {
     "requirejs": "~2.1.17",

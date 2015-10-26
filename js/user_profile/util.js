@@ -2,7 +2,7 @@
  * Provides methods handle HTML element/code. 
  * @class util-html
  */
-define(["./constants"], function (constants) {
+define(["up/constants"], function (constants) {
 	
 	var util = {
 		
@@ -262,7 +262,7 @@ define(["./constants"], function (constants) {
 				value = field.options[field.selectedIndex].textContent;
 			} else if (fieldId.startsWith(constants.LANGUAGE_LABEL_INPUT) || fieldId.startsWith(constants.LANGUAGE_SKILL_INPUT)){
 				threshold = 1;
-				value = field.options[field.selectedIndex].value;
+				value = field.options[field.selectedIndex].text;
 			} else if (fieldId.startsWith(constants.INTEREST_INPUT)){
 				threshold = 1;
 				var topics = $("#" + fieldId).tagit("assignedTags");
