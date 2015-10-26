@@ -1,18 +1,19 @@
-require(['./config'], function(config) {
-	require(["up/common", "up/constants", "up/interests", "up/languages", "up/policy", "up/storage", "up/util"], function (common, constants, interests, languages, policy, storage, util) {
-		
+require(['../common'], function (common) {
+	require(["up/basics", "up/constants", "up/interests", "up/languages", "up/policy", "up/storage", "up/util"], 
+			function (common, constants, interests, languages, policy, storage, util) {
+
 		//********************
 		//** INITIALIZATION **
 		//********************
-		
+
 		init();
 		display();
 		createListeners();
-		
+
 		//***************
 		//** FUNCTIONS **
 		//***************
-		
+
 		/**
 		 * Initializes all the attributes of the form (demographics, languages and interests) using the values saved in the data store. 
 		 * It also initializes the buttons that are used to handle the level of privacy for each attribute. 
@@ -26,7 +27,7 @@ require(['./config'], function(config) {
 			interests.initInterests();
 			policy.initButtons();
 		}
-		
+
 		/**
 		 * Displays the values of the attributes. 
 		 * The values displayed depends on the level of privacy assigned to each attribute. 
@@ -39,7 +40,7 @@ require(['./config'], function(config) {
 			util.displayElements(languages.getLanguageSelects());
 			util.displayElements(interests.getInterestInputs());
 		}
-		
+
 		/**
 		 * Create the listeners. Some of the listeners are assigned to form input fields (e.g., demographics, languages), 
 		 * while others are assigned to links (e.g., links that allow the addition or the removal of languages). 
@@ -96,6 +97,5 @@ require(['./config'], function(config) {
 			var addInterestElement = document.getElementById(constants.ADD_INTEREST);
 			addInterestElement.addEventListener("click", interests.addInterestListener);
 		}
-	
 	});
 });

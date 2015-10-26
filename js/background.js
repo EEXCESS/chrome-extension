@@ -19,14 +19,18 @@ require(['./common'], function (common) {
 
 
         chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+        	console.log('here');
             if (typeof msg.method !== 'undefined') {
                 switch (msg.method) {
                     case 'triggerQuery':
                         var profile = msg.data;
-                        // TODO: adapt origin
-                        profile.origin = {
-                            module: "unknown"
-                        };
+                        origin = new object();
+                        origin.clientType = this.clientType
+                        origin.clientVersion = this.clientVersion,
+                        origin.module =  "unknown",
+                        origin.userID = this.userID
+                        profile.origin = origin;
+                        console.log(profile);
                         APIconnector.query(profile, sendResponse);
                         return true;
                         break;

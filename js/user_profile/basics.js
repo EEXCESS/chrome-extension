@@ -2,9 +2,10 @@
  * Provides methods to initialize, retrieve or display elements. 
  * @class common
  */
-define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"], function (constants, interests, languages, storage, util) {
+define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"], 
+	function (constants, interests, languages, storage, util) {
 	
-	var common = {
+	var basics = {
 		
 		/**
 		* Returns all the text input elements of class CLASS_TEXT. 
@@ -30,7 +31,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		* @method initTextInputs
 		*/
 		initTextInputs(){
-			var textInputs = common.getTextInputs();
+			var textInputs = this.getTextInputs();
 			for (var i = 0 ; i < textInputs.length ; i++) {
 				var input = textInputs[i];
 				var inputId = input.getAttribute("id");
@@ -61,6 +62,6 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		
 	} 
 
-	return common;
+	return basics;
 	
 });

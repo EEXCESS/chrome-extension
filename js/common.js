@@ -10,7 +10,8 @@ require.config({
     bootstrap: "bootstrap/dist/js/bootstrap",
     "jquery-ui": "jquery-ui/jquery-ui",
     graph: "graph/lib/graph",
-    "tag-it": "tag-it/js/tag-it"
+    "tag-it": "tag-it/js/tag-it", 
+    up: "../user_profile"
   },
   packages: [
 

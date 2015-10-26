@@ -2,7 +2,8 @@
  * Provides methods to manage the languages. 
  * @class languages
  */
-define(["up/constants", "up/storage", "up/policy", "up/util"], function (constants, storage, policy, util) {
+define(["up/constants", "up/storage", "up/policy", "up/util"], 
+		function (constants, storage, policy, util) {
 
 	var languages = {
 		

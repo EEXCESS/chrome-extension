@@ -2,7 +2,8 @@
  * Provides methods to manage policy privacy. 
  * @class policy
  */
-define(["up/constants", "up/storage", "up/util", "up/profile"], function (constants, storage, util, profile) {
+define(["up/constants", "up/storage", "up/util", "up/profile"], 
+		function (constants, storage, util, profile) {
 	
 	var policy = {
 		
