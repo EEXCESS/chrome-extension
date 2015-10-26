@@ -25,7 +25,6 @@ require(['./common'], function (common) {
                         var profile = msg.data;
                         // Adaptation of the profile according to the policies
                         profile = profileManager.adaptProfile(profile);
-                        console.log(profile);
                         APIconnector.query(profile, sendResponse);
                         return true;
                         break;

@@ -1,4 +1,4 @@
-require(["up/profile"], function (p){
+require(["up/profileManager"], function (p){
 
 	var name = p.getName();
 	console.log("Name: 		" + name + " (" + p.isNameDisclosed() + ")");
