@@ -1,5 +1,5 @@
 require(['./common'], function (common) {
-    require(['c4/APIconnector', 'up/profile', 'up/constants'], function (APIconnector, up_profile, up_constants) {
+    require(['c4/APIconnector', 'up/profileManager'], function (APIconnector, profileManager) {
 //        APIconnector.init({base_url:'http://eexcess-dev.joanneum.at/eexcess-privacy-proxy-1.0-SNAPSHOT/api/v1/'});
 //        APIconnector.init({base_url:'http://eexcess-dev.joanneum.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'});
 //        APIconnector.init({base_url:'http://eexcess-demo.know-center.tugraz.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'});
@@ -23,59 +23,8 @@ require(['./common'], function (common) {
                 switch (msg.method) {
                     case 'triggerQuery':
                         var profile = msg.data;
-                        // Age range
-                        up_profile.hideAgeRange(); // TODO remove this line
-                        if (up_profile.isAgeRangeDisclosed()){ 
-                        	profile.ageRange = parseInt(up_profile.getAgeRange()); 
-                        }
-                        // Address
-                        if (up_profile.isCityDisclosed() && up_profile.isCountryDisclosed()){
-                        	profile.address = {
-                        		city: up_profile.getCity(),
-                        		country: up_profile.getCountry()
-                        	};
-                        } else if (up_profile.isCountryDisclosed()){
-                        	profile.address = {
-                            	country: up_profile.getCountry()
-                            };
-                        }
-                        // Languages
-                        var languages = up_profile.getLanguages();
-                        var pLanguages = [];
-                        for (var i = 0 ; i < languages.length ; i++){
-                        	if (up_profile.isLanguageDisclosed(i)){
-	                        	var languageSkill = languages[i].languageSkill;
-	                        	var languageCompetenceLevel = 0;
-	                        	for (var j = 0 ; j < up_constants.TAB_LANGUAGE_SKILLS.length ; j++){
-	                        		if (up_constants.TAB_LANGUAGE_SKILLS[j] == languageSkill){
-	                        			languageCompetenceLevel = 1 - j * (1 / up_constants.TAB_LANGUAGE_SKILLS.length);
-	                        		}
-	                        	}
-	                        	pLanguages[pLanguages.length] = {
-	                        		iso2: languages[i].languageCode,
-	                        		languageCompetenceLevel: languageCompetenceLevel
-	                        	};
-                        	}
-                        }
-                        if (pLanguages.length > 0){
-                        	profile.languages = pLanguages;
-                        }
-                        // Interests
-                        var interests = up_profile.getInterests();
-                        var pInterests = [];
-                        for (var i = 0 ; i < interests.length ; i++){
-                        	if (up_profile.isInterestDisclosed(i)){
-	                        	var topics = interests[i];
-	                        	for (var j = 0 ; j < topics.length ; j++){
-	                        		pInterests[pInterests.length] = {
-	                        			text: topics[j]
-	                        		};
-	                        	}
-                        	}
-                        }
-                        if (pInterests.length > 0){
-                        	profile.interests = pInterests;
-                        }
+                        // Adaptation of the profile according to the policies
+                        profile = profileManager.adaptProfile(profile);
                         console.log(profile);
                         APIconnector.query(profile, sendResponse);
                         return true;

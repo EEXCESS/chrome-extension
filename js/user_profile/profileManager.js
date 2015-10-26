@@ -4,8 +4,65 @@ define(["up/constants"], function (cst) {
 	//** Module definition **
 	//***********************
 	
-	var profile = {
+	var profileManager = {
 		
+		adaptProfile:function(profile){
+			// Age range
+            up_profile.hideAgeRange(); // TODO remove this line
+            if (up_profile.isAgeRangeDisclosed()){ 
+            	profile.ageRange = parseInt(up_profile.getAgeRange()); 
+            }
+            // Address
+            if (up_profile.isCityDisclosed() && up_profile.isCountryDisclosed()){
+            	profile.address = {
+            		city: up_profile.getCity(),
+            		country: up_profile.getCountry()
+            	};
+            } else if (up_profile.isCountryDisclosed()){
+            	profile.address = {
+                	country: up_profile.getCountry()
+                };
+            }
+            // Languages
+            var languages = up_profile.getLanguages();
+            var pLanguages = [];
+            for (var i = 0 ; i < languages.length ; i++){
+            	if (up_profile.isLanguageDisclosed(i)){
+                	var languageSkill = languages[i].languageSkill;
+                	var languageCompetenceLevel = 0;
+                	for (var j = 0 ; j < up_constants.TAB_LANGUAGE_SKILLS.length ; j++){
+                		if (up_constants.TAB_LANGUAGE_SKILLS[j] == languageSkill){
+                			languageCompetenceLevel = 1 - j * (1 / up_constants.TAB_LANGUAGE_SKILLS.length);
+                		}
+                	}
+                	pLanguages[pLanguages.length] = {
+                		iso2: languages[i].languageCode,
+                		languageCompetenceLevel: languageCompetenceLevel
+                	};
+            	}
+            }
+            if (pLanguages.length > 0){
+            	profile.languages = pLanguages;
+            }
+            // Interests
+            var interests = up_profile.getInterests();
+            var pInterests = [];
+            for (var i = 0 ; i < interests.length ; i++){
+            	if (up_profile.isInterestDisclosed(i)){
+                	var topics = interests[i];
+                	for (var j = 0 ; j < topics.length ; j++){
+                		pInterests[pInterests.length] = {
+                			text: topics[j]
+                		};
+                	}
+            	}
+            }
+            if (pInterests.length > 0){
+            	profile.interests = pInterests;
+            }
+            return profile;
+		},
+			
 		// Name 
 		
 		getName(){
@@ -206,7 +263,7 @@ define(["up/constants"], function (cst) {
 		localStorage.setItem(cst.STORAGE_PREFIX + key + cst.POLICY_SUFFIX + idx, level);
 	}
 	
-	return profile;
+	return profileManager;
 	
 });
 
