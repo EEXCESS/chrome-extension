@@ -4,86 +4,56 @@
  */
 define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"], 
 		function (constants, storage, policy, util, tag_it, $) {
-                    var lang = window.navigator.userLanguage || window.navigator.language;
-                    if(lang !== 'de' || lang !== 'fr') {
-                        lang = 'en';
-                    }
-                    var autocomplete = {
-                                minLength:3,
-                                source: function(request, response) {
-                                    $.ajax({
-                                        processData: false,
-                                        contentType: 'application/json',
-                                        type: 'POST',
-                                        url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/suggestCategories',
-                                        dataType: "json",
-                                        data: '{"input":"' + request.term + '","language":"'+ lang + '"}', // possible language fields: en,de,fr TODO: make selectable
-                                        success: function(data) {
-                                            response($.map(data.categories, function(item) {
-                                                return {
-                                                    value: item.name,
-                                                    data: {text: item.name, uri: item.uri}
-                                                };
-                                            }));
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            console.log("error calling category suggestion service");
-                                            // no further error handling needed, suggestions will just not be displayed
-                                        }
-                                    });
-                                }
-                            };
-
 	var interests = {
-		
-		/**
-		 * Returns all the nodes embedding a fields related to the topics of interest. 
-		 * @returns {ListNode} List of interest inputs.
-		 * @method getInterestInputs
-		 */
-		getInterestInputs(){
-			return document.getElementsByClassName(constants.CLASS_INTEREST);
-		},
-		
-		/**
-		 * Initializes the interests with the values from the data store. 
-		 * It generates the HTML code, initializes the TagIt fields, adds the listeners and initializes the buttons. 
-		 * @method initInterests
-		 */
-		initInterests(){ 
-			var interests = storage.getStoredJson(constants.INTERESTS); 
-			var interestsElement = document.getElementById(constants.INTERESTS);
-			var code = "";
-			for (var i = 0 ; i < interests.length ; i++){
-				code = code + this.generateCodeInterest(i);
+
+			/**
+			 * Returns all the nodes embedding a fields related to the topics of interest. 
+			 * @returns {ListNode} List of interest inputs.
+			 * @method getInterestInputs
+			 */
+			getInterestInputs(){
+				return document.getElementsByClassName(constants.CLASS_INTEREST);
+			},
+
+			/**
+			 * Initializes the interests with the values from the data store. 
+			 * It generates the HTML code, initializes the TagIt fields, adds the listeners and initializes the buttons. 
+			 * @method initInterests
+			 */
+			initInterests(){ 
+				var interests = storage.getStoredJson(constants.INTERESTS); 
+				var interestsElement = document.getElementById(constants.INTERESTS);
+				var code = "";
+				for (var i = 0 ; i < interests.length ; i++){
+					code = code + this.generateCodeInterest(i);
+					interestsElement.innerHTML = code;
+				}
+				var interestElements = this.getInterestInputs();
+				for (var i = 0 ; i < interestElements.length ; i++){
+					var interestElement = interestElements[i];
+					var interestId = interestElement.getAttribute("id"); 
+					this.initInterest(interestId);
+					this.createInterestListener(interestId);
+				}
+				// Initialize the buttons
+				for (var i = 0 ; i < interests.length ; i++){
+					var policyElement = document.getElementById(constants.INTEREST_POLICY + i);
+					policy.initButtonGroup(policyElement);
+				}
+			},
+
+			/**
+			 * Adds an interest: generates the HTML code, adds the listeners, initializes the buttons, saves the interests and update the listeners. 
+			 * @method addNewInterest
+			 */
+			addNewInterest(){
+				var interestsElement = document.getElementById(constants.INTERESTS);
+				var nbInterests = interestsElement.children.length + 1; // +1 to consider the new one
+				var code = "";
+				for (var i = 0 ; i < nbInterests ; i++){
+					code = code + interests.generateCodeInterest(i);
+				}
 				interestsElement.innerHTML = code;
-			}
-			var interestElements = this.getInterestInputs();
-			for (var i = 0 ; i < interestElements.length ; i++){
-				var interestElement = interestElements[i];
-				var interestId = interestElement.getAttribute("id"); 
-				this.initInterest(interestId);
-				this.createInterestListener(interestId);
-			}
-			// Initialize the buttons
-			for (var i = 0 ; i < interests.length ; i++){
-				var policyElement = document.getElementById(constants.INTEREST_POLICY + i);
-				policy.initButtonGroup(policyElement);
-			}
-		},
-		
-		/**
-		 * Adds an interest: generates the HTML code, adds the listeners, initializes the buttons, saves the interests and update the listeners. 
-		 * @method addNewInterest
-		 */
-		addNewInterest(){
-			var interestsElement = document.getElementById(constants.INTERESTS);
-			var nbInterests = interestsElement.children.length + 1; // +1 to consider the new one
-			var code = "";
-			for (var i = 0 ; i < nbInterests ; i++){
-				code = code + interests.generateCodeInterest(i);
-			}
-			interestsElement.innerHTML = code;
 			var interestElements = interests.getInterestInputs();
 			for (var i = 0 ; i < interestElements.length ; i++){
 				// Initialise the interests
@@ -110,9 +80,45 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 		 * @method initInterest
 		 */
 		initInterest(interestId) {
+                    var lang = window.navigator.userLanguage || window.navigator.language;
+                    if(lang !== 'de' || lang !== 'fr') {
+                        lang = 'en';
+                    }
 			$("#" + interestId).tagit({
                             allowSpaces: true,
-                            autocomplete:autocomplete
+                            removeConfirmation:true,
+                            autocomplete:{
+                                minLength:3,
+                                source: function(request, response) {
+                                    $.ajax({
+                                        processData: false,
+                                        contentType: 'application/json',
+                                        type: 'POST',
+                                        url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/suggestCategories',
+                                        dataType: "json",
+                                        data: '{"input":"' + request.term + '","language":"'+ lang + '"}', // possible language fields: en,de,fr TODO: make selectable
+                                        success: function(data) {
+                                            response($.map(data.categories, function(item) {
+                                                return {
+                                                    value: item.name,
+                                                    data: {text: item.name, uri: item.uri}
+                                                };
+                                            }));
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.log("error calling category suggestion service");
+                                            // no further error handling needed, suggestions will just not be displayed
+                                        }
+                                    });
+                                },
+        focus: function(event, ui) {
+            // show only labels in the preview
+            event.preventDefault();
+            $(this).val(ui.item.label);
+            $(this).data('properties', ui.item.data);
+            
+        }
+                            }
                         });
 			var index = util.extractEndingNumber(interestId);
 			var interests = storage.getStoredJson(constants.INTERESTS);
@@ -131,9 +137,6 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 		 */
 		createInterestListener(interestId) {
 			$("#" + interestId).tagit({
-                            allowSpaces: true,
-                            autocomplete:autocomplete,
-				removeConfirmation: true,
 		    	afterTagAdded: function(event, ui) {
 			    	if (!ui.duringInitialization) {
 			    		var interestElement = document.getElementById(interestId);
@@ -222,79 +225,79 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
                                     });
 				if ((array != null) && (array.length != 0)){
 					interests.push(array);
+					}
 				}
-			}
-			storage.storeValue(constants.INTERESTS, JSON.stringify(interests));
-		},
-		
-		/**
-		 * Adds a topic to an interest (added only if it's not already contained).  
-		 * @param {Array} interests Array of interests. 
-		 * @param {String} interestId Identifier of the interest to be updated. 
-		 * @param {String} label Label of the new topic. 
-		 * @returns {Array} Array of interests containing "label". 
-		 * @method addTopic
-		 */
-		addTopic(interests, interestId, label){
-			var index = "";
-			if (endsWithNumber(interestId)){
-				index = extractEndingNumber(interestId); 
-			}
-			var interest = interests[index];
-			if (interest == null){
-				interest = [];
-			}
-			if (interest.indexOf(label) == -1){
-				interest.push(label);
-				interests[index] = interest;
-			}
-			return interests;
-		},
-		
-		/**
-		 * Removes a topic for an interest. 
-		 * @param {Array} interests Array of interests.  
-		 * @param {String} interestId Identifier of the interest to be updated. 
-		 * @param {String} label Label of the topic to be removed.  
-		 * @returns {Array} Array of interests without "label". 
-		 * @method removeTopic
-		 */
-		removeTopic(interests, interestId, label){
-			var index = extractEndingNumber(interestId);
-			var interest = interests[index];
-			if (interest != null){
-				interest.splice(interest.indexOf(label), 1);
-				if (interest.length != 0){
+				storage.storeValue(constants.INTERESTS, JSON.stringify(interests));
+			},
+
+			/**
+			 * Adds a topic to an interest (added only if it's not already contained).  
+			 * @param {Array} interests Array of interests. 
+			 * @param {String} interestId Identifier of the interest to be updated. 
+			 * @param {String} label Label of the new topic. 
+			 * @returns {Array} Array of interests containing "label". 
+			 * @method addTopic
+			 */
+			addTopic(interests, interestId, label){
+				var index = "";
+				if (endsWithNumber(interestId)){
+					index = extractEndingNumber(interestId); 
+				}
+				var interest = interests[index];
+				if (interest == null){
+					interest = [];
+				}
+				if (interest.indexOf(label) == -1){
+					interest.push(label);
 					interests[index] = interest;
-				} else {
-					interests.splice(index, 1);
 				}
+				return interests;
+			},
+
+			/**
+			 * Removes a topic for an interest. 
+			 * @param {Array} interests Array of interests.  
+			 * @param {String} interestId Identifier of the interest to be updated. 
+			 * @param {String} label Label of the topic to be removed.  
+			 * @returns {Array} Array of interests without "label". 
+			 * @method removeTopic
+			 */
+			removeTopic(interests, interestId, label){
+				var index = extractEndingNumber(interestId);
+				var interest = interests[index];
+				if (interest != null){
+					interest.splice(interest.indexOf(label), 1);
+					if (interest.length != 0){
+						interests[index] = interest;
+					} else {
+						interests.splice(index, 1);
+					}
+				}
+				return interests;
+			},
+
+			/**
+			 * Removes the listener assigned to a link element. 
+			 * This method is used when an interest is removed to make sure the removal is done properly. 
+			 * It resets the policy level, remove the HTML code, and save the interests. 
+			 * @param {Element} link Element corresponding to the link. 
+			 * @method removeInterestListener
+			 */
+			removeInterestListener(link){
+				policy.resetElementPolicy(link, constants.INTEREST_POLICY, constants.DEFAULT_POLICY_LEVEL);
+				util.removeElement(link, constants.INTEREST);
+				interests.saveInterests();
+			},
+
+			/**
+			 * Listener invoked when an interest must be added. 
+			 * @method addInterestListener
+			 */
+			addInterestListener(){ 
+				interests.addNewInterest(); 
 			}
-			return interests;
-		},
-		
-		/**
-		 * Removes the listener assigned to a link element. 
-		 * This method is used when an interest is removed to make sure the removal is done properly. 
-		 * It resets the policy level, remove the HTML code, and save the interests. 
-		 * @param {Element} link Element corresponding to the link. 
-		 * @method removeInterestListener
-		 */
-		removeInterestListener(link){
-			policy.resetElementPolicy(link, constants.INTEREST_POLICY, constants.DEFAULT_POLICY_LEVEL);
-			util.removeElement(link, constants.INTEREST);
-			interests.saveInterests();
-		},
-		
-		/**
-		 * Listener invoked when an interest must be added. 
-		 * @method addInterestListener
-		 */
-		addInterestListener(){ 
-			interests.addNewInterest(); 
-		}
 	}
-	
+
 	return interests;
-		
+
 });

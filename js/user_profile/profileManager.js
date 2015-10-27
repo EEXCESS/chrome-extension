@@ -8,9 +8,9 @@ define(["up/constants"], function (cst) {
 		
 		adaptProfile:function(profile){
 			// Age range
-            this.hideAgeRange(); // TODO remove this line
+            setValue(cst.AGE_RANGE, 0); // TODO remove this line
             if (this.isAgeRangeDisclosed()){ 
-            	profile.ageRange = parseInt(this.getAgeRange()); 
+            	profile.ageRange = this.getAgeRange(); 
             }
             // Address
             if (this.isCityDisclosed() && this.isCountryDisclosed()){
@@ -58,17 +58,39 @@ define(["up/constants"], function (cst) {
             if (pInterests.length > 0){
             	profile.interests = pInterests;
             }
+            // Logging level
+            profile.loggingLevel = this.getLoggingLevel(); 
             return profile;
+		},
+		
+		// Logging level
+		
+		getLoggingLevel(){
+			var level = localStorage.getItem(cst.STORAGE_PREFIX + cst.LOGGING_LEVEL);
+			if (level == null){
+				level = 0;
+			} else {
+				level = parseInt(level);
+			}
+			return level;
+		},
+		
+		// Obfuscation level
+		
+		getObfuscationLevel(){
+			var level = localStorage.getItem(cst.STORAGE_PREFIX + cst.OBFUSCATION_LEVEL);
+			if (level == null){
+				level = 0;
+			} else {
+				level = parseInt(level);
+			}
+			return level;
 		},
 			
 		// Name 
 		
 		getName(){
 			return getValue(cst.NAME);
-		},
-		
-		setName(value){
-			setValue(cst.NAME, value);
 		},
 		
 		isNameDisclosed(){
@@ -85,20 +107,8 @@ define(["up/constants"], function (cst) {
 			return getValue(cst.COUNTRY);
 		}, 
 
-		setCountry(value){
-			setValue(cst.COUNTRY, value);
-		},
-		
 		isCountryDisclosed(){
 			return (getLevel(cst.LOCATION, "") > 0);
-		}, 
-		
-		hideCountry(){
-			setLevel(cst.LOCATION, "", 0); 
-		}, 
-		
-		discloseCountry(){
-			setLevel(cst.LOCATION, "", 1);
 		},
 		
 		getLocationPolicy(){
@@ -110,26 +120,10 @@ define(["up/constants"], function (cst) {
 		getCity(){
 			return getValue(cst.CITY);
 		}, 
-
-		setCity(value){
-			setValue(cst.CITY, value);
-		},
 		
 		isCityDisclosed(){
 			return (getLevel(cst.LOCATION, "") > 1);
 		}, 
-		
-		hideCity(){
-			if (profile.isCountryDisclosed()){
-				setLevel(cst.LOCATION, "", 1); 
-			} else {
-				setLevel(cst.LOCATION, "", 0); 
-			}
-		}, 
-		
-		discloseCity(){
-			setLevel(cst.LOCATION, "", 2); 
-		},
 		
 		// Age range
 		
@@ -138,24 +132,12 @@ define(["up/constants"], function (cst) {
 			if (ageRange == null){
 				ageRange = cst.DEFAULT_AGE_RANGE_INDEX;
 			}
-			return ageRange;
+			return parseInt(ageRange);
 		}, 
-
-		setAgeRange(value){
-			setValue(cst.AGE_RANGE, value);
-		},
 		
 		isAgeRangeDisclosed(){
 			return (getLevel(cst.AGE_RANGE, "") > 0);
 		}, 
-
-		hideAgeRange(){
-			setLevel(cst.AGE_RANGE, "", 0); 
-		}, 
-		
-		discloseAgeRange(){
-			setLevel(cst.AGE_RANGE, "", 1); 
-		},
 		
 		getAgeRangePolicy(){
 			return getLevel(cst.AGE_RANGE, "");
@@ -170,22 +152,10 @@ define(["up/constants"], function (cst) {
 			}
 			return languages;
 		}, 
-
-		setLanguages(value){
-			setJsonValue(cst.LANGUAGES, value);
-		},
 		
 		isLanguageDisclosed(i){
 			return (getLevel(cst.LANGUAGE, i) > 0);
 		}, 
-		
-		hideLanguage(i){
-			setLevel(cst.LANGUAGE, i, 0); 
-		}, 
-		
-		discloseLanguage(i){
-			setLevel(cst.LANGUAGE, i, 1); 
-		},
 		
 		getLanguagePolicy(i){
 			return getLevel(cst.LANGUAGE, i);
@@ -201,20 +171,8 @@ define(["up/constants"], function (cst) {
 			return interests;
 		}, 
 
-		setInterests(value){
-			setJsonValue(cst.INTERESTS, value);
-		},
-		
 		isInterestDisclosed(i){
 			return (getLevel(cst.INTEREST, i) > 0);
-		},
-		
-		hideInterest(i){
-			setLevel(cst.INTEREST, i, 0); 
-		}, 
-		
-		discloseInterest(i){
-			setLevel(cst.INTEREST, i, 1); 
 		},
 		
 		getInterestPolicy(i){

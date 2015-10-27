@@ -25,7 +25,8 @@ require(['./common'], function (common) {
                         var profile = msg.data;
                         // Adaptation of the profile according to the policies
                         profile = profileManager.adaptProfile(profile);
-                        APIconnector.query(profile, sendResponse);
+                        obfuscationLevel = profileManager.getObfucsationLevel();
+                        APIconnector.queryPeas(profile, obfuscationLevel, sendResponse); // if obfuscationLevel == 0, then it's similar to APIconnector.query(...)
                         return true;
                         break;
                     default:

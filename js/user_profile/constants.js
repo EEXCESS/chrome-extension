@@ -16,6 +16,8 @@ define([], function (){
 	var Input = 			"Input";
 	var Display = 			"Display";
 	var Policy =			"Policy";
+	var LoggingLevel = 		"loggingLevel";
+	var ObfuscationLevel = 	"obfuscationLevel";
 	var name =				"name";
 	var city = 				"city";
 	var country = 			"country";
@@ -46,6 +48,9 @@ define([], function (){
 		BUTTON_STYLE_RED: prefixBtn + "danger",
 		
 		PARENT_ID: "ParentId", 
+		
+		LOGGING_LEVEL: LoggingLevel,
+		OBFUSCATION_LEVEL: ObfuscationLevel,
 		
 		NAME: name,
 		NAME_INPUT: name + Input,
@@ -110,6 +115,8 @@ define([], function (){
 
 		TAB_LANGUAGE_SKILLS: ["Fluent", "Intermediate", "Basic knowledge"],
 		
+		DEFAULT_LOGGING_LEVEL_INDEX: 0, // 0: Yes
+		DEFAULT_OBFUSCATION_LEVEL_INDEX: 0, // 0: Low
 		DEFAULT_AGE_RANGE_INDEX: 2, // 2: Adult
 		DEFAULT_LANGUAGE_LABEL_INDEX: 4, // 4: English
 		DEFAULT_LANGUAGE_CODE_INDEX: 4, // 4: en

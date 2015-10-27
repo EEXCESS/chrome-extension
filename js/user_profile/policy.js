@@ -59,12 +59,22 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 				if (j != level){
 					buttonStyle = constants.BUTTON_STYLE_GREY;
 				} else {
-					if (j == 0){
-						buttonStyle = constants.BUTTON_STYLE_GREEN;
-					} else if ((j == 1) && (j != children.length-1)){
-						buttonStyle = constants.BUTTON_STYLE_ORANGE;
-					} else if ((j == 2) || (j == children.length-1)){
-						buttonStyle = constants.BUTTON_STYLE_RED;
+					if ((buttonGroupId == constants.LOGGING_LEVEL) || (buttonGroupId == constants.OBFUSCATION_LEVEL)){
+						if (j == 0){
+							buttonStyle = constants.BUTTON_STYLE_RED;
+						} else if ((j == 1) && (j != children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_ORANGE;
+						} else {
+							buttonStyle = constants.BUTTON_STYLE_GREEN;
+						}
+					} else {
+						if (j == 0){
+							buttonStyle = constants.BUTTON_STYLE_GREEN;
+						} else if ((j == 1) && (j != children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_ORANGE;
+						} else if ((j == 2) || (j == children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_RED;
+						}
 					}
 				}
 				util.addClass(child, buttonStyle);
@@ -84,6 +94,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 */
 		updateButton(button){
 			var parent = document.getElementById(button.getAttribute(constants.PARENT_ID));
+			var buttonGroupId = parent.getAttribute("id");
 			var children = parent.children;
 			for (var i = 0 ; i < children.length ; i++){
 				var child = children[i];
@@ -94,12 +105,22 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 				var buttonStyle = constants.BUTTON_STYLE_GREY;
 				if (child.textContent == button.textContent){
 					// the current child is the button that was clicked on
-					if (i == 0){
-						buttonStyle = constants.BUTTON_STYLE_GREEN;
-					} else if ((i == 1) && (i != children.length-1)){
-						buttonStyle = constants.BUTTON_STYLE_ORANGE;
-					} else if ((i == 2) || (i == children.length-1)){
-						buttonStyle = constants.BUTTON_STYLE_RED;
+					if ((buttonGroupId == constants.LOGGING_LEVEL) || (buttonGroupId == constants.OBFUSCATION_LEVEL)){
+						if (i == 0){
+							buttonStyle = constants.BUTTON_STYLE_RED;
+						} else if ((i == 1) && (i != children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_ORANGE;
+						} else {
+							buttonStyle = constants.BUTTON_STYLE_GREEN;
+						}
+					} else {
+						if (i == 0){
+							buttonStyle = constants.BUTTON_STYLE_GREEN;
+						} else if ((i == 1) && (i != children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_ORANGE;
+						} else if ((i == 2) || (i == children.length-1)){
+							buttonStyle = constants.BUTTON_STYLE_RED;
+						}
 					}
 				}
 				util.addClass(child, buttonStyle);
