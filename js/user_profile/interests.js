@@ -88,6 +88,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
                             allowSpaces: true,
                             removeConfirmation:true,
                             autocomplete:{
+                                autoFocus:true,
                                 minLength:3,
                                 source: function(request, response) {
                                     $.ajax({
@@ -110,14 +111,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
                                             // no further error handling needed, suggestions will just not be displayed
                                         }
                                     });
-                                },
-        focus: function(event, ui) {
-            // show only labels in the preview
-            event.preventDefault();
-            $(this).val(ui.item.label);
-            $(this).data('properties', ui.item.data);
-            
-        }
+                                }
                             }
                         });
 			var index = util.extractEndingNumber(interestId);
