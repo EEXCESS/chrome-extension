@@ -13,6 +13,50 @@
 					User Profile
 				</h3>
 			</div>
+			
+			<div class="panel-body">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							General Privacy Settings<span class="badge pull-right setting"></span>
+						</h3>
+					</div>
+					<form class="form-horizontal">
+						<!-- Logging level -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-6">
+									In order to improve our service, we would like to log your interactions with the system. Do you accept? 
+								</div>
+								<div id="loggingLevel" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Yes</button>
+									<button type="button" class="btn btn-default eexcess-button">No</button>
+								</div>
+								<div class="col-md-4">
+									Your data will never be disclosed to external organizations or companies. It is used for internal purposes only. 
+								</div>
+							</div>
+						</div>
+						<!-- Obfuscation level -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-6">
+									We offer a query obfuscation mechanism to protect your privacy. Which level of privacy do you want? 
+								</div>
+								<div id="obfuscationLevel" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Low</button>
+									<button type="button" class="btn btn-default eexcess-button">Medium</button>
+									<button type="button" class="btn btn-default eexcess-button">High</button>
+								</div>
+								<div class="col-md-4">
+									The more obfuscated a query is, the more protected you are. In return, the performance can be degraded. 
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -134,6 +178,7 @@
 					</form>
 				</div>
 			</div>
+			
 		</div>
 		<script data-main="../js/user_profile/userProfile.js" src="../js/lib/requirejs/require.js"></script>
 	</body>

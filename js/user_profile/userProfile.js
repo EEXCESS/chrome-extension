@@ -23,6 +23,7 @@ require(['../common'], function (common) {
 		function init(){
 			common.initTextInputs();
 			common.initSelectInputs();
+			common.initPrivacyLevels();
 			languages.initLanguages();
 			interests.initInterests();
 			policy.initButtons();
@@ -96,6 +97,7 @@ require(['../common'], function (common) {
 			// Add interests link
 			var addInterestElement = document.getElementById(constants.ADD_INTEREST);
 			addInterestElement.addEventListener("click", interests.addInterestListener);
+			// Logging level
 		}
 	});
 });

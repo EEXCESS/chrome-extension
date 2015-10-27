@@ -58,6 +58,20 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 				}
 				input.value = value;
 			}
+		},
+		
+		initPrivacyLevels(){
+			var level;
+			// Logging level
+			level = storage.getStoredValue(constants.LOGGING_LEVEL);
+			if (level == null){
+				storage.storeValue(constants.LOGGING_LEVEL, constants.DEFAULT_LOGGING_LEVEL_INDEX); 
+			}
+			// Obfuscation level
+			var level = storage.getStoredValue(constants.OBFUSCATION_LEVEL);
+			if (level == null){
+				storage.storeValue(constants.OBFUSCATION_LEVEL, constants.DEFAULT_OBFUSCATION_LEVEL_INDEX); 
+			}
 		}
 		
 	} 
