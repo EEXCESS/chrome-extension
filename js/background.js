@@ -1,5 +1,5 @@
 require(['./common'], function(common) {
-    require(['c4/APIconnector', 'up/profileManager'], function(APIconnector, profileManager) {
+    require(['c4/APIconnector', 'up/profileManager', 'util'], function(APIconnector, profileManager, util) {
 //        APIconnector.init({base_url:'http://eexcess-dev.joanneum.at/eexcess-privacy-proxy-1.0-SNAPSHOT/api/v1/'});
 //        APIconnector.init({base_url:'http://eexcess-dev.joanneum.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'});
 //        APIconnector.init({base_url:'http://eexcess-demo.know-center.tugraz.at/eexcess-federated-recommender-web-service-1.0-SNAPSHOT/recommender/'});
@@ -14,17 +14,24 @@ require(['./common'], function(common) {
         
         var selectedSources = [];
 
-        chrome.storage.sync.get(['numResults','selectedSources'], function(result) {
+        chrome.storage.sync.get(['numResults','selectedSources','uuid'], function(result) {
             if(result.selectedSources) {
                 result.selectedSources.forEach(function(val){
                     selectedSources.push({systemId:val.systemId});
                 });
             }
+            var uuid;
+            if(result.uuid) {
+                uuid = result.uuid;
+            } else {
+                uuid = util.randomUUID();
+                chrome.storage.sync.set({uuid:uuid});
+            }
             
             var settings = {origin: {
-                    userID: "1", // XXX Needs to be fixed
+                    userID: uuid,
                     clientType: "chrome-extension",
-                    clientVersion: "0.53"
+                    clientVersion: chrome.runtime.getManifest().version
                 }};
             if (result.numResults) {
                 settings.numResults = result.numResults;

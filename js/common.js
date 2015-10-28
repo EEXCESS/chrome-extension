@@ -14,7 +14,8 @@ require.config({
     peas_indist: "peas/peas_indist",
     up: "../user_profile",
     peas_adapt: "peas/peas_adapt",
-    d3: "d3/d3"
+    d3: "d3/d3",
+    util:"../util"
   },
   packages: [
 
