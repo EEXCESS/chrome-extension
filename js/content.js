@@ -22,7 +22,26 @@ require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecog
             chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
                 callback(response);
             });
-        }});
+        },
+        queryCrumbs: {
+            active: true,
+            storage: {
+                getHistory: function(numItems, callback) {
+                    chrome.storage.local.get('queryCrumbs_history', function(res){
+                        var history = [];
+                        if(res.queryCrumbs_history) {
+                            history = res.queryCrumbs_history;
+                            history.slice(Math.max(history.length - numItems, 0));
+                        }
+                        callback(history);
+                    });
+                },
+                setHistory: function(history) {
+                    chrome.storage.local.set({queryCrumbs_history:history});
+                }
+            }
+        }
+    });
 
     // detect paragraphs
     var p = paragraphDetection.getParagraphs();
