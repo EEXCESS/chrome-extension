@@ -51,9 +51,7 @@ define(["up/constants"], function (cst) {
             	if (this.isInterestDisclosed(i)){
                 	var topics = interests[i];
                 	for (var j = 0 ; j < topics.length ; j++){
-                		pInterests[pInterests.length] = {
-                			text: topics[j]
-                		};
+                		pInterests[pInterests.length] = topics[j];
                 	}
             	}
             }

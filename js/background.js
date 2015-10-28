@@ -25,9 +25,14 @@ require(['./common'], function (common) {
                         var profile = msg.data;
                         // Adaptation of the profile according to the policies
                         profile = profileManager.adaptProfile(profile);
+                        profile.origin = {
+                        	module: profile.origin.module,
+                        	userID: "1",
+                        	clientType: "chrome-extension",
+                            clientVersion:"0.53"
+                        }
                         obfuscationLevel = profileManager.getObfuscationLevel();
-                        APIconnector.query(profile, sendResponse); // XXX should be next line
-                        // APIconnector.queryPeas(profile, obfuscationLevel, sendResponse); // if obfuscationLevel == 0, then it's similar to APIconnector.query(...)
+                        APIconnector.queryPeas(profile, obfuscationLevel, sendResponse); // if obfuscationLevel == 0, then it's similar to APIconnector.query(profile, sendResponse)
                         return true;
                         break;
                     default:

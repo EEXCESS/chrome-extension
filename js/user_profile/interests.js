@@ -4,7 +4,6 @@
  */
 define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"], 
 		function (constants, storage, policy, util, tag_it, $) {
-
 	var interests = {
 
 			/**
@@ -67,7 +66,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 					var level = policy.initButtonGroup(policyElement);
 					storage.storeValue(policyElement.getAttribute("id"), level);
 					policy.initButtonGroup(policyElement);
-
+					util.displayElement(interestElement);
 				}	
 				// Save all the interests
 				interests.saveInterests();
@@ -81,38 +80,38 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @method initInterest
 			 */
 			initInterest(interestId) {
-				//$("#" + interestId).tagit(tagItConfig(interestId));
+				var lang = window.navigator.userLanguage || window.navigator.language;
+				if(lang !== 'de' || lang !== 'fr') {
+					lang = 'en';
+				}
 				$("#" + interestId).tagit({
 					allowSpaces: true,
-					removeConfirmation: true,
-					autocomplete: {
+					removeConfirmation:true,
+					autocomplete:{
+						autoFocus:true,
+						minLength:3,
 						source: function(request, response) {
 							$.ajax({
 								processData: false,
 								contentType: 'application/json',
 								type: 'POST',
-								url: 'http://zaire.dimis.fim.uni-passau.de:8999/doser-disambiguationserverstable/disambiguation/categorysuggestion-proxy',
+								url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/suggestCategories',
 								dataType: "json",
-								data: '{"input":"' + request.term + '","language":"en"}', 
+								data: '{"input":"' + request.term + '","language":"'+ lang + '"}', // possible language fields: en,de,fr TODO: make selectable
 								success: function(data) {
 									response($.map(data.categories, function(item) {
 										return {
-											label: item.name,
-											value: item.name, 
-											data: {label: item.name, uri: item.uri}
+											value: item.name,
+											data: {text: item.name, uri: item.uri}
 										};
 									}));
 								},
 								error: function(jqXHR, textStatus, errorThrown) {
-									console.log("error!");
-									console.log(jqXHR);
-									console.log(textStatus);
-									console.log(errorThrown);
-									console.log(jqXHR.responseText);
+									console.log("error calling category suggestion service");
+									// no further error handling needed, suggestions will just not be displayed
 								}
 							});
-						},
-						minLength: 3
+						}
 					}
 				});
 				var index = util.extractEndingNumber(interestId);
@@ -120,7 +119,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 				if (interests.length > index){
 					var interest = interests[index]; 
 					for (var i = 0 ; i < interest.length ; i++){
-						$("#" + interestId).tagit("createTag", interest[i]);	
+						$("#" + interestId).tagit("createTag", interest[i].text, interest[i]);
 					}
 				}
 			},
@@ -214,12 +213,14 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 				for (var i = 0 ; i < interestElements.length ; i++){
 					var interestElement = interestElements[i];
 					var interestId = interestElement.getAttribute("id");
-					var array = $("#" + interestId).tagit("assignedTags");
+					var array = $("#" + interestId).tagit("getActiveTagsProperties");
+					array.forEach(function(val){
+						delete val.isMainTopic;
+					});
 					if ((array != null) && (array.length != 0)){
 						interests.push(array);
 					}
 				}
-				console.log(interests);
 				storage.storeValue(constants.INTERESTS, JSON.stringify(interests));
 			},
 

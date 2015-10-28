@@ -97,7 +97,6 @@ require(['../common'], function (common) {
 			// Add interests link
 			var addInterestElement = document.getElementById(constants.ADD_INTEREST);
 			addInterestElement.addEventListener("click", interests.addInterestListener);
-			// Logging level
 		}
 	});
 });
