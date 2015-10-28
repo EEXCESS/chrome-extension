@@ -13,7 +13,8 @@ require.config({
     "tag-it": "tag-it/js/tag-it",
     peas_indist: "peas/peas_indist",
     up: "../user_profile",
-    peas_adapt: "peas/peas_adapt"
+    peas_adapt: "peas/peas_adapt",
+    d3: "d3/d3"
   },
   packages: [
 
