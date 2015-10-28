@@ -12,7 +12,8 @@ require.config({
     graph: "graph/lib/graph",
     "tag-it": "tag-it/js/tag-it",
     peas_indist: "peas/peas_indist",
-    up: "../user_profile"
+    up: "../user_profile",
+    peas_adapt: "peas/peas_adapt"
   },
   packages: [
 
