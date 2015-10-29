@@ -1,6 +1,6 @@
 {
     "name": "EEXCESS_DEV",
-    "version": "0.53",
+    "version": "0.54",
     "background": {
         "page": "html/background.html"
     },
@@ -28,6 +28,10 @@
     ],
     "icons": {"16": "media/icons/16.png",
         "48": "media/icons/48.png",
-        "128": "media/icons/128.png"}
+        "128": "media/icons/128.png"},
+    "options_ui":{
+        "page": "html/options.html",
+         "chrome_style":true
+    }
 }
 
