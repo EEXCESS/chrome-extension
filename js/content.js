@@ -1,19 +1,18 @@
 require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
     var tabs = [{
             "name": "SearchResultList",
-            "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html')
+            "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
+            "icon": chrome.extension.getURL('visualization-widgets/SearchResultListVis/icon.png')
         }
         , {
             "name": "Dashboard",
             //"icon": "icon.png",
-            "url": "https://eexcess.github.io/visualization-widgets/Dashboard/index.html?a"//chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
+            "url": "https://eexcess.github.io/visualization-widgets-files/Dashboard/index.html",//chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
+            "icon":"http://rawgit.com/EEXCESS/visualization-widgets/master/Dashboard/icon.png"
         }, {
             "name": "FacetScape",
-            //"icon": "icon.png",
+            "icon": chrome.extension.getURL('visualization-widgets/FacetScape/icon.png'),
             "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html')
-        }, {
-            name: "PowerSearch",
-            "url": chrome.extension.getURL('visualization-widgets/PowerSearch/index.html')
         }];
     searchBar.init(tabs, {
         storage: chrome.storage.local,
