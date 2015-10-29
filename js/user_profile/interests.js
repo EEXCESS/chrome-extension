@@ -4,6 +4,7 @@
  */
 define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"], 
 		function (constants, storage, policy, util, tag_it, $) {
+	
 	var interests = {
 
 			/**
@@ -11,7 +12,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @returns {ListNode} List of interest inputs.
 			 * @method getInterestInputs
 			 */
-			getInterestInputs(){
+			getInterestInputs: function(){
 				return document.getElementsByClassName(constants.CLASS_INTEREST);
 			},
 
@@ -20,7 +21,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * It generates the HTML code, initializes the TagIt fields, adds the listeners and initializes the buttons. 
 			 * @method initInterests
 			 */
-			initInterests(){ 
+			initInterests: function(){ 
 				var interests = storage.getStoredJson(constants.INTERESTS); 
 				var interestsElement = document.getElementById(constants.INTERESTS);
 				var code = "";
@@ -46,7 +47,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * Adds an interest: generates the HTML code, adds the listeners, initializes the buttons, saves the interests and update the listeners. 
 			 * @method addNewInterest
 			 */
-			addNewInterest(){
+			addNewInterest: function(){
 				var interestsElement = document.getElementById(constants.INTERESTS);
 				var nbInterests = interestsElement.children.length + 1; // +1 to consider the new one
 				var code = "";
@@ -79,7 +80,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @param {String} interestId identifier of an interest.
 			 * @method initInterest
 			 */
-			initInterest(interestId) {
+			initInterest: function(interestId) {
 				var lang = window.navigator.userLanguage || window.navigator.language;
 				if(lang !== 'de' || lang !== 'fr') {
 					lang = 'en';
@@ -129,7 +130,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @param {String} interestId identifier of an interest.
 			 * @method createInterestListener
 			 */
-			createInterestListener(interestId) {
+			createInterestListener: function(interestId) {
 				$("#" + interestId).tagit({
 					afterTagAdded: function(event, ui) {
 						if (!ui.duringInitialization) {
@@ -151,7 +152,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * TagIt field listeners, listener for the removal of an interest, and buttons listeners. 
 			 * @method updateInterestListeners
 			 */
-			updateInterestListeners(){
+			updateInterestListeners: function(){
 				var interestElements = interests.getInterestInputs();
 				for (var i = 0 ; i < interestElements.length ; i++){
 					var interestElement = interestElements[i];
@@ -174,7 +175,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @returns {String} HTML code. 
 			 * @method generateCodeInterest
 			 */
-			generateCodeInterest(index){ 
+			generateCodeInterest: function(index){ 
 				var code = 	'<div id="' + constants.INTEREST + index + '" class="row">\n';
 				code += 	'	<div class="panel-body">\n';
 				code += 	'		<div class="col-md-6">\n';
@@ -207,7 +208,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * Saves all the interests: extract the values from the form and store it in the data store. 
 			 * @method saveInterests
 			 */
-			saveInterests(){
+			saveInterests: function(){
 				var interestElements = this.getInterestInputs();
 				var interests = [];
 				for (var i = 0 ; i < interestElements.length ; i++){
@@ -232,7 +233,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @returns {Array} Array of interests containing "label". 
 			 * @method addTopic
 			 */
-			addTopic(interests, interestId, label){
+			addTopic: function(interests, interestId, label){
 				var index = "";
 				if (endsWithNumber(interestId)){
 					index = extractEndingNumber(interestId); 
@@ -256,7 +257,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @returns {Array} Array of interests without "label". 
 			 * @method removeTopic
 			 */
-			removeTopic(interests, interestId, label){
+			removeTopic: function(interests, interestId, label){
 				var index = extractEndingNumber(interestId);
 				var interest = interests[index];
 				if (interest != null){
@@ -277,7 +278,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * @param {Element} link Element corresponding to the link. 
 			 * @method removeInterestListener
 			 */
-			removeInterestListener(link){
+			removeInterestListener: function(link){
 				policy.resetElementPolicy(link, constants.INTEREST_POLICY, constants.DEFAULT_POLICY_LEVEL);
 				util.removeElement(link, constants.INTEREST);
 				interests.saveInterests();
@@ -287,7 +288,7 @@ define(["up/constants", "up/storage", "up/policy", "up/util", "tag-it", "jquery"
 			 * Listener invoked when an interest must be added. 
 			 * @method addInterestListener
 			 */
-			addInterestListener(){ 
+			addInterestListener: function(){ 
 				interests.addNewInterest(); 
 			}
 	}

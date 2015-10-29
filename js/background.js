@@ -31,8 +31,13 @@ require(['./common'], function (common) {
                         	clientType: "chrome-extension",
                             clientVersion:"0.53"
                         }
-                        obfuscationLevel = profileManager.getObfuscationLevel();
-                        APIconnector.queryPeas(profile, obfuscationLevel, sendResponse); // if obfuscationLevel == 0, then it's similar to APIconnector.query(profile, sendResponse)
+                        var obfuscationLevel = profileManager.getObfuscationLevel();
+                        var k = obfuscationLevel * 2;
+                        if (k == 0){
+                        	APIconnector.query(profile, sendResponse); 
+                        } else {
+                        	APIconnector.queryPeas(profile, k, sendResponse); 
+                        }
                         return true;
                         break;
                     default:

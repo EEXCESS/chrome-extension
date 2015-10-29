@@ -12,7 +12,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @returns {NodeList} List of button groups. 
 		 * @method getButtonGroups
 		 */
-		getButtonGroups(){
+		getButtonGroups: function(){
 			return document.getElementsByClassName(constants.CLASS_BUTTON_GROUP);
 		},
 		
@@ -21,7 +21,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @returns {NodeList} List of buttons. 
 		 * @method getButtons
 		 */
-		getButtons(){
+		getButtons: function(){
 			return document.getElementsByClassName(constants.CLASS_BUTTON);
 		},
 		
@@ -29,7 +29,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * Initializes all the buttons contained in the page. 
 		 * @method initButtons
 		 */
-		initButtons(){
+		initButtons: function(){
 			var buttonGroups = policy.getButtonGroups();
 			for (var i = 0 ; i < buttonGroups.length ; i++){
 				policy.initButtonGroup(buttonGroups[i]);
@@ -41,7 +41,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @param {Element} buttonGroup Button group element containing the buttons that must be initialized. 
 		 * @method initButtonGroup
 		 */
-		initButtonGroup(buttonGroup){
+		initButtonGroup: function(buttonGroup){
 			var buttonGroupId = buttonGroup.getAttribute("id");
 			var level = storage.getStoredValue(buttonGroupId);
 			if (level == null){ 
@@ -92,7 +92,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @param {Element} button Element corresponding to the button to be updated. 
 		 * @method updateButton
 		 */
-		updateButton(button){
+		updateButton: function(button){
 			var parent = document.getElementById(button.getAttribute(constants.PARENT_ID));
 			var buttonGroupId = parent.getAttribute("id");
 			var children = parent.children;
@@ -140,7 +140,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @param {Element} button Element corresponding to the button. 
 		 * @method policyButtonListener
 		 */
-		policyButtonListener(button){ 
+		policyButtonListener: function(button){ 
 			this.updateButton(button); 
 			storage.saveButton(button);
 			var policyId = button.getAttribute(constants.PARENT_ID);
@@ -160,7 +160,7 @@ define(["up/constants", "up/storage", "up/util", "up/profileManager"],
 		 * @param {Integer} defaultPolicyLevel The default level of privacy for the considered attribute.  
 		 * @method resetElementPolicy
 		 */
-		resetElementPolicy(element, typePolicy, defaultPolicyLevel){
+		resetElementPolicy: function(element, typePolicy, defaultPolicyLevel){
 			var num = util.extractEndingNumber(element.getAttribute("id"));
 			var elementId = typePolicy + num;
 			storage.storeValue(elementId, defaultPolicyLevel);

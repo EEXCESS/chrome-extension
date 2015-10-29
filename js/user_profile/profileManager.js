@@ -6,7 +6,7 @@ define(["up/constants"], function (cst) {
 	
 	var profileManager = {
 		
-		adaptProfile:function(profile){
+		adaptProfile: function(profile){
 			// Age range
             setValue(cst.AGE_RANGE, 0); // TODO remove this line
             if (this.isAgeRangeDisclosed()){ 
@@ -65,7 +65,7 @@ define(["up/constants"], function (cst) {
 		
 		// Logging level
 		
-		getLoggingLevel(){
+		getLoggingLevel: function(){
 			var level = localStorage.getItem(cst.STORAGE_PREFIX + cst.LOGGING_LEVEL);
 			if (level == null){
 				level = 0;
@@ -77,7 +77,7 @@ define(["up/constants"], function (cst) {
 		
 		// Obfuscation level
 		
-		getObfuscationLevel(){
+		getObfuscationLevel: function(){
 			var level = localStorage.getItem(cst.STORAGE_PREFIX + cst.OBFUSCATION_LEVEL);
 			if (level == null){
 				level = 0;
@@ -89,45 +89,45 @@ define(["up/constants"], function (cst) {
 			
 		// Name 
 		
-		getName(){
+		getName: function(){
 			return getValue(cst.NAME);
 		},
 		
-		isNameDisclosed(){
+		isNameDisclosed: function(){
 			return (getLevel(cst.NAME, "") > 0);
 		}, 
 		
-		getNamePolicy(){
+		getNamePolicy: function(){
 			return getLevel(cst.NAME, "");
 		},
 		
 		// Country
 		
-		getCountry(){
+		getCountry: function(){
 			return getValue(cst.COUNTRY);
 		}, 
 
-		isCountryDisclosed(){
+		isCountryDisclosed: function(){
 			return (getLevel(cst.LOCATION, "") > 0);
 		},
 		
-		getLocationPolicy(){
+		getLocationPolicy: function(){
 			return getLevel(cst.LOCATION, "");
 		},
 		
 		// City
 		
-		getCity(){
+		getCity: function(){
 			return getValue(cst.CITY);
 		}, 
 		
-		isCityDisclosed(){
+		isCityDisclosed: function(){
 			return (getLevel(cst.LOCATION, "") > 1);
 		}, 
 		
 		// Age range
 		
-		getAgeRange(){
+		getAgeRange: function(){
 			var ageRange = getValue(cst.AGE_RANGE);
 			if (ageRange == null){
 				ageRange = cst.DEFAULT_AGE_RANGE_INDEX;
@@ -135,17 +135,17 @@ define(["up/constants"], function (cst) {
 			return parseInt(ageRange);
 		}, 
 		
-		isAgeRangeDisclosed(){
+		isAgeRangeDisclosed: function(){
 			return (getLevel(cst.AGE_RANGE, "") > 0);
 		}, 
 		
-		getAgeRangePolicy(){
+		getAgeRangePolicy: function(){
 			return getLevel(cst.AGE_RANGE, "");
 		}, 
 		
 		// Languages
 		
-		getLanguages(){
+		getLanguages: function(){
 			var languages = getJsonValue(cst.LANGUAGES);
 			if (languages == null){
 				languages = [];
@@ -153,17 +153,17 @@ define(["up/constants"], function (cst) {
 			return languages;
 		}, 
 		
-		isLanguageDisclosed(i){
+		isLanguageDisclosed: function(i){
 			return (getLevel(cst.LANGUAGE, i) > 0);
 		}, 
 		
-		getLanguagePolicy(i){
+		getLanguagePolicy: function(i){
 			return getLevel(cst.LANGUAGE, i);
 		}, 
 		
 		// Interests
 		
-		getInterests(){
+		getInterests: function(){
 			var interests = getJsonValue(cst.INTERESTS);
 			if (interests == null){
 				interests = [];
@@ -171,11 +171,11 @@ define(["up/constants"], function (cst) {
 			return interests;
 		}, 
 
-		isInterestDisclosed(i){
+		isInterestDisclosed: function(i){
 			return (getLevel(cst.INTEREST, i) > 0);
 		},
 		
-		getInterestPolicy(i){
+		getInterestPolicy: function(i){
 			return getLevel(cst.INTEREST, i);
 		}
 			

@@ -12,7 +12,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		* @method getTextInputs
 		* @return {NodeList} list of elements. 
 		*/
-		getTextInputs(){
+		getTextInputs: function(){
 			return document.getElementsByClassName(constants.CLASS_TEXT);
 		},
 		
@@ -21,7 +21,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		* @method getSelectInputs
 		* @return {NodeList} list of elements. 
 		*/
-		getSelectInputs(){
+		getSelectInputs: function(){
 			return document.getElementsByClassName(constants.CLASS_SELECT);
 		},
 		
@@ -30,7 +30,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		* Values are taken from the data store. 
 		* @method initTextInputs
 		*/
-		initTextInputs(){
+		initTextInputs: function(){
 			var textInputs = this.getTextInputs();
 			for (var i = 0 ; i < textInputs.length ; i++) {
 				var input = textInputs[i];
@@ -47,7 +47,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 		 * Values are taken from the data store. 
 		 * @method initSelectInputs
 		 */
-		initSelectInputs(){
+		initSelectInputs: function(){
 			var selectInputs = this.getSelectInputs();
 			for (var i = 0 ; i < selectInputs.length ; i++) {
 				var input = selectInputs[i];
@@ -60,7 +60,7 @@ define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"]
 			}
 		},
 		
-		initPrivacyLevels(){
+		initPrivacyLevels: function(){
 			var level;
 			// Logging level
 			level = storage.getStoredValue(constants.LOGGING_LEVEL);
