@@ -1,5 +1,9 @@
 require(['../js/common'], function(common) {
     require(['jquery'], function($) {
+        $('#settings').click(function(e){
+            e.preventDefault();
+            chrome.runtime.openOptionsPage();
+        });
         chrome.tabs.query({'active': true}, function(tabs) {
             var url = tabs[0].url;
             var tabid = tabs[0].id;
@@ -30,7 +34,6 @@ require(['../js/common'], function(common) {
                     $('#' + id + '_img').unbind('mouseleave', inactive_mouseleave);
                     $('#' + id + '_img').attr('src', '../media/buttons/green.png');
                     $('#' + id).attr('title', 'switch off');
-                    $('#' + id + '_txt').text('EEXCESS is active');
                     $('#' + id + '_img').bind('mouseenter', active_mouseenter);
                     $('#' + id + '_img').bind('mouseleave', active_mouseleave);
                 };
@@ -39,7 +42,6 @@ require(['../js/common'], function(common) {
                     $('#' + id + '_img').unbind('mouseleave', active_mouseleave);
                     $('#' + id + '_img').attr('src', '../media/buttons/red.png');
                     $('#' + id).attr('title', 'switch on');
-                    $('#' + id + '_txt').text('EEXCESS is inactive');
                     $('#' + id + '_img').bind('mouseenter', inactive_mouseenter);
                     $('#' + id + '_img').bind('mouseleave', inactive_mouseleave);
                 };
@@ -52,19 +54,24 @@ require(['../js/common'], function(common) {
                 };
                 chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
                     var eexcess_off = result.EEXCESS_off;
+                    var tmp_active;
                     var blacklist = result.blacklist || [];
                     var whitelist = result.whitelist || [];
                     var check_blacklist = function() {
                         if (blacklist.indexOf(currentHostname) !== -1) {
+                            tmp_active = false;
                             inactive('tmp');
                         } else {
+                            tmp_active = true;
                             active('tmp');
                         }
                     };
                     var check_whitelist = function() {
                         if (whitelist.indexOf(currentHostname) !== -1) {
+                            tmp_active = true;
                             active('tmp');
                         } else {
+                            tmp_active = false;
                             inactive('tmp');
                         }
                     };
@@ -80,7 +87,7 @@ require(['../js/common'], function(common) {
 
                     // global on/off
                     $('#power').click(function(e) {
-                        if ($('#power_txt').text() === 'EEXCESS is inactive') {
+                        if (eexcess_off) {
                             eexcess_off = false;
                             active('power');
                             chrome.storage.local.set({EEXCESS_off: false});
@@ -97,7 +104,8 @@ require(['../js/common'], function(common) {
                     
                     // local on/off
                     $('#tmp').click(function(e) {
-                        if ($('#tmp_txt').text() === 'EEXCESS is active') {
+                        if (tmp_active) {
+                            tmp_active = false;
                             inactive('tmp');
                             broadcast_msg({status: 'off', site:currentHostname});
                             if (eexcess_off) {
@@ -116,6 +124,7 @@ require(['../js/common'], function(common) {
                                 }
                             }
                         } else {
+                            tmp_active = true
                             active('tmp');
                             broadcast_msg({status: 'on', site:currentHostname});
                             if (eexcess_off) {
