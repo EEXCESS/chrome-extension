@@ -90,9 +90,6 @@
                             if (typeof p[i].query !== 'undefined') {
                                 entitiesExracted = true;
                             }
-                            if (typeof p[i].offset_map === 'undefined') {
-                                p[i].offset_map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
-                            }
                             tmp_idx = i;
                             break;
                         }
@@ -120,31 +117,42 @@
             });
             paragraphDetection.findFocusedParagraphSimple();
 
-            var highlights = [];
             // listen for keyword hover in the searchbar
+            var highlights = [];
             $(document).on('c4_keywordMouseEnter', function(e) {
-//                console.log(e.originalEvent.detail);
-//                console.log(focusedParagraph.offsets[e.originalEvent.detail.text]);
-                //highlight($(focusedParagraph.elements[0]).parent(), e.originalEvent.detail.text, focusedParagraph.offsets[e.originalEvent.detail.text]);
                 var offsets = focusedParagraph.offsets[e.originalEvent.detail.text];
-                var map = focusedParagraph.offset_map;
+                var map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
                 offsets.sort;
                 var idx = 0;
                 var current = map[0];
-                for(var i = 0;i < offsets.length; i++) {
-                    console.log(offsets[i]);
-                    console.log(map);
-                    for(var j = idx; j < map.length; j++) {
-                        if(offsets[i] < map[j].offset) {
-                            // TODO: highlight
+                for (var i = 0; i < offsets.length; i++) {
+                    for (var j = idx; j < map.length; j++) {
+                        if (offsets[i] < map[j].offset) {
                             var word = e.originalEvent.detail.text.toLowerCase();
                             var text = current.el.nodeValue.toLowerCase();
-                            console.log(text);
-                            if(text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
-                                console.log('not perfectly matched ' + text.indexOf(word, offsets[i] - current.offset) + ' (' + offsets[i] + ')');
+                            if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
+                                // not an exact match
+                                var text = text.slice(offsets[i] - current.offset);
+                                var firstWord = text.split(/[^a-zA-ZäöüÄÖÜ]/)[0];
+                                // see how many chars are equal from the start
+                                var comparison = '';
+                                for (var k = 0; k < word.length; k++) {
+                                    var char = word.charAt(k);
+                                    if (char === text.charAt(k)) {
+                                        comparison += char
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                // if the first word is longer than the matched char sequence, use the first word
+                                if (firstWord.length < comparison) {
+                                    word = comparison;
+                                } else {
+                                    word = firstWord;
+                                }
                             }
-                            $(current.el.parentNode).highlight(word);
-//                            jq_highlight.highlight(current.el, word);
+                            highlights.push(current.el.parentNode);
+                            $(current.el.parentNode).highlight(word, {className: 'eexcess_highlight'});
                             idx = j;
                             break;
                         } else {
@@ -154,8 +162,10 @@
                 }
             });
             $(document).on('c4_keywordMouseLeave', function(e) {
-//                console.log(e.originalEvent.detail);
-//                console.log(focusedParagraph.offsets[e.originalEvent.detail.text]);
+                highlights.forEach(function(val) {
+                    $(val).unhighlight({className: 'eexcess_highlight'});
+                });
+                highlights = [];
             });
         });
     };
