@@ -1,6 +1,6 @@
 (function() {
     var run = function() {
-        require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes'], function(searchBar, paragraphDetection, ner, iframes) {
+        require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(searchBar, paragraphDetection, ner, iframes, jq_highlight) {
             var tabs = [{
                     "name": "SearchResultList",
                     "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
@@ -100,6 +100,7 @@
                         paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).text(), function(res) {
                             if (typeof res.query !== 'undefined') {
                                 p[tmp_idx].query = res.query;
+                                p[tmp_idx].offsets = res.offsets;
                                 searchBar.setQuery(res.query.contextKeywords);
                             } else {
                                 // TODO: error handling?
@@ -115,17 +116,74 @@
                 $(v1.elements[0]).parent().css('border', '1px dotted silver');
             });
             paragraphDetection.findFocusedParagraphSimple();
+
+            // listen for keyword hover in the searchbar
+            var highlights = [];
+            $(document).on('c4_keywordMouseEnter', function(e) {
+                var offsets = focusedParagraph.offsets[e.originalEvent.detail.text];
+                var map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
+                offsets.sort;
+                var idx = 0;
+                var current = map[0];
+                for (var i = 0; i < offsets.length; i++) {
+                    for (var j = idx; j < map.length; j++) {
+                        if (offsets[i] < map[j].offset) {
+                            var word = e.originalEvent.detail.text.toLowerCase();
+                            var text = current.el.nodeValue.toLowerCase();
+                            if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
+                                // not an exact match
+                                var text = text.slice(offsets[i] - current.offset);
+                                var firstWord = text.split(/[^a-zA-ZäöüÄÖÜ]/)[0];
+                                // see how many chars are equal from the start
+                                var comparison = '';
+                                for (var k = 0; k < word.length; k++) {
+                                    var char = word.charAt(k);
+                                    if (char === text.charAt(k)) {
+                                        comparison += char
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                // if the first word is longer than the matched char sequence, use the first word
+                                if (firstWord.length < comparison) {
+                                    word = comparison;
+                                } else {
+                                    word = firstWord;
+                                }
+                            }
+                            highlights.push(current.el.parentNode);
+                            $(current.el.parentNode).highlight(word, {className: 'eexcess_highlight'});
+                            idx = j;
+                            break;
+                        } else {
+                            current = map[j];
+                        }
+                    }
+                }
+            });
+            $(document).on('c4_keywordMouseLeave', function(e) {
+                highlights.forEach(function(val) {
+                    $(val).unhighlight({className: 'eexcess_highlight'});
+                });
+                highlights = [];
+            });
         });
     };
 
     var kill = function() {
         require(['jquery'], function($) {
+            // unbind focused paragraph listener
             $(document).unbind('paragraphFocused');
+            // remove paragraph wrappers
             $.each($('.eexcess_detected_par'), function() {
                 $(this).children(':first').unwrap();
             });
+            // remove search bar & content pane
             $('#eexcess_searchBar').remove();
             $('#eexcess-tabBar-contentArea').remove();
+            // unbind highlight listeners
+            $(document).unbind('c4_keywordMouseEnter');
+            $(document).unbind('c4_keywordMouseLeave');
         });
     };
 
