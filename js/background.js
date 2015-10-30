@@ -72,6 +72,9 @@ require(['./common'], function(common) {
                                }
                             });
                             break;
+                        case 'updateQueryCrumbs':
+                            msgAllTabs(msg);
+                            break;
                         default:
                             console.log('unknown method: ' + msg.method);
                             break;

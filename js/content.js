@@ -1,6 +1,11 @@
-(function() {
+require(['c4/searchBar/searchBar'], function(searchBar) {
+    var qcRefresh = function(request, sender, sendResponse) {
+        if (request && request.method === 'updateQueryCrumbs') {
+            searchBar.refreshQC();
+        }
+    };
     var run = function() {
-        require(['c4/searchBar/searchBar', 'c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(searchBar, paragraphDetection, ner, iframes, jq_highlight) {
+        require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
             var tabs = [{
                     "name": "SearchResultList",
                     "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
@@ -27,22 +32,22 @@
                 queryCrumbs: {
                     active: true,
                     storage: {
-                        getHistory: function(numItems, callback) {
+                        getHistory: function(callback) {
                             chrome.storage.local.get('queryCrumbs_history', function(res) {
-                                var history = [];
-                                if (res.queryCrumbs_history) {
-                                    history = res.queryCrumbs_history;
-                                    history.slice(Math.max(history.length - numItems, 0));
-                                }
-                                callback(history);
+                                callback(res.queryCrumbs_history);
                             });
                         },
                         setHistory: function(history) {
                             chrome.storage.local.set({queryCrumbs_history: history});
                         }
+                    },
+                    updateTrigger: function() {
+                        chrome.runtime.sendMessage(({method: 'updateQueryCrumbs'}));
                     }
                 }
             });
+
+            chrome.runtime.onMessage.addListener(qcRefresh);
 
             // detect paragraphs
             var p = paragraphDetection.getParagraphs();
@@ -171,6 +176,7 @@
     };
 
     var kill = function() {
+        chrome.runtime.onMessage.removeListener(qcRefresh);
         require(['jquery'], function($) {
             // unbind focused paragraph listener
             $(document).unbind('paragraphFocused');
@@ -188,7 +194,6 @@
     };
 
     chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
-        console.log(window.location.href);
         if (result.EEXCESS_off) {
             if (result.whitelist && result.whitelist.indexOf(window.location.hostname) !== -1) {
                 run();
@@ -229,4 +234,4 @@
             }
         }
     });
-})();
+});
