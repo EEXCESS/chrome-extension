@@ -102,7 +102,7 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                     if (entitiesExracted) {
                         searchBar.setQuery(p[tmp_idx].query.contextKeywords);
                     } else {
-                        paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).text(), function(res) {
+                        paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).parent().text(), function(res) {
                             if (typeof res.query !== 'undefined') {
                                 p[tmp_idx].query = res.query;
                                 p[tmp_idx].offsets = res.offsets;
