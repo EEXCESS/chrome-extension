@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../css/popup.css" />
+    </head>
+    <body>
+        <div id="internal">EEXCESS cannot be activated on Chrome-internal pages</div>
+        <div id="switch">
+         <!--   <p>Switch EEXCESS on/off and define exceptions for particular sites</p> -->
+            <div id="global">
+                <p>general</p>
+                <a href="#" id="power"><image id="power_img" src="../media/buttons/red.png" alt="power button" /></a>
+            </div>
+            <hr>
+            <div id="local">
+                <p id="current_host"></p>
+                <a href="#" id="tmp"><image id="tmp_img" src="../media/buttons/red.png" alt="power button" /></a>
+            </div>
+        </div>
+        <div id="buttons"><a href="user-profile.html" target="_blank">profile</a> | <a href="#" id="settings">settings</a></div>
+        <script type="text/javascript" data-main="../js/popup" src="../js/lib/requirejs/require.js"></script>
+    </body>
+</html>

@@ -2,7 +2,8 @@
  * Provides methods to manage the languages. 
  * @class languages
  */
-define(["./constants", "./storage", "./policy", "./util"], function (constants, storage, policy, util) {
+define(["up/constants", "up/storage", "up/policy", "up/util"], 
+		function (constants, storage, policy, util) {
 
 	var languages = {
 		
@@ -11,7 +12,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * @returns {ListNode} List of languages inputs.
 		 * @method getLanguageSelects
 		 */
-		getLanguageSelects(){
+		getLanguageSelects: function(){
 			return document.getElementsByClassName(constants.CLASS_LANGUAGE);
 		},
 		
@@ -20,7 +21,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * It generates the HTML code, initializes the fields, adds the listeners and initializes the buttons. 
 		 * @method initLanguages
 		 */
-		initLanguages(){
+		initLanguages: function(){
 			var languages = storage.getStoredJson(constants.LANGUAGES);
 			var languagesElement = document.getElementById(constants.LANGUAGES);
 			for (var i = 0 ; i < languages.length ; i++){
@@ -36,7 +37,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * Adds a language: generates the HTML code, adds the listeners, initializes the buttons, saves the interests and update the listeners.
 		 * @method addNewLanguage
 		 */
-		addNewLanguage(){
+		addNewLanguage: function(){
 			var languagesElement = document.getElementById(constants.LANGUAGES);
 			var nbLanguages = languagesElement.children.length;
 			var htmlCode = languages.generateCodeLanguage(nbLanguages, null, null);
@@ -56,7 +57,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * field listeners, listener for the removal of a language, and buttons listeners. 
 		 * @method updateLanguageListeners
 		 */
-		updateLanguageListeners(){
+		updateLanguageListeners: function(){
 			var languageElements = document.getElementById(constants.LANGUAGES).children;
 			var nbLanguages = languageElements.length;
 			for (var i = 0 ; i < nbLanguages ; i++){
@@ -85,7 +86,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * @returns {String} HTML code. 
 		 * @method generateCodeLanguage
 		 */
-		generateCodeLanguage(index, languageCode, skill){
+		generateCodeLanguage: function(index, languageCode, skill){
 			var code = 	'<div id="' + constants.LANGUAGE + index + '" class="row">\n';
 			code += 	'	<div class="panel-body">\n';
 			code += 	'		<div class="col-md-6">\n';
@@ -106,7 +107,6 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 				var selected = "";
 				var cond1 = (languageCode != null) && (currentCode == languageCode);
 				var cond2 = (languageCode == null) && (i == constants.DEFAULT_LANGUAGE_CODE_INDEX);
-				console.log(languageCode + ": " + cond1 + " "+ cond2);
 				if (cond1 || cond2){
 					selected = " selected=\"selected\"";
 				} 
@@ -152,7 +152,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * Saves all the languages: extract the values from the form and store it in the data store. 
 		 * @method saveLanguages
 		 */
-		saveLanguages(){
+		saveLanguages: function(){
 			var languagesElement = document.getElementById(constants.LANGUAGES);
 			var languageElements = languagesElement.children;
 			var languages = [];
@@ -181,7 +181,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * @param {Element} link Element corresponding to the link. 
 		 * @method removeLanguageListener
 		 */
-		removeLanguageListener(link){
+		removeLanguageListener: function(link){
 			policy.resetElementPolicy(link, constants.LANGUAGE_POLICY, constants.DEFAULT_POLICY_LEVEL);
 			util.removeElement(link, constants.LANGUAGE);
 			languages.saveLanguages();
@@ -191,7 +191,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * Listener invoked when a language must be added. 
 		 * @method addLanguageListener
 		 */
-		addLanguageListener(){ 
+		addLanguageListener: function(){ 
 			languages.addNewLanguage(); 
 		}, 
 		
@@ -202,7 +202,7 @@ define(["./constants", "./storage", "./policy", "./util"], function (constants, 
 		 * @param {String} clas Class of the element. 
 		 * @method elementListener
 		 */
-		elementListener(element, clas){ 
+		elementListener: function(element, clas){ 
 			util.elementListener(element,clas);
 			languages.saveLanguages(); 
 		}

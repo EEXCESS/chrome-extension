@@ -2,7 +2,7 @@
  * Provides methods to manage the storage of data. 
  * @class storage
  */
-define(["./constants"], function (constants) {
+define(["up/constants"], function (constants) {
 	
 	var storage = {
 
@@ -13,7 +13,7 @@ define(["./constants"], function (constants) {
 		 * @param value Value to be stored. 
 		 * @method storeValue
 		 */
-		storeValue(id, value){
+		storeValue: function(id, value){
 			localStorage.setItem(constants.STORAGE_PREFIX + id, value);
 		},
 		
@@ -23,7 +23,7 @@ define(["./constants"], function (constants) {
 		 * @returns {String} Value corresponding to the key. 
 		 * @method getStoredValue
 		 */
-		getStoredValue(id){
+		getStoredValue: function(id){
 			var value = localStorage.getItem(constants.STORAGE_PREFIX + id);
 			if (value == "null"){ value = null; } // FIXME Not clear why the value is sometimes equal to "null" (instead of null)
 			return value;
@@ -35,7 +35,7 @@ define(["./constants"], function (constants) {
 		 * @returns {String} JSON value corresponding to the key. 
 		 * @method getStoredJson
 		 */
-		getStoredJson(key){ 
+		getStoredJson: function(key){ 
 			var jsonString = this.getStoredValue(key);
 			if (jsonString == null){
 				jsonString = "[]"; // FIXME change with "{}" or ""
@@ -49,7 +49,7 @@ define(["./constants"], function (constants) {
 		 * @param {Element} inputElement Input element to be saved.  
 		 * @method saveInput
 		 */
-		saveInput(inputElement){
+		saveInput: function(inputElement){
 			var inputElementId = inputElement.getAttribute("id");
 			this.storeValue(inputElementId, inputElement.value);
 		},
@@ -60,7 +60,7 @@ define(["./constants"], function (constants) {
 		 * @param {Element} button Button to be saved. 
 		 * @method saveButton
 		 */
-		saveButton(button){
+		saveButton: function(button){
 			var children = button.parentNode.children;
 			var buttonGroupId = button.parentNode.getAttribute("id");
 			for (var i = 0 ; i < children.length ; i++){

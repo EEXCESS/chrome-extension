@@ -2,16 +2,17 @@
  * Provides methods to initialize, retrieve or display elements. 
  * @class common
  */
-define(["./constants", "./interests", "./languages", "./storage", "./util"], function (constants, interests, languages, storage, util) {
+define(["up/constants", "up/interests", "up/languages", "up/storage", "up/util"], 
+	function (constants, interests, languages, storage, util) {
 	
-	var common = {
+	var basics = {
 		
 		/**
 		* Returns all the text input elements of class CLASS_TEXT. 
 		* @method getTextInputs
 		* @return {NodeList} list of elements. 
 		*/
-		getTextInputs(){
+		getTextInputs: function(){
 			return document.getElementsByClassName(constants.CLASS_TEXT);
 		},
 		
@@ -20,7 +21,7 @@ define(["./constants", "./interests", "./languages", "./storage", "./util"], fun
 		* @method getSelectInputs
 		* @return {NodeList} list of elements. 
 		*/
-		getSelectInputs(){
+		getSelectInputs: function(){
 			return document.getElementsByClassName(constants.CLASS_SELECT);
 		},
 		
@@ -29,8 +30,8 @@ define(["./constants", "./interests", "./languages", "./storage", "./util"], fun
 		* Values are taken from the data store. 
 		* @method initTextInputs
 		*/
-		initTextInputs(){
-			var textInputs = common.getTextInputs();
+		initTextInputs: function(){
+			var textInputs = this.getTextInputs();
 			for (var i = 0 ; i < textInputs.length ; i++) {
 				var input = textInputs[i];
 				var inputId = input.getAttribute("id");
@@ -46,7 +47,7 @@ define(["./constants", "./interests", "./languages", "./storage", "./util"], fun
 		 * Values are taken from the data store. 
 		 * @method initSelectInputs
 		 */
-		initSelectInputs(){
+		initSelectInputs: function(){
 			var selectInputs = this.getSelectInputs();
 			for (var i = 0 ; i < selectInputs.length ; i++) {
 				var input = selectInputs[i];
@@ -57,10 +58,24 @@ define(["./constants", "./interests", "./languages", "./storage", "./util"], fun
 				}
 				input.value = value;
 			}
+		},
+		
+		initPrivacyLevels: function(){
+			var level;
+			// Logging level
+			level = storage.getStoredValue(constants.LOGGING_LEVEL);
+			if (level == null){
+				storage.storeValue(constants.LOGGING_LEVEL, constants.DEFAULT_LOGGING_LEVEL_INDEX); 
+			}
+			// Obfuscation level
+			var level = storage.getStoredValue(constants.OBFUSCATION_LEVEL);
+			if (level == null){
+				storage.storeValue(constants.OBFUSCATION_LEVEL, constants.DEFAULT_OBFUSCATION_LEVEL_INDEX); 
+			}
 		}
 		
 	} 
 
-	return common;
+	return basics;
 	
 });

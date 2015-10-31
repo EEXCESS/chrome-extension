@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Options</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" data-main="../js/options" src="../js/lib/requirejs/require.js"></script>
+        <link href="../css/options.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="box">
+        <h1>Number of results</h1>
+        <input id="numResults" type="number" /> [0-100]
+        </div>
+        <div class="box">
+        <h1>Select Providers</h1>
+        <div id="sources">
+            <img src="../media/loading.gif" id="loader"/>
+        </div>
+        (if none is selected, all available will be queried)
+        </div>
+    </body>
+</html>

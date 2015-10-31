@@ -2,7 +2,7 @@
 	<head>
 		<link href="../js/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 		<link href="../js/lib/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet" />
-		<link href="../js/lib/tagit/css/jquery.tagit.css" rel="stylesheet" />
+		<link href="../js/lib/tag-it/css/jquery.tagit.css" rel="stylesheet" />
 		<link href="../js/lib/jquery-ui/themes/base/jquery-ui.css" rel="stylesheet" />
 	</head>
 	<body>
@@ -13,6 +13,50 @@
 					User Profile
 				</h3>
 			</div>
+			
+			<div class="panel-body">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							General Privacy Settings<span class="badge pull-right setting"></span>
+						</h3>
+					</div>
+					<form class="form-horizontal">
+						<!-- Logging level -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-6">
+									In order to improve our service, we would like to log your interactions with the system. Do you accept? 
+								</div>
+								<div id="loggingLevel" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Yes</button>
+									<button type="button" class="btn btn-default eexcess-button">No</button>
+								</div>
+								<div class="col-md-4">
+									Your data will never be disclosed to external organizations or companies. It is used for internal purposes only. 
+								</div>
+							</div>
+						</div>
+						<!-- Obfuscation level -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-6">
+									We offer a query obfuscation mechanism to protect your privacy. Which level of privacy do you want? 
+								</div>
+								<div id="obfuscationLevel" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Low</button>
+									<button type="button" class="btn btn-default eexcess-button">Medium</button>
+									<button type="button" class="btn btn-default eexcess-button">High</button>
+								</div>
+								<div class="col-md-4">
+									The more obfuscated a query is, the more protected you are. In return, the performance can be degraded. 
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -60,7 +104,9 @@
 									<button type="button" class="btn btn-default eexcess-button">City</button>
 								</div>
 								<div class="col-md-4">
-									Values shared with the system: <span id="cityDisplay"></span> <span id="countryDisplay"></span> 
+									Your location can be used to rank recommendation in order to present those that are closer to you.  
+									<b>Values shared with the system: </b><span id="cityDisplay"></span> <span id="countryDisplay"></span>
+									
 								</div>
 							</div>
 						</div>
@@ -132,11 +178,8 @@
 					</form>
 				</div>
 			</div>
+			
 		</div>
-		
-		<script src="../js/lib/jquery/dist/jquery.min.js"></script>
-		<script src="../js/lib/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-		<script src="../js/lib/tagit/js/tag-it.js"></script>
-		<script data-main="../js/user_profile/profile-main.js" src="../js/lib/requirejs/require.js"></script>
+		<script data-main="../js/user_profile/userProfile.js" src="../js/lib/requirejs/require.js"></script>
 	</body>
 </html>
