@@ -1,10 +1,63 @@
-require(['c4/searchBar/searchBar'], function(searchBar) {
+require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBar, api, util) {
     var qcRefresh = function(request, sender, sendResponse) {
         if (request && request.method === 'updateQueryCrumbs') {
             searchBar.refreshQC();
         }
     };
+    var loggingHandler = function(msg) {
+        chrome.storage.sync.get('uuid', function(result) {
+            var uuid;
+            if (result.uuid) {
+                uuid = result.uuid;
+            } else {
+                uuid = util.randomUUID();
+                chrome.storage.sync.set({uuid: uuid});
+            }
+            api.init({
+                origin: {
+                    userID: uuid,
+                    clientType: "chrome-extension",
+                    clientVersion: chrome.runtime.getManifest().version
+                }
+            });
+            if (msg.data.event && msg.data.event.startsWith('eexcess.log')) {
+                switch (msg.data.event) {
+                    case 'eexcess.log.moduleOpened':
+                        api.sendLog(api.logInteractionType.moduleOpened, msg.data.data);
+                        break;
+                    case 'eexcess.log.moduleClosed':
+                        api.sendLog(api.logInteractionType.moduleClosed, msg.data.data);
+                        break;
+                    case 'eexcess.log.moduleStatisticsCollected':
+                        api.sendLog(api.logInteractionType.moduleStatisticsCollected, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemOpened':
+                        api.sendLog(api.logInteractionType.itemOpened, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemClosed':
+                        api.sendLog(api.logInteractionType.itemClosed, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemCitedAsImage':
+                        api.sendLog(api.logInteractionType.itemCitedAsImage, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemCitedAsText':
+                        api.sendLog(api.logInteractionType.itemCitedAsText, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemCitedAsHyperlink':
+                        api.sendLog(api.logInteractionType.itemCitedAsHyperlink, msg.data.data);
+                        break;
+                    case 'eexcess.log.itemRated':
+                        api.sendLog(api.logInteractionType.itemRated, msg.data.data);
+                        break;
+                    default:
+                        console.log('unknown log method: ' + msg.data.event);
+                        break;
+                }
+            }
+        });
+    };
     var run = function() {
+        window.addEventListener('message', loggingHandler);
         require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
             var tabs = [{
                     "name": "SearchResultList",
@@ -13,9 +66,8 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                 }
                 , {
                     "name": "Dashboard",
-                    //"icon": "icon.png",
-                    "url": "https://eexcess.github.io/visualization-widgets-files/Dashboard/index.html", //chrome.extension.getURL('visualization-widgets/Dashboard/index.html')
-                    "icon": "http://rawgit.com/EEXCESS/visualization-widgets/master/Dashboard/icon.png"
+                    "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html'),
+                    "icon": chrome.extension.getURL('visualization-widgets/Dashboard/icon.png')
                 }, {
                     "name": "FacetScape",
                     "icon": chrome.extension.getURL('visualization-widgets/FacetScape/icon.png'),
@@ -46,12 +98,9 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                     }
                 }
             });
-
             chrome.runtime.onMessage.addListener(qcRefresh);
-
             // detect paragraphs
             var p = paragraphDetection.getParagraphs();
-
             // selection listener
             var selection;
             $(document).mouseup(function() {
@@ -62,13 +111,12 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                         if (typeof res.query !== 'undefined') {
                             searchBar.setQuery(res.query.contextKeywords);
                         } else {
-                            // TODO: error handling?
-                            // optional error message in res.error
+// TODO: error handling?
+// optional error message in res.error
                         }
                     });
                 }
             });
-
             // might be removed when using simple focusDetection
             var lastY = 0;
             $(document).mousemove(function(e) {
@@ -76,10 +124,10 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
             });
             var focusedParagraph = {};
             $(document).on('paragraphFocused', function(evt) {
-                // prevent focused paragraph updates when the user moves the mouse down to the searchbar
-                // update only when focused paragraph changes
+// prevent focused paragraph updates when the user moves the mouse down to the searchbar
+// update only when focused paragraph changes
                 if (lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
-                    // set focused paragraph variable
+// set focused paragraph variable
                     focusedParagraph = evt.originalEvent.detail;
                     // reset border on all paragraphs
                     p.forEach(function(v1) {
@@ -108,20 +156,18 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                                 p[tmp_idx].offsets = res.offsets;
                                 searchBar.setQuery(res.query.contextKeywords);
                             } else {
-                                // TODO: error handling?
-                                // optional error message in res.error
+// TODO: error handling?
+// optional error message in res.error
                             }
                         });
                     }
                 }
             });
-
             // border on all extracted paragraphs
             p.forEach(function(v1) {
                 $(v1.elements[0]).parent().css('border', '1px dotted silver');
             });
             paragraphDetection.findFocusedParagraphSimple();
-
             // listen for keyword hover in the searchbar
             var highlights = [];
             $(document).on('c4_keywordMouseEnter', function(e) {
@@ -136,7 +182,7 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                             var word = e.originalEvent.detail.text.toLowerCase();
                             var text = current.el.nodeValue.toLowerCase();
                             if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
-                                // not an exact match
+// not an exact match
                                 var text = text.slice(offsets[i] - current.offset);
                                 var firstWord = text.split(/[^a-zA-ZäöüÄÖÜ]/)[0];
                                 // see how many chars are equal from the start
@@ -149,7 +195,7 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
                                         break;
                                     }
                                 }
-                                // if the first word is longer than the matched char sequence, use the first word
+// if the first word is longer than the matched char sequence, use the first word
                                 if (firstWord.length < comparison) {
                                     word = comparison;
                                 } else {
@@ -174,11 +220,11 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
             });
         });
     };
-
     var kill = function() {
+        window.removeEventListener('message', loggingHandler);
         chrome.runtime.onMessage.removeListener(qcRefresh);
         require(['jquery'], function($) {
-            // unbind focused paragraph listener
+// unbind focused paragraph listener
             $(document).unbind('paragraphFocused');
             // remove paragraph wrappers
             $.each($('.eexcess_detected_par'), function() {
@@ -192,7 +238,6 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
             $(document).unbind('c4_keywordMouseLeave');
         });
     };
-
     chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
         if (result.EEXCESS_off) {
             if (result.whitelist && result.whitelist.indexOf(window.location.hostname) !== -1) {
@@ -202,16 +247,15 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
             run();
         }
     });
-
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (request && request.status === 'off') {
             if (request.site) {
-                // local turnoff, check site
+// local turnoff, check site
                 if (request.site === window.location.hostname) {
                     kill();
                 }
             } else {
-                // global turn off, check whitelist
+// global turn off, check whitelist
                 chrome.storage.local.get('whitelist', function(response) {
                     if (!response.whitelist || response.whitelist.indexOf(window.location.hostname) === -1) {
                         kill();
@@ -220,12 +264,12 @@ require(['c4/searchBar/searchBar'], function(searchBar) {
             }
         } else if (request && request.status === 'on') {
             if (request.site) {
-                // local turn on, check site and EEXCESS not running
+// local turn on, check site and EEXCESS not running
                 if (request.site === window.location.hostname && !document.getElementById('eexcess_searchBar')) {
                     run();
                 }
             } else {
-                // global turn on, check blacklist and EEXCESS not running
+// global turn on, check blacklist and EEXCESS not running
                 chrome.storage.local.get('blacklist', function(response) {
                     if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && !document.getElementById('eexcess_searchBar')) {
                         run();
