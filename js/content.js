@@ -126,7 +126,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
             $(document).on('paragraphFocused', function(evt) {
 // prevent focused paragraph updates when the user moves the mouse down to the searchbar
 // update only when focused paragraph changes
-                if (lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
+                if (evt.originalEvent.detail !== null && lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
 // set focused paragraph variable
                     focusedParagraph = evt.originalEvent.detail;
                     // reset border on all paragraphs
