@@ -1,6 +1,6 @@
 {
-    "name": "EEXCESS_DEV",
-    "version": "0.54",
+    "name": "EEXCESS",
+    "version": "1.1.0",
     "background": {
         "page": "html/background.html"
     },
