@@ -111,24 +111,29 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
                         if (typeof res.query !== 'undefined') {
                             searchBar.setQuery(res.query.contextKeywords);
                         } else {
-// TODO: error handling?
-// optional error message in res.error
+                            // TODO: error handling?
+                            // optional error message in res.error
                         }
                     });
                 }
             });
-            // might be removed when using simple focusDetection
-            var lastY = 0;
-            $(document).mousemove(function(e) {
-                lastY = e.pageY;
-            });
             var focusedParagraph = {};
             $(document).on('paragraphFocused', function(evt) {
-// prevent focused paragraph updates when the user moves the mouse down to the searchbar
-// update only when focused paragraph changes
-                if (evt.originalEvent.detail !== null && lastY < $(window).scrollTop() + $(window).height() - 90 && focusedParagraph !== evt.originalEvent.detail) {
-// set focused paragraph variable
-                    focusedParagraph = evt.originalEvent.detail;
+                console.log(evt);
+                var lastOutOfFocus = false;
+                if (typeof focusedParagraph !== 'undefined' && typeof focusedParagraph.elements !== 'undefined') {
+                    var outTop = $(focusedParagraph.elements[0]).parent().offset().top < $(window).scrollTop();
+                    var outBottom = $(focusedParagraph.elements[0]).parent().offset().top > $(window).scrollTop() + $(window).height();
+                    if (outTop || outBottom) {
+                        lastOutOfFocus = true;
+                    }
+                } else {
+                    lastOutOfFocus = true;
+                }
+                var focusEvent = evt.originalEvent.detail;
+                if (focusEvent.paragraph !== null && focusedParagraph !== focusEvent.paragraph && (lastOutOfFocus || focusEvent.trigger === 'click')) {
+                    // set focused paragraph variable
+                    focusedParagraph = focusEvent.paragraph;
                     // reset border on all paragraphs
                     p.forEach(function(v1) {
                         $(v1.elements[0]).parent().css('border', '1px dotted silver');
@@ -147,17 +152,18 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
                             break;
                         }
                     }
+                    var immediately = (focusEvent.trigger && focusEvent.trigger === 'click');
                     if (entitiesExracted) {
-                        searchBar.setQuery(p[tmp_idx].query.contextKeywords);
+                        searchBar.setQuery(p[tmp_idx].query.contextKeywords, immediately);
                     } else {
                         paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).parent().text(), function(res) {
                             if (typeof res.query !== 'undefined') {
                                 p[tmp_idx].query = res.query;
                                 p[tmp_idx].offsets = res.offsets;
-                                searchBar.setQuery(res.query.contextKeywords);
+                                searchBar.setQuery(res.query.contextKeywords, immediately);
                             } else {
-// TODO: error handling?
-// optional error message in res.error
+                                // TODO: error handling?
+                                // optional error message in res.error
                             }
                         });
                     }
@@ -182,7 +188,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
                             var word = e.originalEvent.detail.text.toLowerCase();
                             var text = current.el.nodeValue.toLowerCase();
                             if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
-// not an exact match
+                                // not an exact match
                                 var text = text.slice(offsets[i] - current.offset);
                                 var firstWord = text.split(/[^a-zA-ZäöüÄÖÜ]/)[0];
                                 // see how many chars are equal from the start
@@ -195,7 +201,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
                                         break;
                                     }
                                 }
-// if the first word is longer than the matched char sequence, use the first word
+                                // if the first word is longer than the matched char sequence, use the first word
                                 if (firstWord.length < comparison) {
                                     word = comparison;
                                 } else {
@@ -224,7 +230,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
         window.removeEventListener('message', loggingHandler);
         chrome.runtime.onMessage.removeListener(qcRefresh);
         require(['jquery'], function($) {
-// unbind focused paragraph listener
+            // unbind focused paragraph listener
             $(document).unbind('paragraphFocused');
             // remove paragraph wrappers
             $.each($('.eexcess_detected_par'), function() {
@@ -250,12 +256,12 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (request && request.status === 'off') {
             if (request.site) {
-// local turnoff, check site
+                // local turnoff, check site
                 if (request.site === window.location.hostname) {
                     kill();
                 }
             } else {
-// global turn off, check whitelist
+                // global turn off, check whitelist
                 chrome.storage.local.get('whitelist', function(response) {
                     if (!response.whitelist || response.whitelist.indexOf(window.location.hostname) === -1) {
                         kill();
@@ -264,12 +270,12 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
             }
         } else if (request && request.status === 'on') {
             if (request.site) {
-// local turn on, check site and EEXCESS not running
+                // local turn on, check site and EEXCESS not running
                 if (request.site === window.location.hostname && !document.getElementById('eexcess_searchBar')) {
                     run();
                 }
             } else {
-// global turn on, check blacklist and EEXCESS not running
+                // global turn on, check blacklist and EEXCESS not running
                 chrome.storage.local.get('blacklist', function(response) {
                     if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && !document.getElementById('eexcess_searchBar')) {
                         run();
