@@ -72,10 +72,25 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                 });
             } 
         };
+        var visibilityChangeHandler = function(){
+            var module = searchBar.getCurrentModule();
+            if(document.hidden && module) {
+                api.sendLog(api.logInteractionType.moduleClosed, {
+                    origin: {module: 'searchBar'},
+                    content: {name: module}
+                });
+            } else if (!document.hidden && module) {
+                api.sendLog(api.logInteractionType.moduleOpened, {
+                    origin: {module: 'searchBar'},
+                    content: {name: module}
+                });
+            }
+        };
         var run = function() {
             window.addEventListener('message', loggingHandler);
             window.addEventListener('message', lastQueryHandler);
             window.addEventListener('beforeunload', unloadHandler);
+            document.addEventListener('visibilitychange', visibilityChangeHandler);
             require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
                 var tabs = [{
                         "name": "SearchResultList",
@@ -253,6 +268,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
             window.removeEventListener('message', loggingHandler);
             window.removeEventListener('message', lastQueryHandler);
             window.removeEventListener('beforeunload', unloadHandler);
+            document.removeEventListener('visibilitychange', visibilityChangeHandler);
             unloadHandler();
             lastQuery = null;
             chrome.runtime.onMessage.removeListener(qcRefresh);
