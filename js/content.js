@@ -1,34 +1,33 @@
 require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], function(searchBar, api, util, iframes) {
-    var lastQuery;
-    var qcRefresh = function(request, sender, sendResponse) {
-        if (request && request.method === 'updateQueryCrumbs') {
-            searchBar.refreshQC();
+    chrome.storage.sync.get('uuid', function(result) {
+        var uuid;
+        if (result.uuid) {
+            uuid = result.uuid;
+        } else {
+            uuid = util.randomUUID();
+            chrome.storage.sync.set({uuid: uuid});
         }
-    };
-    var lastQueryHandler = function(msg) {
-        if (msg.data.event && msg.data.event === 'eexcess.currentResults' && lastQuery) {
-            iframes.sendMsgAll({
-                event: 'eexcess.newResults',
-                data: lastQuery
-            });
-        }
-    };
-    var loggingHandler = function(msg) {
-        chrome.storage.sync.get('uuid', function(result) {
-            var uuid;
-            if (result.uuid) {
-                uuid = result.uuid;
-            } else {
-                uuid = util.randomUUID();
-                chrome.storage.sync.set({uuid: uuid});
+        var origin = {
+            userID: uuid,
+            clientType: "chrome-extension",
+            clientVersion: chrome.runtime.getManifest().version
+        };
+        api.init({origin: origin});
+        var lastQuery;
+        var qcRefresh = function(request, sender, sendResponse) {
+            if (request && request.method === 'updateQueryCrumbs') {
+                searchBar.refreshQC();
             }
-            api.init({
-                origin: {
-                    userID: uuid,
-                    clientType: "chrome-extension",
-                    clientVersion: chrome.runtime.getManifest().version
-                }
-            });
+        };
+        var lastQueryHandler = function(msg) {
+            if (msg.data.event && msg.data.event === 'eexcess.currentResults' && lastQuery) {
+                iframes.sendMsgAll({
+                    event: 'eexcess.newResults',
+                    data: lastQuery
+                });
+            }
+        };
+        var loggingHandler = function(msg) {
             if (msg.data.event && msg.data.event.startsWith('eexcess.log')) {
                 switch (msg.data.event) {
                     case 'eexcess.log.moduleOpened':
@@ -63,20 +62,21 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                         break;
                 }
             }
-        });
-    };
-    var run = function() {
-        window.addEventListener('message', loggingHandler);
-        window.addEventListener('message', lastQueryHandler);
-        require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
-            chrome.storage.sync.get('uuid', function(result) {
-                var uuid;
-                if (result.uuid) {
-                    uuid = result.uuid;
-                } else {
-                    uuid = util.randomUUID();
-                    chrome.storage.sync.set({uuid: uuid});
-                }
+        };
+        var unloadHandler = function(e) {
+            var module = searchBar.getCurrentModule();
+            if (module) {
+                api.sendLog(api.logInteractionType.moduleClosed, {
+                    origin: {module: 'searchBar'},
+                    content: {name: module}
+                });
+            } 
+        };
+        var run = function() {
+            window.addEventListener('message', loggingHandler);
+            window.addEventListener('message', lastQueryHandler);
+            window.addEventListener('beforeunload', unloadHandler);
+            require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
                 var tabs = [{
                         "name": "SearchResultList",
                         "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
@@ -104,11 +104,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                             callback(response);
                         });
                     },
-                    origin: {
-                        userID: uuid,
-                        clientType: "chrome-extension",
-                        clientVersion: chrome.runtime.getManifest().version
-                    },
+                    origin: origin,
                     queryCrumbs: {
                         active: true,
                         storage: {
@@ -252,66 +248,67 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                     highlights = [];
                 });
             });
-        });
-    };
-    var kill = function() {
-        window.removeEventListener('message', loggingHandler);
-        window.removeEventListener('message', lastQueryHandler);
-        lastQuery = null;
-        chrome.runtime.onMessage.removeListener(qcRefresh);
-        require(['jquery'], function($) {
-            // unbind focused paragraph listener
-            $(document).unbind('paragraphFocused');
-            // remove paragraph wrappers
-            $.each($('.eexcess_detected_par'), function() {
-                $(this).children(':first').unwrap();
-            });
-            // remove search bar & content pane
-            $('#eexcess_searchBar').remove();
-            $('#eexcess-tabBar-contentArea').remove();
-            // unbind highlight listeners
-            $(document).unbind('c4_keywordMouseEnter');
-            $(document).unbind('c4_keywordMouseLeave');
-        });
-    };
-    chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
-        if (result.EEXCESS_off) {
-            if (result.whitelist && result.whitelist.indexOf(window.location.hostname) !== -1) {
-                run();
-            }
-        } else if (!result.blacklist || result.blacklist.indexOf(window.location.hostname) === -1) {
-            run();
-        }
-    });
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        if (request && request.status === 'off') {
-            if (request.site) {
-                // local turnoff, check site
-                if (request.site === window.location.hostname) {
-                    kill();
-                }
-            } else {
-                // global turn off, check whitelist
-                chrome.storage.local.get('whitelist', function(response) {
-                    if (!response.whitelist || response.whitelist.indexOf(window.location.hostname) === -1) {
-                        kill();
-                    }
+        };
+        var kill = function() {
+            window.removeEventListener('message', loggingHandler);
+            window.removeEventListener('message', lastQueryHandler);
+            window.removeEventListener('beforeunload', unloadHandler);
+            lastQuery = null;
+            chrome.runtime.onMessage.removeListener(qcRefresh);
+            require(['jquery'], function($) {
+                // unbind focused paragraph listener
+                $(document).unbind('paragraphFocused');
+                // remove paragraph wrappers
+                $.each($('.eexcess_detected_par'), function() {
+                    $(this).children(':first').unwrap();
                 });
-            }
-        } else if (request && request.status === 'on') {
-            if (request.site) {
-                // local turn on, check site and EEXCESS not running
-                if (request.site === window.location.hostname && !document.getElementById('eexcess_searchBar')) {
+                // remove search bar & content pane
+                $('#eexcess_searchBar').remove();
+                $('#eexcess-tabBar-contentArea').remove();
+                // unbind highlight listeners
+                $(document).unbind('c4_keywordMouseEnter');
+                $(document).unbind('c4_keywordMouseLeave');
+            });
+        };
+        chrome.storage.local.get(['blacklist', 'EEXCESS_off', 'whitelist'], function(result) {
+            if (result.EEXCESS_off) {
+                if (result.whitelist && result.whitelist.indexOf(window.location.hostname) !== -1) {
                     run();
                 }
-            } else {
-                // global turn on, check blacklist and EEXCESS not running
-                chrome.storage.local.get('blacklist', function(response) {
-                    if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && !document.getElementById('eexcess_searchBar')) {
+            } else if (!result.blacklist || result.blacklist.indexOf(window.location.hostname) === -1) {
+                run();
+            }
+        });
+        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+            if (request && request.status === 'off') {
+                if (request.site) {
+                    // local turnoff, check site
+                    if (request.site === window.location.hostname) {
+                        kill();
+                    }
+                } else {
+                    // global turn off, check whitelist
+                    chrome.storage.local.get('whitelist', function(response) {
+                        if (!response.whitelist || response.whitelist.indexOf(window.location.hostname) === -1) {
+                            kill();
+                        }
+                    });
+                }
+            } else if (request && request.status === 'on') {
+                if (request.site) {
+                    // local turn on, check site and EEXCESS not running
+                    if (request.site === window.location.hostname && !document.getElementById('eexcess_searchBar')) {
                         run();
                     }
-                });
+                } else {
+                    // global turn on, check blacklist and EEXCESS not running
+                    chrome.storage.local.get('blacklist', function(response) {
+                        if ((!response.blacklist || response.blacklist.indexOf(window.location.hostname) === -1) && !document.getElementById('eexcess_searchBar')) {
+                            run();
+                        }
+                    });
+                }
             }
-        }
+        });
     });
 });
