@@ -1,7 +1,16 @@
-require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBar, api, util) {
+require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], function(searchBar, api, util, iframes) {
+    var lastQuery;
     var qcRefresh = function(request, sender, sendResponse) {
         if (request && request.method === 'updateQueryCrumbs') {
             searchBar.refreshQC();
+        }
+    };
+    var lastQueryHandler = function(msg){
+        if(msg.data.event && msg.data.event === 'eexcess.currentResults' && lastQuery) {
+            iframes.sendMsgAll({
+                event:'eexcess.newResults',
+                data:lastQuery
+            });
         }
     };
     var loggingHandler = function(msg) {
@@ -58,6 +67,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
     };
     var run = function() {
         window.addEventListener('message', loggingHandler);
+        window.addEventListener('message', lastQueryHandler);
         require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
             var tabs = [{
                     "name": "SearchResultList",
@@ -67,17 +77,22 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
                 , {
                     "name": "Dashboard",
                     "url": chrome.extension.getURL('visualization-widgets/Dashboard/index.html'),
-                    "icon": chrome.extension.getURL('visualization-widgets/Dashboard/icon.png')
+                    "icon": chrome.extension.getURL('visualization-widgets/Dashboard/icon.png'),
+                    "deferLoading":true
                 }, {
                     "name": "FacetScape",
                     "icon": chrome.extension.getURL('visualization-widgets/FacetScape/icon.png'),
-                    "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html')
+                    "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
+                    "deferLoading":true
                 }];
             searchBar.init(tabs, {
                 storage: chrome.storage.local,
                 imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
                 queryFn: function(queryProfile, callback) {
                     chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
+                        if(response.status === 'success') {
+                            lastQuery = response.data;
+                        }
                         callback(response);
                     });
                 },
@@ -119,7 +134,6 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
             });
             var focusedParagraph = {};
             $(document).on('paragraphFocused', function(evt) {
-                console.log(evt);
                 var lastOutOfFocus = false;
                 if (typeof focusedParagraph !== 'undefined' && typeof focusedParagraph.elements !== 'undefined') {
                     var outTop = $(focusedParagraph.elements[0]).parent().offset().top < $(window).scrollTop();
@@ -228,6 +242,8 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util'], function(searchBa
     };
     var kill = function() {
         window.removeEventListener('message', loggingHandler);
+        window.removeEventListener('message', lastQueryHandler);
+        lastQuery = null;
         chrome.runtime.onMessage.removeListener(qcRefresh);
         require(['jquery'], function($) {
             // unbind focused paragraph listener
