@@ -25,7 +25,13 @@ and open the template in the editor.
                 <a href="#" id="tmp"><image id="tmp_img" src="../media/buttons/red.png" alt="power button" /></a>
             </div>
         </div>
-        <div id="buttons"><a href="user-profile.html" target="_blank">profile</a> | <a href="#" id="settings">settings</a></div>
+        <!--<div id="buttons"><a href="user-profile.html" target="_blank">profile</a> | <a href="#" id="settings">settings</a></div>-->
+        <div id="buttons">
+            <a href="user-profile.html" target="_blank" title="profile"><img src="../media/icons/profile.png" alt="profile" /></a>
+            <a href="#" id="settings" title="settings"><img src="../media/icons/settings.png" alt="settings" /></a>
+            <a href="mailto:feedback@eexcess.eu?subject=EEXCESS browser extension feedback" id="feedback" title="feedback"><img src="../media/icons/feedback.png" alt="feedback" /></a>
+            <a href="help.html" target="_blank" title="help"><img src="../media/icons/help.png" alt="help" /></a>
+        </div>
         <script type="text/javascript" data-main="../js/popup" src="../js/lib/requirejs/require.js"></script>
     </body>
 </html>
