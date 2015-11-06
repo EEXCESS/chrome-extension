@@ -1,5 +1,6 @@
-require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], function(searchBar, api, util, iframes) {
-    chrome.storage.sync.get('uuid', function(result) {
+require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/constants'], function(searchBar, api, util, iframes, up_constants) {
+    var logLevel = up_constants.STORAGE_PREFIX + up_constants.LOGGING_LEVEL;
+    chrome.storage.sync.get(['uuid', logLevel], function(result) {
         var uuid;
         if (result.uuid) {
             uuid = result.uuid;
@@ -12,7 +13,16 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
             clientType: "chrome-extension",
             clientVersion: chrome.runtime.getManifest().version
         };
-        api.init({origin: origin});
+        if (result[logLevel]) {
+            api.init({origin: origin, loggingLevel: result[logLevel]});
+        } else {
+            api.init({origin: origin});
+        }
+        chrome.storage.onChanged.addListener(function(changes,areaName) {
+            if(areaName === 'sync' && changes[logLevel]) {
+                api.setLoggingLevel(changes[logLevel].newValue);
+            }
+        });
         var lastQuery;
         var qcRefresh = function(request, sender, sendResponse) {
             if (request && request.method === 'updateQueryCrumbs') {
@@ -70,11 +80,11 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                     origin: {module: 'searchBar'},
                     content: {name: module}
                 });
-            } 
+            }
         };
-        var visibilityChangeHandler = function(){
+        var visibilityChangeHandler = function() {
             var module = searchBar.getCurrentModule();
-            if(document.hidden && module) {
+            if (document.hidden && module) {
                 api.sendLog(api.logInteractionType.moduleClosed, {
                     origin: {module: 'searchBar'},
                     content: {name: module}
@@ -157,6 +167,9 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
                     }
                 });
                 var focusedParagraph = {};
+//                chrome.storage.local.get('queryCrumbs_history', function(res) {
+//                    console.log(res);
+//                });
                 $(document).on('paragraphFocused', function(evt) {
                     var lastOutOfFocus = false;
                     if (typeof focusedParagraph !== 'undefined' && typeof focusedParagraph.elements !== 'undefined') {

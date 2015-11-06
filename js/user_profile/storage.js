@@ -15,6 +15,11 @@ define(["up/constants"], function (constants) {
 		 */
 		storeValue: function(id, value){
 			localStorage.setItem(constants.STORAGE_PREFIX + id, value);
+                        if(id === constants.LOGGING_LEVEL) {
+                            var toStore = {};
+                            toStore[constants.STORAGE_PREFIX + id] = value;
+                            chrome.storage.sync.set(toStore);
+                        }
 		},
 		
 		/**
