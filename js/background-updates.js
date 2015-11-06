@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(function(details) {
-    if (details.reason === 'install' || details.reason === 'update') {
+    if (details.reason === 'install') {
         chrome.tabs.create({'url': chrome.extension.getURL('html/help.html')});
         // initialize blacklist
         var blacklist = ['stackoverflow.com', 'mail.google.com', 'gmail.com'];
