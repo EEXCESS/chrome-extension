@@ -253,6 +253,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes'], fun
             window.removeEventListener('message', loggingHandler);
             window.removeEventListener('message', lastQueryHandler);
             window.removeEventListener('beforeunload', unloadHandler);
+            unloadHandler();
             lastQuery = null;
             chrome.runtime.onMessage.removeListener(qcRefresh);
             require(['jquery'], function($) {
