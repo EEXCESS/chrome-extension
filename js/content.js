@@ -117,6 +117,10 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         "icon": chrome.extension.getURL('visualization-widgets/FacetScape/icon.png'),
                         "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
                         "deferLoading": true
+                    }, {
+                        "name": "SearchResultListTimeline",
+                        "url": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/index.html'),
+                        "icon": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/icon.svg')
                     }];
                 searchBar.init(tabs, {
                     storage: chrome.storage.local,
