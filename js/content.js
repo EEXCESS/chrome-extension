@@ -134,12 +134,10 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         active: true,
                         storage: {
                             getHistory: function(callback) {
-                                chrome.storage.local.get('queryCrumbs_history', function(res) {
-                                    callback(res.queryCrumbs_history);
-                                });
+                                chrome.runtime.sendMessage({method:'qcGetHistory'}, callback);
                             },
                             setHistory: function(history) {
-                                chrome.storage.local.set({queryCrumbs_history: history});
+                                chrome.runtime.sendMessage({method:'qcSetHistory',data:history});
                             }
                         },
                         updateTrigger: function() {
