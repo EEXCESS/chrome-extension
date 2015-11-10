@@ -121,6 +121,10 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         "name": "SearchResultListTimeline",
                         "url": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/index.html'),
                         "icon": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/icon.svg')
+                    }, {
+                        "name": "SearchResultListCoverflow",
+                        "url": chrome.extension.getURL('visualization-widgets/SearchResultListCoverflow/index.html'),
+                        "icon": chrome.extension.getURL('visualization-widgets/SearchResultListCoverflow/icon.svg')
                     }];
                 searchBar.init(tabs, {
                     storage: chrome.storage.local,
