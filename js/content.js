@@ -228,12 +228,14 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 $(document).on('c4_keywordMouseEnter', function(e) {
                     var offsets = focusedParagraph.offsets[e.originalEvent.detail.text];
                     var map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
-                    offsets.sort;
+                    offsets.sort(function(a,b){
+                        return a-b;
+                    });
                     var idx = 0;
                     var current = map[0];
                     for (var i = 0; i < offsets.length; i++) {
                         for (var j = idx; j < map.length; j++) {
-                            if (offsets[i] < map[j].offset) {
+                            if (offsets[i] < map[j].offset || j === map.length -1) {
                                 var word = e.originalEvent.detail.text.toLowerCase();
                                 var text = current.el.nodeValue.toLowerCase();
                                 if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
@@ -245,7 +247,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                                     for (var k = 0; k < word.length; k++) {
                                         var char = word.charAt(k);
                                         if (char === text.charAt(k)) {
-                                            comparison += char
+                                            comparison += char;
                                         } else {
                                             break;
                                         }
