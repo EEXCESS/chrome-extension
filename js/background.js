@@ -31,11 +31,11 @@ require(['./common'], function(common) {
                 uuid = util.randomUUID();
                 chrome.storage.sync.set({uuid:uuid});
             }
-            
+            var manifest = chrome.runtime.getManifest();
             var settings = {origin: {
                     userID: uuid,
-                    clientType: "chrome-extension",
-                    clientVersion: chrome.runtime.getManifest().version
+                    clientType: manifest.name + "/chrome-extension",
+                    clientVersion: manifest.version
                 }};
             if (result.numResults) {
                 settings.numResults = result.numResults;
