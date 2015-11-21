@@ -148,7 +148,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 });
                 chrome.runtime.onMessage.addListener(qcRefresh);
                 // detect paragraphs
-                var p = paragraphDetection.getParagraphs();
+                var p = paragraphDetection.getParagraphs(document,{addSubparagraphs:true});
                 // selection listener
                 var selection;
                 $(document).mouseup(function() {
@@ -206,16 +206,20 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         if (entitiesExracted) {
                             searchBar.setQuery(p[tmp_idx].query.contextKeywords, immediately);
                         } else {
-                            paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).parent().text(), function(res) {
-                                if (typeof res.query !== 'undefined') {
-                                    p[tmp_idx].query = res.query;
-                                    p[tmp_idx].offsets = res.offsets;
-                                    searchBar.setQuery(res.query.contextKeywords, immediately);
-                                } else {
-                                    // TODO: error handling?
-                                    // optional error message in res.error
-                                }
-                            });
+                            paragraphDetection.paragraphsToQueries(focusedParagraph.subparagraphs, function(res){
+                                p[tmp_idx].offsets = res.queries.main.offsets;
+                                searchBar.setQueries(res.queries, immediately);
+                            }, focusedParagraph.headline);
+//                            paragraphDetection.paragraphToQuery($(focusedParagraph.elements[0]).parent().text(), function(res) {
+//                                if (typeof res.query !== 'undefined') {
+//                                    p[tmp_idx].query = res.query;
+//                                    p[tmp_idx].offsets = res.offsets;
+//                                    searchBar.setQuery(res.query.contextKeywords, immediately);
+//                                } else {
+//                                    // TODO: error handling?
+//                                    // optional error message in res.error
+//                                }
+//                            });
                         }
                     }
                 });
