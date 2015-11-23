@@ -8,20 +8,27 @@
     top:3px;
 }
 
-#partnerList {
+ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-#partnerList li {
+li {
     padding:3px;
 }
 
 #partnerList li input {
+    margin-right: 4px;
+}
+
+input[type="checkbox"] {
     position: relative;
     top: -2px;
-    margin-right: 4px;
+}
+
+#numResults {
+    width:50px;
 }
 
 h1 {

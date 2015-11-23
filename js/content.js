@@ -19,9 +19,14 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
         } else {
             api.init({origin: origin});
         }
-        chrome.storage.onChanged.addListener(function(changes,areaName) {
-            if(areaName === 'sync' && changes[logLevel]) {
+        chrome.storage.onChanged.addListener(function(changes, areaName) {
+            if (areaName === 'sync' && changes[logLevel]) {
                 api.setLoggingLevel(changes[logLevel].newValue);
+            }
+        });
+        chrome.storage.onChanged.addListener(function(changes, areaName) {
+            if (areaName === 'local' && changes.showPopupBubble) {
+                searchBar.showNotificationBubble(changes.showPopupBubble.newValue);
             }
         });
         var lastQuery;
@@ -122,6 +127,11 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 searchBar.init(tabs, {
                     storage: chrome.storage.local,
                     imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
+                    profile: {
+                        addCategories: function(categories) {
+                            // do nothing
+                        }
+                    },
                     queryFn: function(queryProfile, callback) {
                         chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
                             if (response.status === 'success') {
@@ -135,10 +145,10 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         active: true,
                         storage: {
                             getHistory: function(callback) {
-                                chrome.runtime.sendMessage({method:'qcGetHistory'}, callback);
+                                chrome.runtime.sendMessage({method: 'qcGetHistory'}, callback);
                             },
                             setHistory: function(history) {
-                                chrome.runtime.sendMessage({method:'qcSetHistory',data:history});
+                                chrome.runtime.sendMessage({method: 'qcSetHistory', data: history});
                             }
                         },
                         updateTrigger: function() {
@@ -229,14 +239,14 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 $(document).on('c4_keywordMouseEnter', function(e) {
                     var offsets = focusedParagraph.offsets[e.originalEvent.detail.text];
                     var map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
-                    offsets.sort(function(a,b){
-                        return a-b;
+                    offsets.sort(function(a, b) {
+                        return a - b;
                     });
                     var idx = 0;
                     var current = map[0];
                     for (var i = 0; i < offsets.length; i++) {
                         for (var j = idx; j < map.length; j++) {
-                            if (offsets[i] < map[j].offset || j === map.length -1) {
+                            if (offsets[i] < map[j].offset || j === map.length - 1) {
                                 var word = e.originalEvent.detail.text.toLowerCase();
                                 var text = current.el.nodeValue.toLowerCase();
                                 if (text.indexOf(word, offsets[i] - current.offset) !== offsets[i] - current.offset) {
