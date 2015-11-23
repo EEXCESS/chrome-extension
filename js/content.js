@@ -8,10 +8,11 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
             uuid = util.randomUUID();
             chrome.storage.sync.set({uuid: uuid});
         }
+        var manifest = chrome.runtime.getManifest();
         var origin = {
             userID: uuid,
-            clientType: "chrome-extension",
-            clientVersion: chrome.runtime.getManifest().version
+            clientType: manifest.name + "/chrome-extension",
+            clientVersion: manifest.version
         };
         if (result[logLevel]) {
             api.init({origin: origin, loggingLevel: result[logLevel]});
