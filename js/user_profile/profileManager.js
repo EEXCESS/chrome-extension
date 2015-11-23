@@ -8,7 +8,6 @@ define(["up/constants"], function (cst) {
 		
 		adaptProfile: function(profile){
 			// Age range
-            setValue(cst.AGE_RANGE, 0); // TODO remove this line
             if (this.isAgeRangeDisclosed()){ 
             	profile.ageRange = this.getAgeRange(); 
             }

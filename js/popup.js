@@ -4,6 +4,10 @@ require(['../js/common'], function(common) {
             e.preventDefault();
             chrome.runtime.openOptionsPage();
         });
+        $('#feedback').click(function(e){
+            e.preventDefault();
+            chrome.tabs.create({'url': 'mailto:feedback@eexcess.eu?subject=EEXCESS browser extension feedback'});
+        });
         chrome.tabs.query({'active': true}, function(tabs) {
             var url = tabs[0].url;
             var tabid = tabs[0].id;
@@ -11,8 +15,8 @@ require(['../js/common'], function(common) {
             tmp.href = url;
             if (url.startsWith('chrome') && !url.startsWith('chrome://newtab')) {
                 $('#internal').show();
-                $('#switch').hide();
             } else {
+                $('#switch').show();
                 var currentHostname = tmp.hostname;
                 $('#current_host').text(currentHostname);
 

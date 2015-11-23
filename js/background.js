@@ -13,6 +13,10 @@ require(['./common'], function(common) {
         };
         
         var selectedSources = [];
+        var qcHistory = localStorage.getItem('qcHistory');
+        if(typeof qcHistory !== 'undefined') {
+            qcHistory = JSON.parse(qcHistory);
+        }
 
         chrome.storage.sync.get(['numResults','selectedSources','uuid'], function(result) {
             if(result.selectedSources) {
@@ -71,6 +75,17 @@ require(['./common'], function(common) {
                                    });
                                }
                             });
+                            break;
+                        case 'updateQueryCrumbs':
+                            msgAllTabs(msg);
+                            break;
+                        case 'qcGetHistory':
+                            sendResponse(qcHistory);
+                            return true;
+                            break;
+                        case 'qcSetHistory':
+                            qcHistory = msg.data;
+                            localStorage.setItem('qcHistory', JSON.stringify(qcHistory));
                             break;
                         default:
                             console.log('unknown method: ' + msg.method);

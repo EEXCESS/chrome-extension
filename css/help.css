@@ -1,0 +1,49 @@
+body {
+    font-family: Helvetica, Verdana, Arial, Geneva, sans-serif;
+    background-image: url('../media/watermark.png');
+     background-repeat: no-repeat;
+     background-attachment: fixed;
+     background-position: center;
+     padding:0.5%;
+}
+
+h2 {
+    clear:both;
+}
+
+p {
+    width:60%;
+}
+
+#switch_list {
+    list-style-type: none;
+}
+
+#switch_list img {
+    margin-right: 5px;
+}
+
+#popup_img {
+    width:100px;
+    margin-bottom: 20px;
+    float:left;
+    margin-right:30px;
+}
+
+#profile_img {
+    width:300px;
+    margin-bottom: 20px;
+    float:left;
+    margin-right:30px;
+}
+
+#settings_img {
+    width:300px;
+    margin-bottom: 20px;
+    float:left;
+    margin-right:30px;
+}
+
+.active_par {
+    border:2px solid #1d904e;
+}
