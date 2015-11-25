@@ -1,6 +1,7 @@
 require(['./common'], function(common) {
     require(['jquery', 'c4/APIconnector'], function($, api) {
         var $numResults = $('#numResults');
+        var $notificationBubble = $('#notification_bubble');
         // store current values and inform background script about update
         var update = function() {
             var selectedSources = [];
@@ -11,12 +12,12 @@ require(['./common'], function(common) {
                 chrome.runtime.sendMessage({method: 'optionsUpdate'});
             });
         };
-        // get numResults from storage, set to '30' if not present
+        // get numResults from storage, set to '80' if not present
         chrome.storage.sync.get('numResults', function(result) {
             if (result.numResults) {
                 $numResults.val(result.numResults);
             } else {
-                $numResults.val(30);
+                $numResults.val(80);
             }
         });
         // numResults must be int in range 1-100
@@ -29,6 +30,23 @@ require(['./common'], function(common) {
                 $numResults.val(100);
             }
             update();
+        });
+
+
+        chrome.storage.local.get('showPopupBubble', function(result) {
+            if (typeof result.showPopupBubble === 'undefined' || result.showPopupBubble) {
+                $notificationBubble.prop('checked', 'checked');
+            }
+        });
+        
+        chrome.storage.onChanged.addListener(function(changes, areaName) {
+            if (areaName === 'local' && changes.showPopupBubble) {
+                $notificationBubble.prop('checked', changes.showPopupBubble.newValue);
+            }
+        });
+
+        $notificationBubble.change(function() {
+            chrome.storage.local.set({showPopupBubble: $notificationBubble.prop('checked')});
         });
 
         // partner list
