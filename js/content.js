@@ -127,11 +127,6 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 searchBar.init(tabs, {
                     storage: chrome.storage.local,
                     imgPATH: chrome.extension.getURL('js/lib/c4/searchBar/img/'),
-                    profile: {
-                        addCategories: function(categories) {
-                            // do nothing
-                        }
-                    },
                     queryFn: function(queryProfile, callback) {
                         chrome.runtime.sendMessage({method: 'triggerQuery', data: queryProfile}, function(response) {
                             if (response.status === 'success') {
