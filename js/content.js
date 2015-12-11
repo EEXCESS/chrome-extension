@@ -110,7 +110,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
             require(['c4/paragraphDetection', 'c4/namedEntityRecognition', 'c4/iframes', 'jq_highlight'], function(paragraphDetection, ner, iframes, jq_highlight) {
                 var tabs = [{
                         "name": "SearchResultList",
-                        "url": chrome.extension.getURL('visualization-widgets/SearchResultListVis/index.html'),
+                        "url": "https://rawgit.com/EEXCESS/visualization-widgets/feature/explanation/SearchResultListVis/index.html",
                         "icon": chrome.extension.getURL('visualization-widgets/SearchResultListVis/icon.png')
                     }
                     , {
@@ -160,21 +160,21 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 // detect paragraphs
                 var p = paragraphDetection.getParagraphs();
                 // selection listener
-                var selection;
-                $(document).mouseup(function() {
-                    var tmp_selection = document.getSelection().toString();
-                    if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
-                        selection = tmp_selection;
-                        paragraphDetection.paragraphToQuery(selection, function(res) {
-                            if (typeof res.query !== 'undefined') {
-                                searchBar.setQuery(res.query.contextKeywords);
-                            } else {
-                                // TODO: error handling?
-                                // optional error message in res.error
-                            }
-                        });
-                    }
-                });
+//                var selection;
+//                $(document).mouseup(function() {
+//                    var tmp_selection = document.getSelection().toString();
+//                    if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
+//                        selection = tmp_selection;
+//                        paragraphDetection.paragraphToQuery(selection, function(res) {
+//                            if (typeof res.query !== 'undefined') {
+//                                searchBar.setQuery(res.query.contextKeywords);
+//                            } else {
+//                                // TODO: error handling?
+//                                // optional error message in res.error
+//                            }
+//                        });
+//                    }
+//                });
                 var focusedParagraph = {};
 //                chrome.storage.local.get('queryCrumbs_history', function(res) {
 //                    console.log(res);
@@ -237,6 +237,10 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 // listen for keyword hover in the searchbar
                 var highlights = [];
                 $(document).on('c4_keywordMouseEnter', function(e) {
+//                    iframes.sendMsgAll({
+//                        event:'eexcess.explanation.highlight',
+//                        data:e.originalEvent.detail.text.split(' ')
+//                    });
                     var offsets = focusedParagraph.offsets[e.originalEvent.detail.text];
                     var map = paragraphDetection.getOffsetMap($('#' + focusedParagraph.id).get(0));
                     offsets.sort(function(a, b) {
@@ -281,6 +285,9 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                     }
                 });
                 $(document).on('c4_keywordMouseLeave', function(e) {
+//                    iframes.sendMsgAll({
+//                        event:'eexcess.explanation.unhighlight'
+//                    });
                     highlights.forEach(function(val) {
                         $(val).unhighlight({className: 'eexcess_highlight'});
                     });
