@@ -70,7 +70,7 @@ require(['./common'], function(common) {
                 chrome.storage.sync.get('selectedSources', function(res) {
                     if (res.selectedSources) {
                         res.selectedSources.forEach(function(val) {
-                            $('#partnerList input[name=' + val.systemId + ']').prop('checked', true);
+                            $('#partnerList input[name="' + val.systemId + '"]').prop('checked', true);
                         });
                     }
                 });
