@@ -45,45 +45,14 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
         };
         var loggingHandler = function(msg) {
             if (msg.data.event && msg.data.event.startsWith('eexcess.log')) {
-                switch (msg.data.event) {
-                    case 'eexcess.log.moduleOpened':
-                        api.sendLog(api.logInteractionType.moduleOpened, msg.data.data);
-                        break;
-                    case 'eexcess.log.moduleClosed':
-                        api.sendLog(api.logInteractionType.moduleClosed, msg.data.data);
-                        break;
-                    case 'eexcess.log.moduleStatisticsCollected':
-                        api.sendLog(api.logInteractionType.moduleStatisticsCollected, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemOpened':
-                        api.sendLog(api.logInteractionType.itemOpened, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemClosed':
-                        api.sendLog(api.logInteractionType.itemClosed, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemCitedAsImage':
-                        api.sendLog(api.logInteractionType.itemCitedAsImage, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemCitedAsText':
-                        api.sendLog(api.logInteractionType.itemCitedAsText, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemCitedAsHyperlink':
-                        api.sendLog(api.logInteractionType.itemCitedAsHyperlink, msg.data.data);
-                        break;
-                    case 'eexcess.log.itemRated':
-                        api.sendLog(api.logInteractionType.itemRated, msg.data.data);
-                        break;
-                    default:
-                        console.log('unknown log method: ' + msg.data.event);
-                        break;
-                }
+                api.logMsgHandler(msg.data);
             }
         };
         var unloadHandler = function(e) {
             var module = searchBar.getCurrentModule();
             if (module) {
                 api.sendLog(api.logInteractionType.moduleClosed, {
-                    origin: {module: 'searchBar'},
+                    origin: {module: 'c4/searchBar'},
                     content: {name: module}
                 });
             }
@@ -92,12 +61,12 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
             var module = searchBar.getCurrentModule();
             if (document.hidden && module) {
                 api.sendLog(api.logInteractionType.moduleClosed, {
-                    origin: {module: 'searchBar'},
+                    origin: {module: 'c4/searchBar'},
                     content: {name: module}
                 });
             } else if (!document.hidden && module) {
                 api.sendLog(api.logInteractionType.moduleOpened, {
-                    origin: {module: 'searchBar'},
+                    origin: {module: 'c4/searchBar'},
                     content: {name: module}
                 });
             }

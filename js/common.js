@@ -16,7 +16,8 @@ require.config({
     peas_adapt: "peas/peas_adapt",
     d3: "d3/d3",
     util: "../util/util",
-    jq_highlight: "../util/jq_highlight"
+    jq_highlight: "../util/jq_highlight",
+    selectionAugmentation: "selectionAugmentation/index"
   },
   packages: [
 
