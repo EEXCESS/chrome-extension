@@ -29,6 +29,7 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                 searchBar.showNotificationBubble(changes.showPopupBubble.newValue);
             }
         });
+        api.init({base_url:'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/'})
         var lastQuery;
         var qcRefresh = function(request, sender, sendResponse) {
             if (request && request.method === 'updateQueryCrumbs') {
