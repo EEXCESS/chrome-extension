@@ -1,5 +1,6 @@
 require(['./common'], function(common) {
     require(['jquery', 'c4/APIconnector'], function($, api) {
+        api.init({base_url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/'});
         var $numResults = $('#numResults');
         var $notificationBubble = $('#notification_bubble');
         // store current values and inform background script about update
