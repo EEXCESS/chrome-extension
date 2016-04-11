@@ -93,6 +93,11 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         "icon": chrome.extension.getURL('visualization-widgets/FacetScape/icon.png'),
                         "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
                         "deferLoading": true
+                    }, {
+                        "name": "QueryInspector",
+                        "icon": chrome.extension.getURL('easter-egg/icon.png'),
+                        "url": chrome.extension.getURL('easter-egg/index.html'),
+                        "deferLoading": true
                     }];
                 searchBar.init(tabs, {
                     storage: chrome.storage.local,

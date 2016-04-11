@@ -1,6 +1,6 @@
 {
     "name": "EEXCESS_DEV",
-    "version": "1.7.3",
+    "version": "1.7.4",
     "background": {
         "page": "html/background.html"
     },
@@ -17,7 +17,8 @@
         "js/*",
         "visualization-widgets/*",
         "media/*",
-        "html/*"
+        "html/*",
+        "easter-egg/*"
     ],
     "manifest_version": 2,
     "permissions": [
