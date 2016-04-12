@@ -11,25 +11,45 @@ require(['./common'], function(common) {
                 }
             });
         };
-        
+
         var selectedSources = [];
+        var prefs = {
+            text: 20,
+            video: 40,
+            picture: 80,
+            openLicence: 0,
+            expertLevel:0,
+        };
         var qcHistory = localStorage.getItem('qcHistory');
-        if(typeof qcHistory !== 'undefined') {
+        if (typeof qcHistory !== 'undefined') {
             qcHistory = JSON.parse(qcHistory);
         }
 
-        chrome.storage.sync.get(['numResults','selectedSources','uuid'], function(result) {
-            if(result.selectedSources) {
-                result.selectedSources.forEach(function(val){
-                    selectedSources.push({systemId:val.systemId});
+        chrome.storage.onChanged.addListener(function(changes, areaName) {
+            if (areaName === 'sync' && changes.preferences) {
+                prefs = changes.preferences.newValue;
+                console.log(changes.preferences);
+            }
+        });
+
+
+        chrome.storage.sync.get(['numResults', 'selectedSources', 'uuid', 'preferences'], function(result) {
+            if (result.preferences) {
+                prefs = result.preferences;
+            } else {
+                chrome.storage.sync.set({preferences: prefs});
+            }
+            if (result.selectedSources) {
+                result.selectedSources.forEach(function(val) {
+                    selectedSources.push({systemId: val.systemId});
                 });
             }
             var uuid;
-            if(result.uuid) {
+            if (result.uuid) {
                 uuid = result.uuid;
             } else {
                 uuid = util.randomUUID();
-                chrome.storage.sync.set({uuid:uuid});
+                chrome.storage.sync.set({uuid: uuid});
             }
             var manifest = chrome.runtime.getManifest();
             var settings = {
@@ -50,32 +70,36 @@ require(['./common'], function(common) {
                         case 'triggerQuery':
                             var profile = msg.data;
                             // selected sources
-                            if(selectedSources && selectedSources.length > 0 && !profile.partnerList) {
+                            if (selectedSources && selectedSources.length > 0 && !profile.partnerList) {
                                 profile.partnerList = selectedSources;
                             }
                             // Adaptation of the profile according to the policies
                             profile = profileManager.adaptProfile(profile);
-                            var obfuscationLevel = profileManager.getObfuscationLevel();
-                            if (obfuscationLevel == 0){
-                            	APIconnector.query(profile, sendResponse); 
-                            } else {
-                            	var k = obfuscationLevel * 2;
-                            	APIconnector.queryPeas(profile, k, sendResponse); 
-                            }
                             
+                            // add preferences
+                            profile['preferences'] = prefs;
+                            
+                            var obfuscationLevel = profileManager.getObfuscationLevel();
+                            if (obfuscationLevel == 0) {
+                                APIconnector.query(profile, sendResponse);
+                            } else {
+                                var k = obfuscationLevel * 2;
+                                APIconnector.queryPeas(profile, k, sendResponse);
+                            }
+
                             return true;
                             break;
                         case 'optionsUpdate':
-                            chrome.storage.sync.get(['numResults','selectedSources'], function(result) {
-                               if(result.numResults) {
-                                   APIconnector.setNumResults(result.numResults);
-                               } 
-                               if(result.selectedSources) {
-                                   selectedSources = [];
-                                   result.selectedSources.forEach(function(val){
-                                       selectedSources.push({systemId:val.systemId});
-                                   });
-                               }
+                            chrome.storage.sync.get(['numResults', 'selectedSources'], function(result) {
+                                if (result.numResults) {
+                                    APIconnector.setNumResults(result.numResults);
+                                }
+                                if (result.selectedSources) {
+                                    selectedSources = [];
+                                    result.selectedSources.forEach(function(val) {
+                                        selectedSources.push({systemId: val.systemId});
+                                    });
+                                }
                             });
                             break;
                         case 'updateQueryCrumbs':

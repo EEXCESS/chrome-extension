@@ -5,6 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" data-main="../js/options" src="../js/lib/requirejs/require.js"></script>
         <link href="../css/options.css" rel="stylesheet" />
+        <link href="../css/jquery-ui.min.css" rel="stylesheet"/>
+        <link href="../css/jquery-ui.theme.eexcess.css" rel="stylesheet"/>
     </head>
     <body>
         <div class="box">
@@ -13,6 +15,18 @@
                 <li><input id="numResults" type="number" /> <label for="numResults">Number of results [0-100]</label><br /></li>
                 <li><input id="notification_bubble" type="checkbox" /> <label for="notification_bubble">Show notification bubble</label></li>
             </ul>
+        </div>
+        
+        <div class="box">
+            <h1>Content Preferences</h1>
+            Image
+            <div id="slider_img"></div>
+            Video
+            <div id="slider_vid"></div>
+            Text
+            <div id="slider_text"></div>
+            Open Licence
+            <div id="slider_ol"></div>
         </div>
         
         <div class="box">

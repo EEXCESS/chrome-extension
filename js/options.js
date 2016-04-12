@@ -1,5 +1,5 @@
 require(['./common'], function(common) {
-    require(['jquery', 'c4/APIconnector'], function($, api) {
+    require(['jquery', 'c4/APIconnector', 'jqueryui'], function($, api, jui) {
         api.init({base_url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/'});
         var $numResults = $('#numResults');
         var $notificationBubble = $('#notification_bubble');
@@ -39,7 +39,7 @@ require(['./common'], function(common) {
                 $notificationBubble.prop('checked', 'checked');
             }
         });
-        
+
         chrome.storage.onChanged.addListener(function(changes, areaName) {
             if (areaName === 'local' && changes.showPopupBubble) {
                 $notificationBubble.prop('checked', changes.showPopupBubble.newValue);
@@ -48,6 +48,58 @@ require(['./common'], function(common) {
 
         $notificationBubble.change(function() {
             chrome.storage.local.set({showPopupBubble: $notificationBubble.prop('checked')});
+        });
+
+        // slider settings
+        chrome.storage.sync.get('preferences', function(res) {
+            var prefs = {
+                text: 20,
+                video: 40,
+                picture: 80,
+                openLicence: 0,
+                expertLevel:0
+            };
+            if (res.preferences) {
+                prefs = res.preferences;
+            } else {
+                chrome.storage.sync.set({preferences: prefs});
+            }
+            $('#slider_img').slider({
+                min: 0,
+                max: 100,
+                value: prefs.picture,
+                slide: function(event, ui) {
+                    prefs.picture = ui.value;
+                    chrome.storage.sync.set({preferences: prefs});
+                }
+            });
+            $('#slider_vid').slider({
+                min: 0,
+                max: 100,
+                value: prefs.video,
+                slide: function(event, ui) {
+                    prefs.video = ui.value;
+                    chrome.storage.sync.set({preferences: prefs});
+                }
+            });
+            $('#slider_text').slider({
+                min: 0,
+                max: 100,
+                value: prefs.text,
+                slide: function(event, ui) {
+                    prefs.text = ui.value;
+                    chrome.storage.sync.set({preferences: prefs});
+                }
+            });
+            $('#slider_ol').slider({
+                min: 0,
+                max: 100,
+                value: prefs.openLicence,
+                slide: function(event, ui) {
+                    prefs.openLicence = ui.value;
+                    chrome.storage.sync.set({preferences: prefs});
+                }
+            });
         });
 
         // partner list
