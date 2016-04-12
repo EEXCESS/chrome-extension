@@ -73,6 +73,13 @@ require(['./common'], function(common) {
                             if (selectedSources && selectedSources.length > 0 && !profile.partnerList) {
                                 profile.partnerList = selectedSources;
                             }
+                            
+                            for(var i=0;i<profile.contextKeywords.length; i++) {
+                                if (profile.contextKeywords[i].type && profile.contextKeywords[i].type === 'Organisation') {
+                                    profile.contextKeywords[i].type = 'Organization';
+                                }
+                            }
+                            
                             // Adaptation of the profile according to the policies
                             profile = profileManager.adaptProfile(profile);
                             
