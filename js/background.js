@@ -53,7 +53,6 @@ require(['./common'], function(common) {
             }
             var manifest = chrome.runtime.getManifest();
             var settings = {
-                base_url: 'https://eexcess-dev.joanneum.at/eexcess-privacy-proxy-issuer-1.0-SNAPSHOT/issuer/',
                 origin: {
                     userID: uuid,
                     clientType: manifest.name + "/chrome-extension",
