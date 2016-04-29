@@ -93,6 +93,20 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         "url": chrome.extension.getURL('visualization-widgets/FacetScape/index.html'),
                         "deferLoading": true
                     }, {
+                        "name": "Timeline",
+                        "icon": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/icon.png'),
+                        "url": chrome.extension.getURL('visualization-widgets/SearchResultListTimeline/index.html'),
+                        "deferLoading": true,
+                        "deactivate": function(results) {
+                            for (var i = 0; i < results.length; i++) {
+                                if (results[i].date !== 'unknown' && results[i].mediaType.toLowerCase() === 'image') {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        },
+                        'deactivateMsg': ' (inactive, since there are no images with a proper date in the result)'
+                    }, {
                         "name": "QueryInspector",
                         "icon": chrome.extension.getURL('easter-egg/icon.png'),
                         "url": chrome.extension.getURL('easter-egg/index.html'),
@@ -126,28 +140,48 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                     }
                 });
                 chrome.runtime.onMessage.addListener(qcRefresh);
+                // init paragraph detection
+                paragraphDetection.init({
+                    img_PATH: chrome.extension.getURL('js/lib/c4/img/')
+                });
                 // detect paragraphs
                 var p = paragraphDetection.getParagraphs(document, {addSubparagraphs: true});
                 // selection listener
-                var selection;
-                $(document).mouseup(function() {
-                    var tmp_selection = document.getSelection().toString();
-                    if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
-                        selection = tmp_selection;
-                        paragraphDetection.paragraphToQuery(selection, function(res) {
-                            if (typeof res.query !== 'undefined') {
-                                searchBar.setQuery(res.query.contextKeywords);
-                            } else {
-                                // TODO: error handling?
-                                // optional error message in res.error
-                            }
-                        });
-                    }
-                });
+//                var selection;
+//                $(document).mouseup(function() {
+//                    var tmp_selection = document.getSelection().toString();
+//                    if (tmp_selection && tmp_selection !== '' && tmp_selection !== selection) {
+//                        selection = tmp_selection;
+//                        paragraphDetection.paragraphToQuery(selection, function(res) {
+//                            if (typeof res.query !== 'undefined') {
+//                                searchBar.setQuery(res.query.contextKeywords);
+//                            } else {
+//                                // TODO: error handling?
+//                                // optional error message in res.error
+//                            }
+//                        });
+//                    }
+//                });
                 var focusedParagraph = {};
 //                chrome.storage.local.get('queryCrumbs_history', function(res) {
 //                    console.log(res);
 //                });
+                var customParagraph;
+                var customParActive = function() {
+                    if(!customParagraph) {
+                        return false;
+                    } else {
+                        var outTop = customParagraph.offset().top < $(window).scrollTop();
+                        var outBottom = customParagraph.offset().top > $(window).scrollTop() + $(window).height();
+                        if (outTop || outBottom) {
+                            customParagraph.remove();
+                            customParagraph = null;
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                };
                 $(document).on('paragraphFocused', function(evt) {
                     var lastOutOfFocus = false;
                     if (typeof focusedParagraph !== 'undefined' && typeof focusedParagraph.elements !== 'undefined') {
@@ -160,7 +194,11 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                         lastOutOfFocus = true;
                     }
                     var focusEvent = evt.originalEvent.detail;
-                    if (focusEvent.paragraph !== null && focusedParagraph !== focusEvent.paragraph && (lastOutOfFocus || focusEvent.trigger === 'click')) {
+                    if (focusEvent.paragraph !== null && focusedParagraph !== focusEvent.paragraph && (lastOutOfFocus || focusEvent.trigger === 'click') && (!customParActive() || focusEvent.trigger === 'click')) {
+                        // remove custom paragraph if present
+                        if(customParagraph) {
+                            customParagraph.remove();
+                        }
                         // set focused paragraph variable
                         focusedParagraph = focusEvent.paragraph;
                         // reset border on all paragraphs
@@ -272,9 +310,55 @@ require(['c4/searchBar/searchBar', 'c4/APIconnector', 'util', 'c4/iframes', 'up/
                     });
                     highlights = [];
                 });
+
+                var augmentationData = {
+                    addKeyword: function(keywordToADD) {
+                        searchBar.addKeyword({
+                            text: keywordToADD
+                        });
+                    },
+                    queryFromSelection: function(selection) {
+                        paragraphDetection.paragraphToQuery(selection, function(res) {
+                            // set query in search bar
+                            if (res.query) {
+                                focusedParagraph = {};
+                                p.forEach(function(v1) {
+                                    $(v1.elements[0]).parent().css('border', '1px dotted silver');
+                                });
+                                searchBar.setQuery(res.query.contextKeywords, true);
+                            } else {
+                                //TODO: handle errors?
+                            }
+                        });
+                    },
+                    pd: function(domEL, selection) {
+                        domEL.css('border', '2px solid #1d904e');
+                        customParagraph = domEL;
+                        focusedParagraph = {};
+                        p.forEach(function(v1) {
+                            $(v1.elements[0]).parent().css('border', '1px dotted silver');
+                        });
+                        paragraphDetection.paragraphToQuery(selection, function(res) {
+                            // set query in search bar
+                            if (res.query) {
+                                searchBar.setQuery(res.query.contextKeywords, true);
+                            } else {
+                                //TODO: handle errors?
+                            }
+                        });
+                    },
+                    mainTopic: function(mainTopic) {
+                        searchBar.setMainTopic({text: mainTopic});
+                    }
+                };
+
+                paragraphDetection.activateSelectionAugmentation(augmentationData);
             });
         };
         var kill = function() {
+            require(['c4/paragraphDetection'], function(paragraphDetection) {
+                paragraphDetection.deactivateSelectionAugmentation();
+            });
             window.removeEventListener('message', loggingHandler);
             window.removeEventListener('message', lastQueryHandler);
             window.removeEventListener('beforeunload', unloadHandler);
