@@ -60,6 +60,8 @@ require(['./common'], function(common) {
                 }};
             if (result.numResults) {
                 settings.numResults = result.numResults;
+            } else {
+                settings.numResults = 80;
             }
             APIconnector.init(settings);
 
