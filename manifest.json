@@ -25,6 +25,7 @@
         "tabs",
         "<all_urls>",
         "background",
+        "proxy",
         "storage"
     ],
     "icons": {"16": "media/icons/16.png",
@@ -39,4 +40,3 @@
         "default_popup":"html/popup.html"
     }
 }
-

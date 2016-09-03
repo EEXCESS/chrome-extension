@@ -73,19 +73,45 @@ require(['./common'], function(common) {
                             if (selectedSources && selectedSources.length > 0 && !profile.partnerList) {
                                 profile.partnerList = selectedSources;
                             }
-                            
+
                             for(var i=0;i<profile.contextKeywords.length; i++) {
                                 if (profile.contextKeywords[i].type && profile.contextKeywords[i].type === 'Organisation') {
                                     profile.contextKeywords[i].type = 'Organization';
                                 }
                             }
-                            
+
                             // Adaptation of the profile according to the policies
                             profile = profileManager.adaptProfile(profile);
-                            
+
                             // add preferences
                             profile['preferences'] = prefs;
-                            
+
+                            var configPAC = {
+                              mode: "pac_script",
+                              pacScript: {
+                                data: "function FindProxyForURL(url, host) {\n" +
+                                "  if (host == 'eexcess.joanneum.at')\n" +
+                                "    return 'PROXY liris-vm-41.univ-lyon1.fr:81';\n" +
+                                "  return 'DIRECT';\n" +
+                                "}"
+                              }
+                            };
+
+                            var configDIRECT = {
+                              mode: "direct"
+                            };
+
+                            var unlinkabilityLevel = profileManager.getUnlinkabilityLevel();
+                            if (unlinkabilityLevel == 0) {
+                              chrome.proxy.settings.set(
+                                {value: configPAC, scope: 'regular'},
+                                function() {}); 
+                            } else {
+                              chrome.proxy.settings.set(
+                                {value: configDIRECT, scope: 'regular'},
+                                function() {});
+                            }
+
                             var obfuscationLevel = profileManager.getObfuscationLevel();
                             if (obfuscationLevel == 0) {
                                 APIconnector.query(profile, sendResponse);

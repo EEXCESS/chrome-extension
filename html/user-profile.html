@@ -13,7 +13,7 @@
 					User Profile
 				</h3>
 			</div>
-			
+
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -26,14 +26,14 @@
 						<div class="row">
 							<div class="panel-body">
 								<div class="col-md-6">
-									In order to improve our service, we would like to log your interactions with the system. Do you accept? 
+									In order to improve our service, we would like to log your interactions with the system. Do you accept?
 								</div>
 								<div id="loggingLevel" class="btn-group col-md-2" role="group">
 									<button type="button" class="btn btn-default eexcess-button">Yes</button>
 									<button type="button" class="btn btn-default eexcess-button">No</button>
 								</div>
 								<div class="col-md-4">
-									Your data will never be disclosed to external organizations or companies. It is used for internal purposes only. 
+									Your data will never be disclosed to external organizations or companies. It is used for internal purposes only.
 								</div>
 							</div>
 						</div>
@@ -41,7 +41,7 @@
 						<div class="row">
 							<div class="panel-body">
 								<div class="col-md-6">
-									We offer a query obfuscation mechanism to protect your privacy. Which level of privacy do you want? 
+									We offer a query obfuscation mechanism to protect your privacy. Which level of privacy do you want?
 								</div>
 								<div id="obfuscationLevel" class="btn-group col-md-2" role="group">
 									<button type="button" class="btn btn-default eexcess-button">None</button>
@@ -49,14 +49,29 @@
 									<button type="button" class="btn btn-default eexcess-button">High</button>
 								</div>
 								<div class="col-md-4">
-									The more obfuscated a query is, the more protected you are. In return, the performance can be degraded. 
+									The more obfuscated a query is, the more protected you are. In return, the performance can be degraded.
+								</div>
+							</div>
+						</div>
+						<!-- Unlinkability level -->
+						<div class="row">
+							<div class="panel-body">
+								<div class="col-md-6">
+									We offer an unlinkability mechanism to protect your privacy. Do you want to use it?
+								</div>
+								<div id="unlinkabilityLevel" class="btn-group col-md-2" role="group">
+									<button type="button" class="btn btn-default eexcess-button">Yes</button>
+									<button type="button" class="btn btn-default eexcess-button">No</button>
+								</div>
+								<div class="col-md-4">
+									Your queries will be routed through a proxy, consequently the queried websites will be not able to link your queries to you (i.e. your IP address).
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
 			</div>
-			
+
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -104,9 +119,9 @@
 									<button type="button" class="btn btn-default eexcess-button">City</button>
 								</div>
 								<div class="col-md-4">
-									Your location can be used to rank recommendation in order to present those that are closer to you.  
+									Your location can be used to rank recommendation in order to present those that are closer to you.
 									<b>Values shared with the system: </b><span id="cityDisplay"></span> <span id="countryDisplay"></span>
-									
+
 								</div>
 							</div>
 						</div>
@@ -136,7 +151,7 @@
 					</form>
 				</div>
 			</div>
-			
+
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -157,7 +172,7 @@
 					</form>
 				</div>
 			</div>
-			
+
 			<div class="panel-body">
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -178,7 +193,7 @@
 					</form>
 				</div>
 			</div>
-			
+
 		</div>
 		<script data-main="../js/user_profile/userProfile.js" src="../js/lib/requirejs/require.js"></script>
 	</body>
